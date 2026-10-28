@@ -2397,10 +2397,16 @@ const store = {
   set: (k, v) => { try { window.localStorage.setItem(k, v); } catch { /* storage unavailable */ } },
 };
 
-function Avatar({ size = 'h-7 w-7', className = '' }) {
+// Pre-shrunk, sharpened copies of the full portrait; the browser picks one by display size and pixel density.
+const AVATAR_64 = '/avatar-64.webp';
+const AVATAR_128 = '/avatar-128.webp';
+const AVATAR_192 = '/avatar-192.webp';
+const AVATAR_SRCSET = `${AVATAR_64} 64w, ${AVATAR_128} 128w, ${AVATAR_192} 192w`;
+
+function Avatar({ size = 'h-7 w-7', px = 28, className = '' }) {
   return (
     <span className={`block shrink-0 overflow-hidden rounded-full bg-gradient-to-b from-[#2a2b30] to-[#0e0f11] ${size} ${className}`}>
-      <img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" />
+      <img src={AVATAR_128} srcSet={AVATAR_SRCSET} sizes={`${px}px`} alt="" className="h-full w-full object-cover" />
     </span>
   );
 }
@@ -2539,7 +2545,7 @@ function ChatWidget() {
           className="anim-pop flex max-h-[min(640px,calc(100vh-8rem))] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0e0f11] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.9),0_0_0_1px_rgba(220,38,38,0.15)]">
           <div className="relative flex items-center gap-3 border-b border-white/10 bg-gradient-to-b from-crimson/20 to-transparent px-5 py-4">
             <span className="relative block shrink-0">
-              <Avatar size="h-14 w-14" className="ring-2 ring-crimson/70" />
+              <Avatar size="h-14 w-14" px={56} className="ring-2 ring-crimson/70" />
               <span className="absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-[#0e0f11] bg-[#22c55e]" />
             </span>
             <div className="min-w-0 flex-1">
@@ -2566,7 +2572,7 @@ function ChatWidget() {
 
       <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close message box' : 'Message Dwight'}
         className="group relative flex h-[72px] items-center gap-3 rounded-full bg-crimson pl-1.5 pr-6 text-white shadow-[0_14px_40px_-8px_rgba(220,38,38,0.8)] transition hover:scale-105 hover:bg-[#ef4444] motion-reduce:transform-none">
-        <Avatar size="h-[60px] w-[60px]" className="border-2 border-white/90" />
+        <Avatar size="h-[60px] w-[60px]" px={60} className="border-2 border-white/90" />
         <span className="font-mono text-[12px] tracking-[0.15em]">{open ? 'CLOSE' : 'MESSAGE ME'}</span>
         {!open && <MessageCircle className="h-4 w-4" />}
         {!open && (
