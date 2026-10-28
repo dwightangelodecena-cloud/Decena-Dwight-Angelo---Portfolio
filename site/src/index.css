@@ -90,3 +90,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .anim-wander { animation: wander 24s ease-in-out infinite; }
 @keyframes scrollcue { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
 .anim-scrollcue { animation: scrollcue 1.8s cubic-bezier(.6,0,.4,1) infinite; }
+
+/* section edges */
+@keyframes sweep { from { left: -35%; } to { left: 100%; } }
+.anim-sweep { animation: sweep 5.5s cubic-bezier(.5,0,.5,1) infinite; }

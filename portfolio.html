@@ -99,6 +99,9 @@
   .anim-wander { animation: wander 24s ease-in-out infinite; }
   @keyframes scrollcue { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
   .anim-scrollcue { animation: scrollcue 1.8s cubic-bezier(.6,0,.4,1) infinite; }
+  /* section edges */
+  @keyframes sweep { from { left: -35%; } to { left: 100%; } }
+  .anim-sweep { animation: sweep 5.5s cubic-bezier(.5,0,.5,1) infinite; }
   .process-num.is-on { color: #DC2626; -webkit-text-stroke-color: #DC2626; }
 </style>
 <div id="root"><div id="boot">LOADING PORTFOLIO…</div></div>
@@ -537,6 +540,31 @@ function BrandIcon({ name, className }) {
   );
 }
 
+// Designed top border for each section: glowing rule with a travelling light,
+// corner brackets and a hanging index tab.
+function SectionEdge({ n, label }) {
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-20">
+      <div className="relative h-px w-full overflow-hidden bg-gradient-to-r from-transparent via-white/20 to-transparent">
+        <span className="anim-sweep absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-crimson to-transparent" />
+      </div>
+      <div className="mx-auto flex max-w-[1400px] items-start justify-between px-gutter">
+        <span className="relative h-5 w-5 border-l border-t border-crimson/70">
+          <span className="absolute -left-[3px] -top-[3px] h-[5px] w-[5px] rotate-45 bg-crimson" />
+        </span>
+        <span className="flex items-center gap-2.5 rounded-b-xl border-x border-b border-white/10 bg-[#0b0b0d]/90 px-4 py-1.5 font-mono text-[10px] tracking-[0.25em] text-mute backdrop-blur">
+          <span className="text-crimson">{n}</span>
+          <span className="h-px w-5 bg-white/20" />
+          {label}
+        </span>
+        <span className="relative h-5 w-5 border-r border-t border-crimson/70">
+          <span className="absolute -right-[3px] -top-[3px] h-[5px] w-[5px] rotate-45 bg-crimson" />
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function SectionHead({ index, label, title, ghost }) {
   return (
     <div className="relative mb-10 md:mb-14">
@@ -813,7 +841,7 @@ function Backdrop() {
 // Two crossing ribbons of roles, used as a divider between sections.
 function RoleRibbon() {
   return (
-    <div aria-hidden className="relative h-36 overflow-hidden md:h-44">
+    <div aria-hidden data-ribbon className="relative h-36 overflow-hidden md:h-44">
       <div className="absolute inset-x-[-6%] top-1/2 -translate-y-1/2 rotate-[-3deg] border-y border-white/10 bg-[#0e0f11] py-3">
         <Ticker items={ROLES} reverse dur={55} className="text-outline-strong font-display text-2xl tracking-wide md:text-4xl" sepClass="px-3 text-white/25" />
       </div>
@@ -1246,7 +1274,8 @@ function CapabilityCard({ c }) {
 
 function Capabilities() {
   return (
-    <section id="capabilities" className="relative scroll-mt-24 overflow-hidden border-t border-white/10 py-24 md:py-32">
+    <section id="capabilities" className="relative scroll-mt-24 overflow-hidden py-24 md:py-32">
+      <SectionEdge n="02" label="WHAT I CAN DO" />
       <div aria-hidden className="pointer-events-none absolute -top-40 left-0 h-[480px] w-[720px] max-w-full rounded-full bg-crimson/10 blur-[140px]" />
       <div className="relative mx-auto max-w-[1400px] px-gutter">
         <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-white/[0.03] px-3.5 py-1.5 font-mono text-[11px] tracking-[0.25em]">
@@ -1431,7 +1460,8 @@ function ContribSummary() {
 
 function Work() {
   return (
-    <section id="work" className="scroll-mt-24 py-24 md:py-32">
+    <section id="work" className="relative scroll-mt-24 py-24 md:py-32">
+      <SectionEdge n="03" label="SELECTED WORK" />
       <div className="mx-auto max-w-[1400px] px-gutter">
         <SectionHead index="03" label="SELECTED WORK" ghost="WORK" title="Web portals, mobile apps and prototypes, built end to end." />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
@@ -1532,7 +1562,8 @@ function Stack() {
   const mid = rest.slice(0, -1);
 
   return (
-    <section id="stack" className="scroll-mt-24 py-24 md:py-32 border-t border-white/10">
+    <section id="stack" className="relative scroll-mt-24 py-24 md:py-32">
+      <SectionEdge n="04" label="STACK &amp; PROCESS" />
       <div className="mx-auto max-w-[1400px] px-gutter">
         <SectionHead index="04" label="STACK & PROCESS" ghost="STACK" title="The tools I reach for, and the order I use them in." />
 
@@ -2114,7 +2145,8 @@ function About() {
   const [ref, seen] = useSeen(0.15);
   return (
     // overflow-clip (not hidden) so the sticky profile card can follow the scroll.
-    <section id="about" className="relative scroll-mt-24 overflow-clip border-t border-white/10 py-24 md:py-32">
+    <section id="about" className="relative scroll-mt-24 overflow-clip py-24 md:py-32">
+      <SectionEdge n="05" label="ABOUT ME" />
       <div aria-hidden className="pointer-events-none absolute -left-40 top-20 h-[460px] w-[620px] max-w-full rounded-full bg-crimson/10 blur-[140px]" />
       <div className="relative mx-auto max-w-[1400px] px-gutter">
         <SectionHead index="05" label="ABOUT ME" ghost="ABOUT" title="A 4th-year IT student who ships real systems." />
@@ -2214,7 +2246,8 @@ function Info() {
   const cert = CREDENTIALS.cert;
   const deans = CREDENTIALS.deans;
   return (
-    <section id="info" className="scroll-mt-24 py-24 md:py-32 border-t border-white/10">
+    <section id="info" className="relative scroll-mt-24 py-24 md:py-32">
+      <SectionEdge n="06" label="INFO &amp; CREDENTIALS" />
       <div className="mx-auto max-w-[1400px] px-gutter">
         <SectionHead index="06" label="EDUCATION & CREDENTIALS" ghost="INFO" title="Trained in mobile and web application development." />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
@@ -2370,7 +2403,8 @@ function Contact() {
   const rise = (ms) => ({ className: seen ? 'anim-rise' : 'opacity-0', style: { animationDelay: `${ms}ms` } });
   const tile = 'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-crimson transition duration-300 group-hover:-rotate-6 group-hover:border-crimson group-hover:bg-crimson group-hover:text-white motion-reduce:transform-none';
   return (
-    <footer id="contact" className="relative scroll-mt-24 overflow-hidden border-t border-white/10 pt-24 md:pt-32">
+    <footer id="contact" className="relative scroll-mt-24 overflow-hidden pt-24 md:pt-32">
+      <SectionEdge n="07" label="CONTACT" />
       <div aria-hidden className="anim-drift pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] max-w-full rounded-full bg-crimson/15 blur-[120px]" />
       <div ref={ref} className="relative mx-auto max-w-[1400px] px-gutter">
         <span aria-hidden className={`pointer-events-none absolute right-8 top-6 hidden select-none font-display text-[clamp(6rem,16vw,15rem)] leading-none text-white/[0.04] md:block ${seen ? 'anim-rise' : 'opacity-0'}`} style={{ animationDelay: '300ms' }}>HELLO</span>
@@ -2569,6 +2603,7 @@ function Contributions({ p }) {
 
 function ProjectPage({ p }) {
   const d = p.details;
+  useScrollReveal(p.slug);
   const sibling = PROJECTS.find((x) => x.title === p.title && x.slug !== p.slug);
   return (
     <div className="relative min-h-screen bg-obsidian font-sans text-mute antialiased selection:bg-crimson selection:text-white">
@@ -2951,8 +2986,78 @@ function ChatWidget() {
   );
 }
 
+// Replays an entrance every time a block scrolls into view: it rises from below when
+// scrolling down and drops in from above when scrolling up. Uses the Web Animations API
+// with the standalone `translate` property, so it never fights a block's own transforms or transitions.
+function useScrollReveal(key) {
+  useEffect(() => {
+    if (!('IntersectionObserver' in window) || !Element.prototype.animate) return undefined;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    let dir = 1;
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - lastY) > 2) { dir = y > lastY ? 1 : -1; lastY = y; }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const tall = window.innerHeight * 1.1;
+    const skip = (el) => {
+      if (!(el instanceof HTMLElement) || el.dataset.noReveal != null || el.getAttribute('aria-hidden') === 'true') return true;
+      const cls = typeof el.className === 'string' ? el.className : '';
+      if (/\banim-|\bopacity-0\b|\bsticky\b/.test(cls)) return true;
+      const cs = getComputedStyle(el);
+      return cs.position === 'absolute' || cs.position === 'fixed' || cs.display === 'none' || el.offsetHeight === 0;
+    };
+    const items = new Map(); // element -> { i, kind }
+    const walk = (box, depth) => {
+      [...box.children].forEach((el) => {
+        if (skip(el)) return;
+        const cs = getComputedStyle(el);
+        const many = el.children.length > 1;
+        if ((cs.display === 'grid' || (cs.display === 'flex' && cs.flexWrap === 'wrap')) && many && depth < 4) {
+          [...el.children].forEach((c, i) => { if (!skip(c)) items.set(c, { i, kind: 'card' }); });
+        } else if (el.offsetHeight > tall && depth < 4) {
+          walk(el, depth + 1);
+        } else {
+          items.set(el, { i: 0, kind: /^H[12]$/.test(el.tagName) || el.querySelector(':scope > h2') ? 'title' : 'block' });
+        }
+      });
+    };
+    const units = [...document.querySelectorAll('main > section, #contact')];
+    if (units.length) units.forEach((u) => walk(u.querySelector(':scope > .mx-auto') || u, 0));
+    else document.querySelectorAll('main').forEach((m) => walk(m, 0));
+    document.querySelectorAll('main > [data-ribbon]').forEach((el) => items.set(el, { i: 0, kind: 'ribbon' }));
+
+    const play = (el, { i, kind }) => {
+      const d = dir * (kind === 'card' ? 46 : 60);
+      const from = { opacity: 0, translate: `0 ${d}px` };
+      if (kind === 'card') from.scale = '0.96';
+      if (kind === 'title' || (kind === 'block' && el.offsetHeight < 360)) from.filter = 'blur(8px)';
+      if (kind === 'ribbon') { from.translate = `${dir * -80}px 0`; from.scale = '1.04'; }
+      const to = { opacity: 1, translate: '0 0', scale: '1', filter: 'blur(0px)' };
+      Object.keys(to).forEach((k) => { if (!(k in from)) delete to[k]; });
+      el.animate([from, to], { duration: kind === 'ribbon' ? 1100 : 850, delay: (i % 6) * 80, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
+    };
+
+    const shown = new WeakSet();
+    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) {
+        if (!shown.has(e.target)) { shown.add(e.target); play(e.target, items.get(e.target)); }
+      } else {
+        shown.delete(e.target);
+      }
+    }), { rootMargin: '0px 0px -6% 0px' });
+    items.forEach((_, el) => io.observe(el));
+
+    return () => { io.disconnect(); window.removeEventListener('scroll', onScroll); };
+  }, [key]);
+}
+
 function Home() {
   const [active, setActive] = useState('hero');
+  useScrollReveal('home');
   useEffect(() => {
     const ids = [...NAV.map((n) => n.id), 'contact'];
     const io = new IntersectionObserver(
