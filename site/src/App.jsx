@@ -406,6 +406,17 @@ const go = (id) => (e) => {
 
 /* ---------- small pieces ---------- */
 
+// Personal mark: a bold "D" with a blinking cursor, same artwork as public/favicon.svg.
+function LogoMark({ className, blink = false }) {
+  return (
+    <svg viewBox="0 0 64 64" aria-hidden="true" className={className}>
+      <rect width="64" height="64" rx="16" fill="#DC2626" />
+      <path fill="#fff" fillRule="evenodd" d="M13 14h15a18 18 0 0 1 0 36H13zM21 22v20h7a10 10 0 0 0 0-20z" />
+      <rect x="49" y="40" width="6" height="10" rx="1" fill="#fff" className={blink ? 'anim-blink' : undefined} />
+    </svg>
+  );
+}
+
 // lucide-react v1 dropped brand icons, so the GitHub mark is inlined.
 function Github({ className }) {
   return (
@@ -621,8 +632,8 @@ function Header({ active }) {
     <header className="fixed inset-x-0 z-50 flex justify-center px-gutter" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 14px)' }}>
       <nav className={`relative flex w-full items-center justify-between gap-4 rounded-full border py-2 pl-5 pr-2 backdrop-blur-xl transition-all duration-500 ${scrolled ? 'max-w-[1200px] border-white/15 bg-[#0b0b0d]/85 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.95),0_0_0_1px_rgba(220,38,38,0.08)]' : 'max-w-[1400px] border-white/10 bg-black/40'}`}>
         <a href="#hero" onClick={jump('hero')} className="group flex items-center gap-3">
-          <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-crimson font-display text-[13px] tracking-wide text-white transition duration-300 group-hover:rotate-[-8deg]">
-            DAD
+          <span className="relative block h-10 w-10 shrink-0 transition duration-300 group-hover:rotate-[-8deg]">
+            <LogoMark blink className="h-full w-full drop-shadow-[0_6px_16px_rgba(220,38,38,0.55)]" />
             <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-[#0b0b0d] bg-[#22c55e]" />
           </span>
           <span className="hidden font-mono text-[10px] leading-[1.35] tracking-[0.18em] text-mute xl:block">
@@ -2709,7 +2720,7 @@ function ProjectPage({ p }) {
       <div aria-hidden className="grain pointer-events-none fixed inset-0 z-[60] opacity-[0.06]" />
       <header className="fixed inset-x-0 z-50 flex justify-center px-gutter" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 14px)' }}>
         <nav className="flex w-full max-w-[1400px] items-center justify-between gap-4 rounded-full border border-white/10 bg-black/50 py-2 pl-5 pr-2 backdrop-blur-xl">
-          <a href="#hero" className="font-display text-xl tracking-wide text-white">DAD<span className="text-crimson">.</span></a>
+          <a href="#hero" className="flex items-center gap-2.5 font-display text-xl tracking-wide text-white"><LogoMark className="h-9 w-9" />DAD<span className="-ml-2.5 text-crimson">.</span></a>
           <span className="hidden font-mono text-[11px] tracking-[0.15em] text-mute md:block">PROJECT {p.id} / {String(PROJECTS.length).padStart(2, '0')}</span>
           <a href="#work" className="rounded-full border border-white/15 px-4 py-2 font-mono text-[11px] tracking-[0.15em] text-white transition hover:border-crimson hover:text-crimson">
             ← ALL WORK
