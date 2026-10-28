@@ -3,7 +3,7 @@ import {
   ArrowUpRight, Mail, Phone, MapPin, Copy, Check, GraduationCap,
   BadgeCheck, Smartphone, Globe, Server, Wrench, Layers, PenTool, Terminal,
   Code, Database, Bell, MousePointer2, GitBranch, Rocket, Award, X, ShieldCheck, Maximize2,
-  Sparkles, Users, GitCommitHorizontal,
+  Sparkles, Users, GitCommitHorizontal, FileText, Download, Briefcase,
 } from 'lucide-react';
 
 /* Dwight Angelo Decena — Portfolio
@@ -390,7 +390,8 @@ const NAV = [
   { id: 'capabilities', label: '02-WHAT I CAN DO' },
   { id: 'work', label: '03-WORK' },
   { id: 'stack', label: '04-STACK' },
-  { id: 'info', label: '05-INFO' },
+  { id: 'about', label: '05-ABOUT' },
+  { id: 'info', label: '06-INFO' },
 ];
 
 const go = (id) => (e) => {
@@ -1552,6 +1553,206 @@ function ScoreRing({ score, max }) {
   );
 }
 
+/* ---------- about: profile card, resume & CV, how I work ---------- */
+
+const ABOUT = {
+  summary: 'I’m a 4th-year BS Information Technology student at National University Dasmariñas, specializing in Mobile and Web Application Development. I build responsive web apps and cross-platform mobile apps with React, TypeScript, React Native and Flutter, backed by Supabase and MySQL. I’m a certified IT Specialist in Databases, and I’m looking for an OJT or internship where I can contribute to production code.',
+  facts: [['LOCATION', 'General Trias, Cavite'], ['SCHOOL', 'NU Dasmariñas'], ['STUDYING SINCE', 'Aug 2023'], ['STATUS', '4th year · OJT']],
+  docs: [
+    { title: 'Resume', pages: 1, file: '/docs/Resume_-_Dwight_Angelo_Decena.pdf',
+      desc: 'A one-page overview for quick reads.', sections: ['Summary', 'Technical skills', 'Featured projects', 'Competencies'] },
+    { title: 'Curriculum Vitae', pages: 2, file: '/docs/Curriculum_Vitae_-_Dwight_Angelo_Decena.pdf',
+      desc: 'The full record, including coursework and references.', sections: ['Academic statement', 'Competency matrix', 'Projects', 'Coursework', 'References'] },
+  ],
+  how: [
+    [Wrench, 'Analytical problem solving', 'I trace bugs to their root cause instead of patching symptoms.', 'Fixed auth email redirects, app crashes and every lint error blocking CI on Bridges of Hope.'],
+    [FileText, 'Technical documentation', 'I write things down so the next person can pick the work up.', 'Wrote the README, PRD and architecture docs for Bridges of Hope.'],
+    [Users, 'Team collaboration', 'Agile habits and clean, version-controlled teamwork.', 'Built Bridges of Hope with a team of four, keeping the web and mobile apps in sync through Git.'],
+    [Rocket, 'Adaptability', 'I learn a new framework quickly when a project needs it.', 'Shipped features in React, React Native, Flutter and Laravel across two projects in 2026.'],
+  ],
+  method: ['SDLC', 'Agile / Scrum', 'Git branching & merges', 'CI lint & build checks', 'Technical documentation'],
+  coursework: [
+    ['Mobile & Web Systems', 'Cross-platform development, frontend frameworks, UI/UX principles'],
+    ['Database Administration', 'Relational design, SQL querying, data security & normalization'],
+    ['Software Engineering', 'Systems analysis & design, SDLC, Agile methods'],
+    ['Networking & Security', 'Computer networks, virtualization, troubleshooting'],
+  ],
+};
+
+function ProfileCard() {
+  const [t, setT] = useState({ rx: 0, ry: 0, gx: 50, gy: 30 });
+  const still = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const move = (e) => {
+    if (still) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    setT({ rx: (0.5 - py) * 10, ry: (px - 0.5) * 12, gx: px * 100, gy: py * 100 });
+  };
+  return (
+    <div className="relative mx-auto w-full max-w-sm [perspective:1200px]">
+      <div aria-hidden className="mx-auto h-10 w-14 rounded-b-xl bg-gradient-to-b from-crimson/80 to-crimson/30" />
+      <div onMouseMove={move} onMouseLeave={() => setT({ rx: 0, ry: 0, gx: 50, gy: 30 })}
+        className="relative -mt-2 overflow-hidden rounded-[2rem] border border-white/15 bg-[#0f1013] shadow-[0_40px_100px_-30px_rgba(220,38,38,0.55)] transition-transform duration-200 ease-out"
+        style={{ transform: `rotateX(${t.rx}deg) rotateY(${t.ry}deg)` }}>
+        <div aria-hidden className="pointer-events-none absolute inset-0 z-20 mix-blend-overlay"
+          style={{ background: `radial-gradient(circle at ${t.gx}% ${t.gy}%, rgba(255,255,255,0.35), transparent 45%)` }} />
+        <div aria-hidden className="absolute left-1/2 top-3 z-20 h-2 w-12 -translate-x-1/2 rounded-full bg-black/80 ring-1 ring-white/15" />
+
+        <div className="shine relative h-80 overflow-hidden bg-[radial-gradient(90%_80%_at_50%_100%,rgba(220,38,38,0.5),transparent_70%)]">
+          <div aria-hidden className="absolute inset-0 bg-grid opacity-50" />
+          <span aria-hidden className="absolute -left-2 top-6 font-display text-[7rem] leading-none text-white/[0.06]">DAD</span>
+          <div className="absolute left-5 top-6 z-10 font-display text-xl tracking-wide text-white">DAD<span className="text-crimson">.</span></div>
+          <div className="absolute right-5 top-6 z-10 font-mono text-[9px] tracking-[0.2em] text-white/70">ID · BSIT-MWA</div>
+          <img src={PORTRAIT_SRC} alt="" aria-hidden className="absolute bottom-0 left-1/2 w-[92%] -translate-x-1/2 [mask-image:linear-gradient(to_bottom,black_80%,transparent)]" />
+          <span className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-3 py-1.5 font-mono text-[9px] tracking-[0.2em] text-white backdrop-blur">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-crimson opacity-75 motion-reduce:animate-none" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-crimson" />
+            </span>
+            OPEN TO OJT / INTERNSHIP
+          </span>
+        </div>
+
+        <div className="relative p-6">
+          <div className="font-mono text-[10px] tracking-[0.25em] text-crimson">MOBILE &amp; WEB DEVELOPER INTERN</div>
+          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white">{PROFILE.name}</h3>
+          <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 font-mono">
+            {ABOUT.facts.map(([k, v]) => (
+              <div key={k} className="min-w-0">
+                <dt className="text-[9px] tracking-[0.2em] text-mute/70">{k}</dt>
+                <dd className="mt-0.5 truncate text-[12px] text-white">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <div aria-hidden className="mt-6 flex h-8 items-end gap-[3px] border-t border-dashed border-white/15 pt-3">
+            {Array.from({ length: 38 }, (_, i) => (
+              <span key={i} className="w-[3px] bg-white/30" style={{ height: `${30 + ((i * 37) % 70)}%` }} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DocCard({ d }) {
+  return (
+    <div className="group relative flex min-w-0 gap-5 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition duration-300 hover:-translate-y-1 hover:border-crimson/50 motion-reduce:transform-none">
+      <div aria-hidden className="relative h-36 w-28 shrink-0">
+        {d.pages > 1 && <div className="absolute inset-0 translate-x-2 translate-y-2 rotate-3 rounded-md bg-white/70" />}
+        <div className="absolute inset-0 flex flex-col gap-1 rounded-md bg-white p-2.5 shadow-[0_14px_30px_rgba(0,0,0,0.5)] transition-transform duration-500 group-hover:-rotate-3 group-hover:scale-105">
+          <span className="h-2 w-3/4 rounded-sm bg-[#0f172a]" />
+          <span className="h-1 w-1/2 rounded-sm bg-[#2563eb]" />
+          <span className="mb-1 h-px w-full bg-[#2563eb]" />
+          {[90, 100, 80, 95, 60, 100, 85, 70, 92, 55].map((w, i) => (
+            <span key={i} className={`h-[3px] rounded-sm ${i === 4 ? 'mt-1 bg-[#334155]' : 'bg-[#cbd5e1]'}`} style={{ width: `${w}%` }} />
+          ))}
+        </div>
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-crimson">
+          <FileText className="h-3.5 w-3.5" /> PDF · {d.pages} {d.pages > 1 ? 'PAGES' : 'PAGE'}
+        </div>
+        <h4 className="mt-2 text-xl font-semibold text-white">{d.title}</h4>
+        <p className="mt-1 text-sm">{d.desc}</p>
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {d.sections.map((s) => <span key={s} className="rounded-full border border-white/10 px-2 py-0.5 font-mono text-[9px] text-mute">{s}</span>)}
+        </div>
+        <div className="mt-auto flex flex-wrap gap-2 pt-4">
+          <a href={d.file} target="_blank" rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full bg-crimson px-4 py-2 font-mono text-[11px] tracking-[0.12em] text-white transition hover:bg-white hover:text-black">
+            OPEN <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
+          <a href={d.file} download
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 font-mono text-[11px] tracking-[0.12em] text-white transition hover:border-crimson hover:text-crimson">
+            <Download className="h-3.5 w-3.5" /> DOWNLOAD
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function About() {
+  const [ref, seen] = useSeen(0.15);
+  return (
+    <section id="about" className="relative scroll-mt-24 overflow-hidden border-t border-white/10 py-24 md:py-32">
+      <div aria-hidden className="pointer-events-none absolute -left-40 top-20 h-[460px] w-[620px] max-w-full rounded-full bg-crimson/10 blur-[140px]" />
+      <div className="relative mx-auto max-w-[1400px] px-gutter">
+        <SectionHead index="05" label="ABOUT ME" ghost="ABOUT" title="A 4th-year IT student who ships real systems." />
+        <div ref={ref} className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <div className="lg:sticky lg:top-28"><ProfileCard /></div>
+          </div>
+
+          <div className="min-w-0 space-y-12 lg:col-span-8">
+            <div>
+              <p className="max-w-[65ch] text-lg leading-relaxed text-white/85">{ABOUT.summary}</p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {[[GraduationCap, 'BSIT · Mobile & Web Applications'], [BadgeCheck, 'IT Specialist — Databases'], [Award, 'Dean’s List · Second Honor'], [Briefcase, 'Seeking OJT / internship']].map(([Icon, label]) => (
+                  <span key={label} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[13px] text-white/85">
+                    <Icon className="h-3.5 w-3.5 text-crimson" /> {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
+                <FileText className="h-4 w-4 text-crimson" /> RESUME &amp; CV
+              </div>
+              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                {ABOUT.docs.map((d) => <DocCard key={d.title} d={d} />)}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
+                <Terminal className="h-4 w-4 text-crimson" /> HOW I WORK
+              </div>
+              <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
+                {ABOUT.how.map(([Icon, title, desc, proof], i) => (
+                  <div key={title} style={{ animationDelay: `${i * 100}ms` }}
+                    className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-300 hover:-translate-y-1 hover:border-crimson/50 hover:shadow-[0_24px_60px_-28px_rgba(220,38,38,0.7)] motion-reduce:transform-none ${seen ? 'anim-rise' : ''}`}>
+                    <span aria-hidden className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-gradient-to-r from-crimson to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-crimson/15 text-crimson transition-colors group-hover:bg-crimson group-hover:text-white">
+                      <Icon className="h-5 w-5" />
+                    </span>
+                    <h4 className="mt-5 text-lg font-semibold text-white">{title}</h4>
+                    <p className="mt-1.5 text-sm leading-relaxed">{desc}</p>
+                    <p className="mt-4 border-t border-white/10 pt-4 text-[13px] leading-relaxed text-white/80">
+                      <span className="font-mono text-[9px] tracking-[0.2em] text-crimson">PROOF · </span>{proof}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                <span className="mr-1 font-mono text-[10px] tracking-[0.2em] text-mute/70">METHODS</span>
+                {ABOUT.method.map((m) => <Pill key={m}>{m}</Pill>)}
+              </div>
+            </div>
+
+            <div>
+              <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
+                <GraduationCap className="h-4 w-4 text-crimson" /> RELEVANT COURSEWORK
+              </div>
+              <div className="mt-5 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-2">
+                {ABOUT.coursework.map(([k, v]) => (
+                  <div key={k} className="min-w-0 bg-obsidian p-5 transition-colors hover:bg-white/[0.04]">
+                    <div className="font-semibold text-white">{k}</div>
+                    <p className="mt-1 text-sm">{v}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Info() {
   const [open, setOpen] = useState(null);
   const close = React.useCallback(() => setOpen(null), []);
@@ -1560,7 +1761,7 @@ function Info() {
   return (
     <section id="info" className="scroll-mt-24 py-24 md:py-32 border-t border-white/10">
       <div className="mx-auto max-w-[1400px] px-gutter">
-        <SectionHead index="05" label="EDUCATION & CREDENTIALS" ghost="INFO" title="Trained in mobile and web application development." />
+        <SectionHead index="06" label="EDUCATION & CREDENTIALS" ghost="INFO" title="Trained in mobile and web application development." />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
 
           <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-500 hover:border-crimson/40 md:p-8 lg:col-span-7">
@@ -1676,7 +1877,7 @@ function Contact() {
     <footer id="contact" className="relative scroll-mt-24 overflow-hidden border-t border-white/10 pt-24 md:pt-32">
       <div aria-hidden className="pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] max-w-full -translate-x-1/2 rounded-full bg-crimson/15 blur-[120px]" />
       <div className="relative mx-auto max-w-[1400px] px-gutter">
-        <div className="font-mono text-[11px] tracking-[0.2em] text-crimson">06 — CONTACT</div>
+        <div className="font-mono text-[11px] tracking-[0.2em] text-crimson">07 — CONTACT</div>
         <h2 className="mt-5 font-display text-[clamp(3rem,10.5vw,10rem)] leading-[0.88] text-white [text-wrap:balance]">
           LET&apos;S CREATE SOMETHING <span className="text-crimson">EXTRAORDINARY</span>
         </h2>
@@ -2039,6 +2240,7 @@ function Home() {
         <Capabilities />
         <Work />
         <Stack />
+        <About />
         <Info />
       </main>
       <Contact />
