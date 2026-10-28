@@ -48,6 +48,7 @@ const PROJECTS = [
     stack: ['Flutter', 'Dart', 'Laravel API'],
     repo: 'https://github.com/dwightangelodecena-cloud/RhayzKicks',
     span: 'lg:col-span-2', mono: 'RK',
+    image: '/projects/rk-mobile.webp', shot: 'phone', bezel: true,
   },
   {
     id: '04', kind: 'WEB', title: 'Rhayz Kicks', sub: 'Web Platform',
@@ -56,6 +57,7 @@ const PROJECTS = [
     live: 'https://rhayz-kicks.vercel.app/',
     repo: 'https://github.com/dwightangelodecena-cloud/RhayzKicks',
     span: 'lg:col-span-4', mono: 'RK',
+    image: '/projects/rk-web.webp', shot: 'web', pos: 'object-[50%_55%]',
   },
 ];
 
@@ -396,10 +398,16 @@ function ProjectCard({ p }) {
               <span className="h-2 w-2 rounded-full bg-white/20" />
             </div>
             <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} home page`} loading="lazy"
-              className="h-[calc(100%-1.5rem)] w-full object-cover object-left-top" />
+              className={`h-[calc(100%-1.5rem)] w-full object-cover ${p.pos || 'object-left-top'}`} />
           </div>
         )}
-        {p.shot === 'phone' && (
+        {p.shot === 'phone' && p.bezel && (
+          <div className="absolute left-1/2 top-14 w-[72%] max-w-[320px] -translate-x-1/2 overflow-hidden rounded-[2.2rem] border-[7px] border-[#1b1b1d] bg-black shadow-[0_20px_50px_rgba(0,0,0,0.85)] ring-1 ring-white/15 transition-transform duration-500 group-hover:-translate-y-2 motion-reduce:transform-none">
+            <span aria-hidden className="absolute left-1/2 top-2 z-10 h-4 w-[30%] -translate-x-1/2 rounded-full bg-black" />
+            <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} home screen`} loading="lazy" className="block w-full" />
+          </div>
+        )}
+        {p.shot === 'phone' && !p.bezel && (
           <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} home screen`} loading="lazy"
             className="absolute left-1/2 top-14 w-[72%] max-w-[320px] -translate-x-1/2 rounded-[9%/4.2%] drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:-translate-y-2 motion-reduce:transform-none" />
         )}
