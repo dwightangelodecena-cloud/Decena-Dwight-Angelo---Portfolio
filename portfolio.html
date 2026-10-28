@@ -843,8 +843,8 @@ function Ticker({ items, reverse = false, dur = 80, still = false, className = '
 }
 
 // Fixed decorative layer behind every section: dot field, drifting glows and outlined role words.
-function Backdrop() {
-  const rows = [
+function Backdrop({ words }) {
+  const rows = words || [
     { top: '9%', items: ROLES.slice(0, 4), dur: 140 },
     { top: '42%', items: ROLES.slice(4), dur: 170, reverse: true },
     { top: '75%', items: ['DWIGHT ANGELO DECENA', 'FULL STACK', 'MOBILE & WEB'], dur: 155 },
@@ -2046,7 +2046,7 @@ function ProfileCard() {
                 <span aria-hidden className="absolute -left-2 top-8 font-display text-[7rem] leading-none text-white/[0.06]">DAD</span>
                 <div className="absolute left-5 top-6 z-10 font-display text-xl tracking-wide text-white">DAD<span className="text-crimson">.</span></div>
                 <div className="absolute right-5 top-6 z-10 text-right font-mono text-[9px] leading-relaxed tracking-[0.2em] text-white/70">DEVELOPER ID<br /><span className="text-white">BSIT-MWA</span></div>
-                <img src={PORTRAIT_SRC} alt="" aria-hidden className="absolute bottom-0 left-1/2 h-[17rem] w-auto max-w-none -translate-x-1/2 brightness-[0.88] contrast-[1.04]" />
+                <img src={PORTRAIT_SRC} alt="" aria-hidden className="absolute bottom-0 left-1/2 h-[17rem] w-auto max-w-none -translate-x-1/2 brightness-[0.8] contrast-[1.05]" />
                 <span className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/65 px-3 py-1.5 font-mono text-[9px] tracking-[0.2em] text-white backdrop-blur">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-crimson opacity-75 motion-reduce:animate-none" />
@@ -2843,6 +2843,25 @@ function ProjectPage({ p }) {
   return (
     <div className="relative min-h-screen bg-obsidian font-sans text-mute antialiased selection:bg-crimson selection:text-white">
       <div aria-hidden className="grain pointer-events-none fixed inset-0 z-[60] opacity-[0.06]" />
+      <Backdrop words={[
+        { top: '12%', items: [p.title.toUpperCase(), p.sub.toUpperCase()] },
+        { top: '46%', items: p.stack.map((t) => t.toUpperCase()) },
+        { top: '80%', items: [p.kind === 'WEB' ? 'WEB PLATFORM' : 'MOBILE APP', 'DWIGHT ANGELO DECENA'] },
+      ]} />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-0 h-[760px] overflow-hidden">
+        <div className="anim-float absolute -left-24 top-24 h-72 w-72 rounded-full bg-crimson/20 blur-[90px]" />
+        <div className="anim-float absolute right-[-6rem] top-64 h-80 w-80 rounded-full bg-crimson/[0.14] blur-[100px]" style={{ animationDelay: '-2.5s' }} />
+        <div className="absolute inset-x-0 top-[300px] space-y-2 md:top-[260px]">
+          <Ticker items={[p.title.toUpperCase(), p.title.toUpperCase(), p.title.toUpperCase()]} sep="✦" dur={60}
+            className="text-outline-hero whitespace-nowrap font-display text-[clamp(5rem,14vw,13rem)] leading-[0.9]" sepClass="px-[0.3em] text-crimson/[0.08]" />
+        </div>
+        <div className="absolute -right-40 -top-24 hidden h-[34rem] w-[34rem] opacity-60 lg:block">
+          <div className="anim-orbit absolute inset-0 rounded-full border border-dashed border-white/[0.07]" />
+          <div className="anim-orbit absolute inset-16 rounded-full border border-crimson/15" style={{ animationDirection: 'reverse', animationDuration: '26s' }}>
+            <span className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-crimson shadow-[0_0_12px_rgba(220,38,38,0.9)]" />
+          </div>
+        </div>
+      </div>
       <header className="fixed inset-x-0 z-50 flex justify-center px-gutter" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 14px)' }}>
         <nav className="flex w-full max-w-[1400px] items-center justify-between gap-4 rounded-full border border-white/10 bg-black/50 py-2 pl-5 pr-2 backdrop-blur-xl">
           <a href="#hero" className="flex items-center gap-2.5 font-display text-xl tracking-wide text-white"><LogoMark className="h-9 w-9" />DAD<span className="-ml-2.5 text-crimson">.</span></a>
@@ -2853,7 +2872,7 @@ function ProjectPage({ p }) {
         </nav>
       </header>
 
-      <main className="mx-auto max-w-[1400px] px-gutter pt-32 pb-24 md:pt-40">
+      <main className="relative z-10 mx-auto max-w-[1400px] px-gutter pt-32 pb-24 md:pt-40">
         <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-[0.2em]">
           <span className="text-crimson">{p.id}</span>
           <span className="rounded-full border border-white/15 px-2.5 py-0.5 text-mute">{p.kind}</span>
@@ -2870,11 +2889,11 @@ function ProjectPage({ p }) {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="min-w-0 lg:col-span-7">
-            <h1 className="font-display text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] text-white [text-wrap:balance]">
-              {p.title.toUpperCase()}
+          <div data-no-reveal className="min-w-0 lg:col-span-7">
+            <h1 className="overflow-hidden pb-[0.04em] font-display text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] text-white [text-wrap:balance]">
+              <span key={p.slug} className="anim-up block">{p.title.toUpperCase()}</span>
             </h1>
-            <p className="mt-4 text-xl text-white/80">{d.tagline}</p>
+            <p key={`t-${p.slug}`} className="anim-rise mt-4 text-xl text-white/80" style={{ animationDelay: '250ms' }}>{d.tagline}</p>
           </div>
           <div className="min-w-0 lg:col-span-5">
             <p className="max-w-[60ch] text-[15px] leading-relaxed">{d.overview}</p>
