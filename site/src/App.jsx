@@ -55,18 +55,6 @@ const PROJECTS = [
     repo: 'https://github.com/dwightangelodecena-cloud/RhayzKicks',
     span: 'lg:col-span-4', mono: 'RK',
   },
-  {
-    id: '05', kind: 'CAPSTONE', title: 'Integrated Service & Warranty Management System', sub: 'Web System',
-    desc: 'Web-based capstone system streamlining service requests, warranty tracking, and administrative workflows.',
-    stack: ['React', 'PHP', 'MySQL', 'Supabase'],
-    span: 'lg:col-span-3', mono: 'ISWM',
-  },
-  {
-    id: '06', kind: 'UI/UX', title: 'Travel Booking & Checkout UI', sub: 'Figma Prototype',
-    desc: 'Low-fidelity Figma wireframes and interactive prototypes mapping search, booking, and payment user flows.',
-    stack: ['Figma', 'UI/UX', 'Wireframing'],
-    span: 'lg:col-span-3', mono: 'TRVL',
-  },
 ];
 
 const STACK = [
