@@ -52,6 +52,14 @@
   @keyframes rowpulse { 0%, 100% { background-color: rgba(255,255,255,0.02); } 50% { background-color: rgba(220,38,38,0.12); } }
   .anim-row { animation: rowpulse 3s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) { [class*="anim-"] { animation: none !important; } }
+  /* stack section */
+  .skill-tile:hover { border-color: color-mix(in srgb, var(--brand) 55%, transparent); background-color: color-mix(in srgb, var(--brand) 9%, transparent); box-shadow: 0 14px 40px -18px var(--brand); }
+  .process-num { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.22); }
+  .group:hover .process-num { color: #DC2626; -webkit-text-stroke-color: #DC2626; }
+  @keyframes orbit { to { transform: rotate(360deg); } }
+  .anim-orbit { animation: orbit 30s linear infinite; }
+  @keyframes glow { 0%, 100% { box-shadow: 0 0 34px -12px rgba(220,38,38,0.55); } 50% { box-shadow: 0 0 60px -6px rgba(220,38,38,0.95); } }
+  .anim-glow { animation: glow 3.2s ease-in-out infinite; }
 </style>
 <div id="root"><div id="boot">LOADING PORTFOLIO…</div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
@@ -65,7 +73,7 @@ const __icons = new Proxy(window.LucideReact || {}, { get: (t, k) => t[k] || __N
 const {
   ArrowUpRight, Mail, Phone, MapPin, Copy, Check, GraduationCap,
   BadgeCheck, Smartphone, Globe, Server, Wrench, Layers, PenTool, Terminal,
-  Code, Database, Bell, MousePointer2,
+  Code, Database, Bell, MousePointer2, GitBranch, Rocket,
 } = __icons;
 
 /* Dwight Angelo Decena — Portfolio
@@ -241,6 +249,22 @@ const STACK = [
     items: ['Figma', 'VS Code', 'Android Studio', 'Oracle VirtualBox', 'Wireshark', 'Git/GitHub'] },
 ];
 
+const SKILL_TYPE = {
+  Flutter: 'UI toolkit', Dart: 'Language', 'React Native': 'Framework',
+  React: 'Library', TypeScript: 'Language', JavaScript: 'Language', 'Tailwind CSS': 'Styling',
+  PHP: 'Language', MySQL: 'Database', Supabase: 'Backend · DB', 'Laravel API': 'PHP framework',
+  Figma: 'Design', 'VS Code': 'Code editor', 'Android Studio': 'Android IDE',
+  'Oracle VirtualBox': 'Virtualization', Wireshark: 'Network analysis', 'Git/GitHub': 'Version control',
+};
+
+const CORE_ICON = {
+  'Mobile & Web Application Development': Code, 'UI/UX & Wireframing': PenTool,
+  'Database Architecture': Database, 'Version Control': GitBranch,
+};
+
+const ORBIT_INNER = ['react', 'typescript', 'javascript', 'tailwind'];
+const ORBIT_OUTER = ['flutter', 'dart', 'supabase', 'laravel', 'php', 'mysql', 'figma', 'git'];
+
 const CAPABILITIES = [
   { n: '01', icon: Code, title: 'Web & Systems Development', mock: 'web',
     desc: 'Full-stack web systems built end to end, from the database schema to the deployed interface. I build role-based portals and admin dashboards that staff use every day, with clear workflows and reliable data behind every screen.',
@@ -302,6 +326,9 @@ const TECH_LOGOS = {
   reactrouter: { hex: '#CA4245', path: 'M12.118 5.466a2.306 2.306 0 00-.623.08c-.278.067-.702.332-.953.583-.41.423-.49.609-.662 1.469-.08.423.41 1.43.847 1.734.45.317 1.085.502 2.065.608 1.429.16 1.84.636 1.84 2.197 0 1.377-.385 1.747-1.96 1.906-1.707.172-2.58.834-2.765 2.117-.106.781.41 1.76 1.125 2.091 1.627.768 3.15-.198 3.467-2.196.211-1.284.622-1.642 1.998-1.747 1.588-.133 2.409-.675 2.713-1.787.278-1.02-.304-2.157-1.297-2.554-.264-.106-.873-.238-1.35-.291-1.495-.16-1.879-.424-2.038-1.39-.225-1.337-.317-1.562-.794-2.09a2.174 2.174 0 00-1.613-.73zm-4.785 4.36a2.145 2.145 0 00-.497.048c-1.469.318-2.17 2.051-1.35 3.295 1.178 1.774 3.944.953 3.97-1.177.012-1.193-.98-2.143-2.123-2.166zM2.089 14.19a2.22 2.22 0 00-.427.052c-2.158.476-2.237 3.626-.106 4.182.53.145.582.145 1.111.013 1.191-.318 1.866-1.456 1.549-2.607-.278-1.02-1.144-1.664-2.127-1.64zm19.824.008c-.233.002-.477.058-.784.162-1.39.477-1.866 2.092-.98 3.336.557.794 1.96 1.058 2.82.516 1.416-.874 1.363-3.057-.093-3.746-.38-.186-.663-.271-.963-.268z' },
   framer: { hex: '#0055FF', path: 'M4 0h16v8h-8zM4 8h8l8 8H4zM4 16h8v8z' },
   git: { hex: '#F05032', path: 'M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187' },
+  androidstudio: { hex: '#3DDC84', path: 'M19.2693 10.3368c-.3321 0-.6026.2705-.6026.6031v9.8324h-1.7379l-3.3355-6.9396c.476-.5387.6797-1.286.5243-2.0009a2.2862 2.2862 0 0 0-1.2893-1.6248v-.8124c.0121-.2871-.1426-.5787-.4043-.7407-.1391-.0825-.2884-.1234-.4402-.1234a.8478.8478 0 0 0-.4318.1182c-.2701.1671-.4248.4587-.4123.7662l-.0003.721c-1.0149.3668-1.6619 1.4153-1.4867 2.5197a2.282 2.282 0 0 0 .5916 1.2103l-3.2096 6.9064H4.0928c-1.0949-.007-1.9797-.8948-1.9832-1.9896V5.016c-.0055 1.1024.8836 2.0006 1.9859 2.0062a2.024 2.024 0 0 0 .1326-.0037h14.7453s2.5343-.2189 2.8619 1.5392c-.2491.0287-.4449.2321-.4449.4889 0 .7115-.5791 1.2901-1.3028 1.2901h-.8183zM17.222 22.5366c.2347.4837.0329 1.066-.4507 1.3007-.1296.0629-.2666.0895-.4018.0927a.9738.9738 0 0 1-.3194-.0455c-.024-.0078-.046-.0209-.0694-.0305a.9701.9701 0 0 1-.2277-.1321c-.0247-.0192-.0495-.038-.0724-.0598-.0825-.0783-.1574-.1672-.21-.2757l-1.2554-2.6143-1.5585-3.2452a.7725.7725 0 0 0-.6995-.4443h-.0024a.792.792 0 0 0-.7083.4443l-1.5109 3.2452-1.2321 2.6464a.9722.9722 0 0 1-.7985.5795c-.0626.0053-.1238-.0024-.185-.0087-.0344-.0036-.069-.0053-.1025-.0124-.0489-.0103-.0954-.0278-.142-.0452-.0301-.0113-.0613-.0197-.0901-.0339-.0496-.0244-.0948-.0565-.1397-.0889-.0217-.0156-.0457-.0275-.0662-.045a.9862.9862 0 0 1-.1695-.1844.9788.9788 0 0 1-.0708-.9852l.8469-1.8223 3.2676-7.0314a1.7964 1.7964 0 0 1-.7072-1.1637c-.1555-.9799.5129-1.9003 1.4928-2.0559V9.3946a.3542.3542 0 0 1 .1674-.3155.3468.3468 0 0 1 .3541 0 .354.354 0 0 1 .1674.3155v1.159l.0129.0064a1.8028 1.8028 0 0 1 1.2878 1.378 1.7835 1.7835 0 0 1-.6439 1.7836l3.3889 7.0507.8481 1.7643zM12.9841 12.306c.0042-.6081-.4854-1.1044-1.0935-1.1085a1.1204 1.1204 0 0 0-.7856.3219 1.101 1.101 0 0 0-.323.7716c-.0042.6081.4854 1.1044 1.0935 1.1085h.0077c.6046 0 1.0967-.488 1.1009-1.0935zm-1.027 5.2768c-.1119.0005-.2121.0632-.2571.1553l-1.4127 3.0342h3.3733l-1.4564-3.0328a.274.274 0 0 0-.2471-.1567zm8.1432-6.7459l-.0129-.0001h-.8177a.103.103 0 0 0-.103.103v12.9103a.103.103 0 0 0 .0966.103h.8435c.9861-.0035 1.7836-.804 1.7836-1.79V9.0468c0 .9887-.8014 1.7901-1.7901 1.7901zM2.6098 5.0161v.019c.0039.816.6719 1.483 1.4874 1.4869a12.061 12.061 0 0 1 .1309-.0034h1.1286c.1972-1.315.7607-2.525 1.638-3.4859H4.0993c-.9266.0031-1.6971.6401-1.9191 1.4975.2417.0355.4296.235.4296.4859zm6.3381-2.8977L7.9112.3284a.219.219 0 0 1 0-.2189A.2384.2384 0 0 1 8.098 0a.219.219 0 0 1 .1867.1094l1.0496 1.8158a6.4907 6.4907 0 0 1 5.3186 0L15.696.1094a.2189.2189 0 0 1 .3734.2189l-1.0302 1.79c1.6671.9125 2.7974 2.5439 3.0975 4.4018l-12.286-.0014c.3004-1.8572 1.4305-3.488 3.0972-4.4003zm5.3774 2.6202a.515.515 0 0 0 .5271.5028.515.515 0 0 0 .5151-.5151.5213.5213 0 0 0-.8885-.367.5151.5151 0 0 0-.1537.3793zm-5.7178-.0067a.5151.5151 0 0 0 .5207.5095.5086.5086 0 0 0 .367-.1481.5215.5215 0 1 0-.734-.7341.515.515 0 0 0-.1537.3727z' },
+  virtualbox: { hex: '#6F9BEA', path: 'M0 1.758 5.182 20c.129.455.25.691.421.945.063.092.13.179.202.264.173.204.37.378.59.525.243.163.49.286.763.371.324.1.61.137.99.137h4.327l1.918-6.615h6.798v3.699a.11.11 0 0 1-.109.11h-4.88l-.813 2.806h5.654a2.92 2.92 0 0 0 1.95-.725A2.903 2.903 0 0 0 24 19.285v-6.47H12.28l-1.919 6.614H7.937L3.715 4.564h2.922l1.546 5.444H11.1l-2.343-8.25zm15.496 0-2.4 8.25H24v-5.29a2.962 2.962 0 0 0-1.825-2.741 3.044 3.044 0 0 0-1.129-.22zm2.11 2.806h3.476a.11.11 0 0 1 .11.112V7.2h-4.354z' },
+  wireshark: { hex: '#4FB3E8', path: 'm2.95 0c-1.62 0-2.95 1.32-2.95 2.95v18.1c0 1.63 1.32 2.95 2.95 2.95h18.1c1.62 0 2.95-1.32 2.95-2.95v-18.1c-.00024-1.63-1.32-2.95-2.95-2.95zm0 1.09h18.1c1.04 0 1.85.818 1.85 1.86v14h-5.27c-.335-.796-2.57-6.47.283-10.9a.516.517 0 0 0-.443-.794c-5.24.0827-8.2 3.19-9.74 6.21-1.35 2.64-1.63 4.91-1.69 5.53h-4.95v-14c0-1.04.817-1.86 1.85-1.86zm13.6 5.24c-2.62 5.24.248 11.4.248 11.4a.516.517 0 0 0 .469.301h5.62v3.05c0 1.04-.817 1.86-1.85 1.86h-18.1c-1.04 0-1.85-.818-1.85-1.86v-3.05h5.39a.516.517 0 0 0 .514-.477s.226-2.8 1.66-5.62c1.34-2.62 3.67-5.17 7.91-5.57z' },
 };
 
 // Display name (lowercased) -> TECH_LOGOS key, for tech chips on project pages.
@@ -312,7 +339,7 @@ const LOGO_FOR = {
   postgresql: 'postgresql', sql: 'postgresql', 'row level security': 'postgresql',
   'tailwind css': 'tailwind', css: 'css', html: 'html', vite: 'vite', vercel: 'vercel',
   expo: 'expo', 'expo router': 'expo', 'expo notifications': 'expo', 'eas build': 'expo',
-  'react router': 'reactrouter', 'framer motion': 'framer', 'git/github': 'git', figma: 'figma', mysql: 'mysql',
+  'laravel api': 'laravel', 'react router': 'reactrouter', 'android studio': 'androidstudio', 'oracle virtualbox': 'virtualbox', wireshark: 'wireshark', 'framer motion': 'framer', 'git/github': 'git', figma: 'figma', mysql: 'mysql',
 };
 
 const MARQUEE = [
@@ -928,8 +955,94 @@ function Work() {
   );
 }
 
+function SkillTile({ name }) {
+  const logo = TECH_LOGOS[LOGO_FOR[name.toLowerCase()]];
+  // VS Code has no Simple Icons mark, so it falls back to a code glyph in its blue.
+  const hex = logo ? logo.hex : '#3B9EFF';
+  return (
+    <div className="skill-tile group/tile flex min-w-0 items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3 transition duration-300 hover:-translate-y-0.5 motion-reduce:transform-none"
+      style={{ '--brand': hex }}>
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-black/50 transition-transform duration-300 group-hover/tile:rotate-[-6deg] group-hover/tile:scale-110">
+        {logo ? (
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" style={{ fill: hex }}><path d={logo.path} /></svg>
+        ) : (
+          <Code className="h-5 w-5" style={{ color: hex }} />
+        )}
+      </span>
+      <div className="min-w-0">
+        <div className="truncate text-sm font-medium text-white">{name}</div>
+        <div className="truncate font-mono text-[10px] tracking-[0.12em] text-mute/70">{(SKILL_TYPE[name] || '').toUpperCase()}</div>
+      </div>
+    </div>
+  );
+}
+
+function OrbitRing({ keys, r, dur, reverse }) {
+  return (
+    <div className="anim-orbit absolute left-1/2 top-1/2 rounded-full border border-dashed border-white/15"
+      style={{ width: r * 2, height: r * 2, marginLeft: -r, marginTop: -r, animationDuration: dur, animationDirection: reverse ? 'reverse' : 'normal' }}>
+      {keys.map((k, i) => {
+        const a = (360 / keys.length) * i;
+        const logo = TECH_LOGOS[k];
+        return (
+          <div key={k} className="absolute left-1/2 top-1/2" style={{ transform: `rotate(${a}deg) translateX(${r}px) rotate(${-a}deg)` }}>
+            <div className="anim-orbit -ml-5 -mt-5" style={{ animationDuration: dur, animationDirection: reverse ? 'normal' : 'reverse' }}>
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-[#111214]"
+                style={{ boxShadow: `0 0 22px -8px ${logo.hex}` }}>
+                <svg viewBox="0 0 24 24" className="h-5 w-5" style={{ fill: logo.hex }}><path d={logo.path} /></svg>
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Orbit() {
+  return (
+    <div className="relative mx-auto h-[340px] w-[340px] max-w-full" aria-hidden>
+      <div className="absolute inset-[22%] rounded-full bg-crimson/15 blur-[50px]" />
+      <OrbitRing keys={ORBIT_INNER} r={82} dur="26s" />
+      <OrbitRing keys={ORBIT_OUTER} r={152} dur="46s" reverse />
+      <div className="anim-glow absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border border-crimson/60 bg-black font-display text-2xl tracking-wide text-white">
+        DAD<span className="text-crimson">.</span>
+      </div>
+    </div>
+  );
+}
+
+const PROCESS_ICON = [PenTool, Database, Code, Rocket];
+
 function Stack() {
   const [filter, setFilter] = useState('all');
+  const langs = Object.values(SKILL_TYPE).filter((t) => t === 'Language').length;
+  const toolCount = STACK.filter((s) => s.key !== 'core').reduce((n, s) => n + s.items.length, 0);
+  const cardCls = (key, span) => {
+    const on = filter === 'all' || filter === key;
+    return `group relative min-w-0 overflow-hidden rounded-2xl border p-5 md:p-6 transition duration-500 ${span} ${on ? 'border-white/10 bg-white/[0.04] opacity-100' : 'scale-[0.98] border-white/5 bg-white/[0.015] opacity-30'}`;
+  };
+  const Sweep = () => (
+    <span aria-hidden className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-gradient-to-r from-crimson via-crimson/40 to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+  );
+  const Head = ({ c }) => {
+    const Icon = c.icon;
+    return (
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md border border-white/10 bg-black/40 transition-colors group-hover:border-crimson group-hover:bg-crimson">
+            <Icon className="h-3.5 w-3.5 text-crimson transition-colors group-hover:text-white" />
+          </span>
+          <span className="font-mono text-[11px] tracking-[0.2em] text-white">{c.label.toUpperCase()}</span>
+        </div>
+        <span className="font-mono text-[10px] text-mute/60 tabular-nums">{String(c.items.length).padStart(2, '0')}</span>
+      </div>
+    );
+  };
+  const [core, ...rest] = STACK;
+  const tools = rest[rest.length - 1];
+  const mid = rest.slice(0, -1);
+
   return (
     <section id="stack" className="scroll-mt-24 py-24 md:py-32 border-t border-white/10">
       <div className="mx-auto max-w-[1400px] px-gutter">
@@ -945,43 +1058,92 @@ function Stack() {
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
-          {STACK.map((c) => {
-            const on = filter === 'all' || filter === c.key;
-            const Icon = c.icon;
-            return (
-              <div key={c.key}
-                className={`group min-w-0 rounded-2xl border p-5 md:p-6 transition duration-300 ${c.span} ${c.key === 'core' || c.key === 'tools' ? 'md:col-span-2' : ''} ${on ? 'border-white/10 bg-white/[0.04] opacity-100' : 'border-white/5 bg-white/[0.015] opacity-35'}`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="h-4 w-4 text-crimson" />
-                    <span className="font-mono text-[11px] tracking-[0.2em] text-white">{c.label.toUpperCase()}</span>
-                  </div>
-                  <span className="font-mono text-[10px] text-mute/60 tabular-nums">{String(c.items.length).padStart(2, '0')}</span>
+          <div className={cardCls(core.key, 'md:col-span-2 lg:col-span-6')}>
+            <Sweep />
+            <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-12">
+              <div className="min-w-0 lg:col-span-7">
+                <Head c={core} />
+                <p className="mt-6 max-w-[22ch] text-3xl font-semibold leading-tight tracking-tight text-white md:text-4xl [text-wrap:balance]">
+                  Full-stack, from schema to screen.
+                </p>
+                <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {core.items.map((s) => {
+                    const Icon = CORE_ICON[s] || Layers;
+                    return (
+                      <div key={s} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/30 p-3.5 transition duration-300 hover:-translate-y-0.5 hover:border-crimson/60 motion-reduce:transform-none">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-crimson/15 text-crimson"><Icon className="h-4 w-4" /></span>
+                        <span className="text-sm text-white">{s}</span>
+                      </div>
+                    );
+                  })}
                 </div>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {c.items.map((s) => (
-                    <span key={s}
-                      className="cursor-default rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[13px] text-mute transition duration-200 hover:-translate-y-0.5 hover:border-crimson hover:bg-crimson/15 hover:text-white hover:shadow-[0_0_24px_-4px_rgba(220,38,38,0.6)]">
-                      {s}
-                    </span>
+                <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 font-mono">
+                  {[[toolCount, 'TOOLS & TECH'], [langs, 'LANGUAGES'], [STACK.length - 1, 'DISCIPLINES']].map(([v, k]) => (
+                    <div key={k} className="flex items-baseline gap-2">
+                      <dd className="text-2xl text-white tabular-nums">{String(v).padStart(2, '0')}</dd>
+                      <dt className="text-[10px] tracking-[0.2em] text-mute/70">{k}</dt>
+                    </div>
                   ))}
-                </div>
+                </dl>
+              </div>
+              <div className="min-w-0 overflow-hidden lg:col-span-5">
+                <Orbit />
+              </div>
+            </div>
+          </div>
+
+          {mid.map((c) => (
+            <div key={c.key} className={cardCls(c.key, `${c.span} ${c.key === 'backend' ? 'md:col-span-2 lg:col-span-2' : ''}`)}>
+              <Sweep />
+              <Head c={c} />
+              <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                {c.items.map((s) => <SkillTile key={s} name={s} />)}
+              </div>
+            </div>
+          ))}
+
+          <div className={cardCls(tools.key, 'md:col-span-2 lg:col-span-6')}>
+            <Sweep />
+            <Head c={tools} />
+            <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+              {tools.items.map((s) => <SkillTile key={s} name={s} />)}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-20 flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
+          <Terminal className="h-4 w-4 text-crimson" /> WORK PROCESS
+        </div>
+        <div aria-hidden className="relative mt-8 hidden grid-cols-4 lg:grid">
+          <div className="absolute left-[12.5%] right-[12.5%] top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-crimson/70 via-white/15 to-crimson/70">
+            <span className="anim-travel absolute -top-[3px] h-[7px] w-[7px] rounded-full bg-crimson shadow-[0_0_14px_#DC2626]" style={{ animationDuration: '6s' }} />
+          </div>
+          {PROCESS.map((s, i) => {
+            const Icon = PROCESS_ICON[i];
+            return (
+              <div key={s.n} className="relative flex justify-center">
+                <span className="anim-glow flex h-12 w-12 items-center justify-center rounded-full border border-crimson/50 bg-obsidian text-crimson" style={{ animationDelay: `${i * 0.6}s` }}>
+                  <Icon className="h-5 w-5" />
+                </span>
               </div>
             );
           })}
         </div>
-
-        <div className="mt-16 flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
-          <Terminal className="h-4 w-4 text-crimson" /> WORK PROCESS
-        </div>
-        <ol className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PROCESS.map((s) => (
-            <li key={s.n} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:border-crimson/40">
-              <span className="font-display text-6xl leading-none text-white/10 transition-colors group-hover:text-crimson">{s.n}</span>
-              <h3 className="mt-6 text-lg font-semibold text-white">{s.t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-mute">{s.d}</p>
-            </li>
-          ))}
+        <ol className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {PROCESS.map((s, i) => {
+            const Icon = PROCESS_ICON[i];
+            return (
+              <li key={s.n} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-300 hover:-translate-y-1 hover:border-crimson/40 motion-reduce:transform-none">
+                <span aria-hidden className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-gradient-to-r from-crimson to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+                <div className="flex items-start justify-between">
+                  <span className="process-num font-display text-6xl leading-none transition-colors duration-300">{s.n}</span>
+                  <Icon className="h-5 w-5 text-mute/50 transition-colors group-hover:text-crimson lg:hidden" />
+                </div>
+                <h3 className="mt-6 text-lg font-semibold text-white">{s.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-mute">{s.d}</p>
+              </li>
+            );
+          })}
         </ol>
       </div>
     </section>

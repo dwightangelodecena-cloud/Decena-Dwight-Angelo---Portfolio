@@ -36,3 +36,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @keyframes rowpulse { 0%, 100% { background-color: rgba(255,255,255,0.02); } 50% { background-color: rgba(220,38,38,0.12); } }
 .anim-row { animation: rowpulse 3s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { [class*="anim-"] { animation: none !important; } }
+
+/* stack section */
+.skill-tile:hover { border-color: color-mix(in srgb, var(--brand) 55%, transparent); background-color: color-mix(in srgb, var(--brand) 9%, transparent); box-shadow: 0 14px 40px -18px var(--brand); }
+.process-num { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.22); }
+.group:hover .process-num { color: #DC2626; -webkit-text-stroke-color: #DC2626; }
+@keyframes orbit { to { transform: rotate(360deg); } }
+.anim-orbit { animation: orbit 30s linear infinite; }
+@keyframes glow { 0%, 100% { box-shadow: 0 0 34px -12px rgba(220,38,38,0.55); } 50% { box-shadow: 0 0 60px -6px rgba(220,38,38,0.95); } }
+.anim-glow { animation: glow 3.2s ease-in-out infinite; }
