@@ -177,6 +177,21 @@ const STACK = [
     items: ['Figma', 'VS Code', 'Android Studio', 'Oracle VirtualBox', 'Wireshark', 'Git/GitHub'] },
 ];
 
+const CAPABILITIES = [
+  { icon: Smartphone, title: 'Mobile Apps',
+    desc: 'Cross-platform Android and iOS apps with sign-up flows, push notifications and real-time data.',
+    tools: ['React Native', 'Expo', 'Flutter'], proof: 'bridges-of-hope-mobile' },
+  { icon: Globe, title: 'Web Apps & Dashboards',
+    desc: 'Role-based portals, storefronts and admin dashboards with charts and PDF reports.',
+    tools: ['React', 'TypeScript', 'Tailwind CSS'], proof: 'bridges-of-hope-web' },
+  { icon: Server, title: 'Backend & Databases',
+    desc: 'Database schemas, access rules, REST APIs and serverless functions, including payments.',
+    tools: ['Supabase', 'PostgreSQL', 'Laravel'], proof: 'rhayz-kicks-web' },
+  { icon: PenTool, title: 'UI/UX Design',
+    desc: 'Wireframes and clickable prototypes that map user flows before any code is written.',
+    tools: ['Figma', 'Wireframing', 'Prototyping'] },
+];
+
 const PROCESS = [
   { n: '01', t: 'Map the flow', d: 'Wireframe screens and user journeys in Figma before writing code.' },
   { n: '02', t: 'Model the data', d: 'Design tables, relations and auth in MySQL or Supabase.' },
@@ -578,6 +593,37 @@ function Work() {
         <SectionHead index="02" label="SELECTED WORK" ghost="WORK" title="Web portals, mobile apps and prototypes, built end to end." />
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
           {PROJECTS.map((p) => <ProjectCard key={p.id} p={p} />)}
+        </div>
+
+        <div className="mt-16 flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
+          <Layers className="h-4 w-4 text-crimson" /> WHAT I CAN DO
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {CAPABILITIES.map((c) => {
+            const Icon = c.icon;
+            const proof = PROJECTS.find((p) => p.slug === c.proof);
+            return (
+              <div key={c.title} className="group flex min-w-0 flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-300 hover:-translate-y-1 hover:border-crimson/50 hover:shadow-[0_24px_60px_-24px_rgba(220,38,38,0.5)] motion-reduce:transform-none">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04] text-crimson transition-colors group-hover:border-crimson group-hover:bg-crimson group-hover:text-white">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <h3 className="mt-5 text-lg font-semibold text-white">{c.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed">{c.desc}</p>
+                <div className="mt-5 flex flex-wrap gap-1.5">
+                  {c.tools.map((t) => <Pill key={t}>{t}</Pill>)}
+                </div>
+                <div className="mt-auto pt-6 font-mono text-[10px] tracking-[0.2em]">
+                  {proof ? (
+                    <a href={`#${proof.slug}`} className="inline-flex items-center gap-1 text-mute transition-colors hover:text-crimson">
+                      SEEN IN {proof.title.toUpperCase()} · {proof.kind} <ArrowUpRight className="h-3 w-3" />
+                    </a>
+                  ) : (
+                    <span className="text-mute/60">COURSEWORK · FIGMA PROTOTYPES</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
