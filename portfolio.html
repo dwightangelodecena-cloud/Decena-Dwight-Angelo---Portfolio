@@ -408,13 +408,17 @@ const CONTRIB_SUMMARY = [
     share: [64, 216],
     // Areas where I made the most commits on the team (non-merge commits touching each path).
     lead: [['WEB PORTAL', 56, 120], ['BACKEND', 23, 42], ['ADMIN PAGES', 41, 66]],
-    overall: '30% OF ALL 216 COMMITS · 2ND OF 4 OVERALL · MOBILE LED BY A TEAMMATE',
+    rankNote: '2ND OF 4 · MOBILE LED BY A TEAMMATE',
     stats: [['TEAM', '4 developers'], ['ACTIVE', 'Mar – Oct 2026'], ['WEB PORTAL', '#1 of 4'], ['BACKEND', '#1 of 4']],
     areas: [[GitBranch, 'Project foundation & role-based routing'], [Layers, 'Admin dashboard & analytics'], [Database, 'Patient, admission & discharge management'],
       [ShieldCheck, 'Auth & security on web and mobile'], [Bell, 'Notifications & branded email'], [Server, 'Supabase migrations & Edge Functions']],
     links: ['bridges-of-hope-web', 'bridges-of-hope-mobile'] },
   { title: 'Rhayz Kicks', badge: 'SOLO', role: 'Solo developer — designed and built every layer',
     share: [12, 12], stats: [['TEAM', 'Solo'], ['ACTIVE', 'Aug – Oct 2026'], ['WEB', 'React + Supabase'], ['MOBILE', 'Flutter + Laravel']],
+    // Commit dates as days after the first commit (Aug 8, 2026), from the repo history.
+    log: { span: 'AUG 8 – OCT 3, 2026', days: 56, commits: [0, 3, 11, 11, 32, 34, 35, 55, 55, 56, 56, 56],
+      marks: [['AUG 8', 'First commit: web store, Flutter app & schema'], ['AUG 19', 'Laravel API & realtime cart'],
+        ['SEP 12', 'Delivery-stage tracking'], ['OCT 3', 'Loyalty, vouchers & video ads']] },
     areas: [[Database, 'Supabase schema & storefront'], [Layers, 'Back office, inventory & POS'], [ShieldCheck, 'Checkout, loyalty & vouchers'],
       [Smartphone, 'Flutter app & Laravel API'], [Bell, 'Delivery tracking on web and mobile'], [PenTool, 'CMS & admin UI redesign']],
     links: ['rhayz-kicks-web', 'rhayz-kicks-mobile'] },
@@ -1114,7 +1118,20 @@ function ContribPanel({ c }) {
               );
             })}
           </div>
-          <div className="mt-3 font-mono text-[9px] tracking-[0.15em] text-mute/60">{c.overall}</div>
+          <div className="mt-3 rounded-xl border border-white/10 bg-black/30 p-3">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="font-mono text-[9px] tracking-[0.2em] text-mute/70">TOTAL CONTRIBUTION · WHOLE REPOSITORY</span>
+              <span className="text-xl font-semibold text-white tabular-nums">{pct}<span className="text-sm text-crimson">%</span></span>
+            </div>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div className={`h-full origin-left rounded-full bg-gradient-to-r from-crimson to-[#ff6b6b] ${seen ? 'anim-grow' : ''}`}
+                style={{ width: `${pct}%`, animationDelay: '450ms' }} />
+            </div>
+            <div className="mt-1.5 flex flex-wrap justify-between gap-x-3 font-mono text-[9px] tracking-[0.15em] text-mute/60">
+              <span><span className="text-crimson">●</span> ME · {c.share[0]} OF {c.share[1]} COMMITS</span>
+              <span>{c.rankNote}</span>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="relative mt-6">
@@ -1146,6 +1163,34 @@ function ContribPanel({ c }) {
           </li>
         ))}
       </ul>
+
+      {c.log && (
+        <div className="relative mt-6 rounded-xl border border-white/10 bg-black/30 p-4">
+          <div className="flex flex-wrap justify-between gap-2 font-mono text-[9px] tracking-[0.2em] text-mute/70">
+            <span>BUILD LOG · {c.log.commits.length} COMMITS IN {Math.round(c.log.days / 7)} WEEKS</span>
+            <span>{c.log.span}</span>
+          </div>
+          <div className="relative mx-1.5 mt-3 h-10">
+            <div className="absolute inset-x-0 top-[75%] h-px bg-white/15" />
+            <div className={`absolute inset-x-0 top-[75%] h-px origin-left bg-crimson/70 ${seen ? 'anim-grow' : ''}`} />
+            {c.log.commits.map((d, i) => {
+              const stack = c.log.commits.slice(0, i).filter((x) => x === d).length;
+              return (
+                <span key={i} style={{ left: `${(d / c.log.days) * 100}%`, top: `calc(75% - 5px - ${stack * 10}px)`, animationDelay: `${300 + i * 70}ms` }}
+                  className={`absolute h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-crimson shadow-[0_0_10px_rgba(220,38,38,0.8)] ring-2 ring-[#121316] ${seen ? 'anim-rise' : ''}`} />
+              );
+            })}
+          </div>
+          <ul className="mt-3 grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2">
+            {c.log.marks.map(([date, label]) => (
+              <li key={date} className="flex min-w-0 items-baseline gap-2.5">
+                <span className="shrink-0 font-mono text-[9px] tracking-[0.15em] text-crimson">{date}</span>
+                <span className="text-[13px] text-white/85">{label}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="relative mt-auto flex flex-wrap gap-x-6 gap-y-2 pt-6 font-mono text-[11px] tracking-[0.15em]">
         {c.links.map((slug) => {
