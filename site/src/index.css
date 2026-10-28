@@ -13,6 +13,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .bg-grid { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 28px 28px; mask-image: linear-gradient(180deg, #000 0%, transparent 95%); -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 95%); }
 .grain { background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' fill='white'/></svg>"); }
 .marquee { animation: marquee 38s linear infinite; }
+.marquee:hover { animation-play-state: paused; }
 @keyframes marquee { to { transform: translateX(-50%); } }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .marquee { animation: none; } *, *::before, *::after { transition-duration: 0.01ms !important; } }
