@@ -2479,41 +2479,179 @@ function Portfolio() {
   );
 }
 
-/* ---------- floating "message me" widget ---------- */
+/* ---------- floating chat: AI assistant + email ---------- */
 
 const CHAT_TOPICS = ['Internship / OJT', 'Freelance project', 'Collaboration', 'Just saying hi'];
+const AI_SUGGESTIONS = ['Is Dwight available?', 'What’s Dwight’s tech stack?', 'What has Dwight built?', 'How can I reach Dwight?'];
+const AI_LIMIT = 12; // questions per visit; the API also rate-limits per IP
 
 const store = {
   get: (k) => { try { return window.localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { window.localStorage.setItem(k, v); } catch { /* storage unavailable */ } },
 };
 
-function ChatWidget() {
-  const [open, setOpen] = useState(false);
-  const [teaser, setTeaser] = useState(false);
+function Avatar({ size = 'h-7 w-7', className = '' }) {
+  return (
+    <span className={`block shrink-0 overflow-hidden rounded-full bg-white/10 ${size} ${className}`}>
+      <img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" />
+    </span>
+  );
+}
+
+// Renders the assistant's plain-text reply: paragraphs plus "- " bullet lists.
+function AiText({ text }) {
+  const blocks = [];
+  let list = null;
+  text.split('\n').forEach((line) => {
+    const item = line.match(/^\s*[-•]\s+(.*)/);
+    if (item) {
+      if (!list) { list = []; blocks.push(list); }
+      list.push(item[1]);
+    } else {
+      list = null;
+      if (line.trim()) blocks.push(line.trim());
+    }
+  });
+  return (
+    <div className="space-y-2">
+      {blocks.map((b, i) => (Array.isArray(b) ? (
+        <ul key={i} className="list-disc space-y-1 pl-4 marker:text-crimson">{b.map((x, j) => <li key={j}>{x}</li>)}</ul>
+      ) : <p key={i}>{b}</p>))}
+    </div>
+  );
+}
+
+function AiTab({ onEmail }) {
+  const [msgs, setMsgs] = useState([]);
+  const [input, setInput] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const listRef = useRef(null);
+  const inputRef = useRef(null);
+  const asked = msgs.filter((m) => m.role === 'user').length;
+  const atLimit = asked >= AI_LIMIT;
+
+  useEffect(() => {
+    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: 'smooth' });
+  }, [msgs, busy, err]);
+  useEffect(() => { inputRef.current?.focus(); }, []);
+
+  const ask = async (text) => {
+    const q = text.trim();
+    if (!q || busy || atLimit) return;
+    const next = [...msgs, { role: 'user', content: q }];
+    setMsgs(next);
+    setInput('');
+    setErr('');
+    setBusy(true);
+    try {
+      const r = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        // An odd-length tail of an alternating history always starts with a user turn.
+        body: JSON.stringify({ messages: next.slice(-19) }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || !data.reply) throw new Error(data.error || 'I can’t reach the assistant from here. Please try the live site, or email Dwight.');
+      setMsgs([...next, { role: 'assistant', content: data.reply }]);
+    } catch (e) {
+      setMsgs(msgs); // drop the unanswered question so the history keeps alternating
+      setInput(q);
+      setErr(e.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex min-h-0 flex-1 flex-col">
+      <div ref={listRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5">
+        {msgs.length === 0 && (
+          <div className="anim-rise flex flex-col items-center pt-2 text-center">
+            <span className="block rounded-full p-1 ring-2 ring-crimson/60 ring-offset-4 ring-offset-[#0e0f11]">
+              <Avatar size="h-20 w-20" />
+            </span>
+            <h3 className="mt-5 text-2xl font-semibold tracking-tight text-white">
+              Hi, I&apos;m Dwight&apos;s <span className="font-serif font-normal italic text-crimson">Assistant</span>
+            </h3>
+            <p className="mt-2 max-w-[30ch] text-sm leading-relaxed text-mute">
+              Ask me about Dwight&apos;s skills, projects or availability. For anything else, I&apos;ll point you to Dwight.
+            </p>
+            <div className="mt-6 grid w-full grid-cols-2 gap-2">
+              {AI_SUGGESTIONS.map((s) => (
+                <button key={s} type="button" onClick={() => ask(s)}
+                  className="group flex items-start gap-2 rounded-2xl border border-white/10 bg-white/[0.03] p-3 text-left text-[13px] leading-snug text-white/85 transition hover:border-crimson/60 hover:bg-crimson/10 hover:text-white">
+                  <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-crimson transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  {s}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {msgs.map((m, i) => (m.role === 'user' ? (
+          <div key={i} className="anim-rise ml-auto max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-crimson px-4 py-2.5 text-sm leading-relaxed text-white">
+            {m.content}
+          </div>
+        ) : (
+          <div key={i} className="anim-rise flex items-end gap-2">
+            <Avatar />
+            <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-sm leading-relaxed text-white/90">
+              <AiText text={m.content} />
+            </div>
+          </div>
+        )))}
+
+        {busy && (
+          <div className="flex items-end gap-2" aria-live="polite" aria-label="Assistant is typing">
+            <Avatar />
+            <div className="flex gap-1 rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3.5">
+              {[0, 1, 2].map((d) => (
+                <span key={d} className="h-1.5 w-1.5 animate-bounce rounded-full bg-mute motion-reduce:animate-none" style={{ animationDelay: `${d * 150}ms` }} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {(err || atLimit) && (
+          <div role="alert" className="anim-rise rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm leading-relaxed text-white/85">
+            <p>{atLimit ? 'That’s the limit for this chat. Email Dwight to keep the conversation going.' : err}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {!atLimit && (
+                <button type="button" onClick={() => ask(input)} className="rounded-full border border-white/15 px-3 py-1.5 font-mono text-[10px] tracking-[0.12em] text-white hover:border-white/40">TRY AGAIN</button>
+              )}
+              <button type="button" onClick={onEmail} className="inline-flex items-center gap-1 rounded-full bg-crimson px-3 py-1.5 font-mono text-[10px] tracking-[0.12em] text-white hover:bg-white hover:text-black">
+                <Mail className="h-3 w-3" /> EMAIL DWIGHT
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <form onSubmit={(e) => { e.preventDefault(); ask(input); }} className="px-4 pb-3 pt-2">
+        <div className="flex items-center gap-2 rounded-2xl border border-white/10 bg-black/40 p-1.5 pl-4 transition focus-within:border-crimson/70 focus-within:ring-2 focus-within:ring-crimson/20">
+          <input id="ai-input" ref={inputRef} value={input} onChange={(e) => setInput(e.target.value)} maxLength={1200}
+            disabled={atLimit} placeholder={atLimit ? 'Chat limit reached' : 'Message Dwight’s Assistant…'} aria-label="Message Dwight’s Assistant"
+            className="min-w-0 flex-1 bg-transparent py-2 text-sm text-white placeholder:text-mute/60 outline-none focus-visible:outline-none disabled:opacity-50" />
+          <button type="submit" disabled={!input.trim() || busy || atLimit} aria-label="Send"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-crimson text-white transition hover:bg-white hover:text-black disabled:bg-white/10 disabled:text-mute">
+            <Send className="h-4 w-4" />
+          </button>
+        </div>
+        <p className="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-mute/70">
+          <Sparkles className="h-3 w-3" /> AI can make mistakes · chats aren&apos;t stored
+        </p>
+      </form>
+    </div>
+  );
+}
+
+function EmailTab() {
   const [topic, setTopic] = useState(CHAT_TOPICS[0]);
   const [form, setForm] = useState({ name: '', email: '', msg: '' });
   const [draft, setDraft] = useState(null);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
-  const panelRef = useRef(null);
-
-  // Show the greeting bubble once per visitor, a few seconds after load.
-  useEffect(() => {
-    if (store.get('dad-chat-teased')) return undefined;
-    const t = setTimeout(() => setTeaser(true), 5000);
-    return () => clearTimeout(t);
-  }, []);
-  const hideTeaser = () => { setTeaser(false); store.set('dad-chat-teased', '1'); };
-
-  useEffect(() => {
-    if (!open) return undefined;
-    hideTeaser();
-    panelRef.current?.querySelector('textarea, input')?.focus();
-    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [open]);
 
   const send = (e) => {
     e.preventDefault();
@@ -2544,115 +2682,148 @@ function ChatWidget() {
   const field = 'w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-mute/60 outline-none transition focus:border-crimson focus:ring-2 focus:ring-crimson/25';
 
   return (
+    <div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-5 py-5">
+      <div className="flex items-end gap-2">
+        <Avatar />
+        <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-sm leading-relaxed text-white/90">
+          Prefer to reach Dwight directly? Tell me about your project, internship or idea and I&apos;ll get an email to Dwight ready for you.
+        </div>
+      </div>
+
+      {draft ? (
+        <div className="anim-rise space-y-3">
+          <div className="ml-auto max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-md bg-crimson px-4 py-3 text-sm leading-relaxed text-white">{form.msg}</div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm leading-relaxed text-white/90">
+            <div className="flex items-center gap-2.5 font-semibold text-white">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#22c55e]/15 text-[#4ade80]"><Check className="h-3.5 w-3.5" /></span>
+              Your message is ready to send
+            </div>
+            <p className="mt-2 text-mute">If your email app opened, just press send there. Use Gmail or Outlook in the browser? Open it there instead:</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {webmail.map(([name, url]) => (
+                <a key={name} href={url} target="_blank" rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-black/30 px-3 py-2.5 font-mono text-[11px] tracking-[0.1em] text-white transition hover:border-crimson hover:bg-crimson">
+                  <Mail className="h-3.5 w-3.5" /> {name.toUpperCase()} <ArrowUpRight className="h-3 w-3" />
+                </a>
+              ))}
+            </div>
+            <button type="button" onClick={copyDraft}
+              className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/10 px-3 py-2 font-mono text-[11px] tracking-[0.1em] text-mute transition hover:border-white/30 hover:text-white">
+              {copied ? <Check className="h-3.5 w-3.5 text-[#4ade80]" /> : <Copy className="h-3.5 w-3.5" />} {copied ? 'COPIED — PASTE IT ANYWHERE' : 'COPY MESSAGE'}
+            </button>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-mute">Or email directly: <CopyCode code={PROFILE.email} /></div>
+          </div>
+          <button type="button" onClick={() => setDraft(null)} className="font-mono text-[10px] tracking-[0.15em] text-mute hover:text-white">← EDIT MESSAGE</button>
+        </div>
+      ) : (
+        <form onSubmit={send} className="space-y-3" noValidate>
+          <div>
+            <div className="mb-2 font-mono text-[10px] tracking-[0.2em] text-mute/70">WHAT&apos;S IT ABOUT?</div>
+            <div className="flex flex-wrap gap-1.5">
+              {CHAT_TOPICS.map((t) => (
+                <button key={t} type="button" onClick={() => setTopic(t)} aria-pressed={topic === t}
+                  className={`rounded-full border px-3 py-1.5 text-xs transition ${topic === t ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute hover:border-white/30 hover:text-white'}`}>
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <input id="chat-name" aria-label="Your name" placeholder="Your name" value={form.name} onChange={set('name')} className={field} />
+            <input id="chat-email" type="email" aria-label="Your email" placeholder="Your email" value={form.email} onChange={set('email')} className={field} />
+          </div>
+          <textarea id="chat-msg" aria-label="Message" rows={4} placeholder="Hi Dwight, I'd like to talk about…" value={form.msg} onChange={set('msg')} className={`${field} resize-none`} />
+          {error && <p role="alert" className="text-xs text-crimson">{error}</p>}
+          <button type="submit"
+            className="group flex w-full items-center justify-center gap-2 rounded-xl bg-crimson px-4 py-3 font-mono text-[12px] tracking-[0.15em] text-white transition hover:bg-white hover:text-black">
+            SEND VIA EMAIL <Send className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          </button>
+          <p className="text-center text-[11px] text-mute/70">Opens your email app with this message ready to send.</p>
+        </form>
+      )}
+
+      <div className="flex items-center justify-around border-t border-white/10 pt-4 font-mono text-[10px] tracking-[0.15em]">
+        <a href={`mailto:${PROFILE.email}`} className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Mail className="h-3.5 w-3.5" /> EMAIL</a>
+        <a href={`tel:${PROFILE.phone.replace(/\s/g, '')}`} className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Phone className="h-3.5 w-3.5" /> CALL</a>
+        <a href={PROFILE.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Github className="h-3.5 w-3.5" /> GITHUB</a>
+      </div>
+    </div>
+  );
+}
+
+function ChatWidget() {
+  const [open, setOpen] = useState(false);
+  const [tab, setTab] = useState('ai');
+  const [teaser, setTeaser] = useState(false);
+
+  // Show the greeting bubble once per visitor, a few seconds after load.
+  useEffect(() => {
+    if (store.get('dad-chat-teased')) return undefined;
+    const t = setTimeout(() => setTeaser(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
+  const hideTeaser = () => { setTeaser(false); store.set('dad-chat-teased', '1'); };
+
+  useEffect(() => {
+    if (!open) return undefined;
+    hideTeaser();
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  return (
     <div className="fixed z-[80] flex flex-col items-end gap-3"
       style={{ right: 'max(16px, calc(env(safe-area-inset-right, 0px) + 16px))', bottom: 'max(16px, calc(env(safe-area-inset-bottom, 0px) + 16px))' }}>
 
       {open && (
-        <div ref={panelRef} role="dialog" aria-label="Message Dwight"
-          className="anim-pop flex max-h-[min(640px,calc(100vh-7rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0e0f11] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.9),0_0_0_1px_rgba(220,38,38,0.15)]">
-          <div className="relative flex items-center gap-3 overflow-hidden bg-crimson px-5 py-4">
-            <div aria-hidden className="absolute inset-0 bg-grid opacity-25" />
-            <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white/70 bg-black/30">
-              <img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" />
+        <div role="dialog" aria-label="Chat with Dwight’s Assistant"
+          className="anim-pop flex h-[min(640px,calc(100vh-7rem))] w-[min(390px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0e0f11] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.9),0_0_0_1px_rgba(220,38,38,0.15)]">
+          <div className="relative flex items-center gap-3 border-b border-white/10 bg-gradient-to-b from-crimson/20 to-transparent px-5 py-4">
+            <span className="relative block shrink-0">
+              <Avatar size="h-11 w-11" className="ring-2 ring-crimson/70" />
+              <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#0e0f11] bg-[#22c55e]" />
             </span>
-            <div className="relative min-w-0 flex-1">
-              <div className="truncate font-semibold text-white">Dwight Angelo Decena</div>
-              <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] text-white/85">
-                <span className="h-1.5 w-1.5 rounded-full bg-white" /> OPEN TO OJT &amp; PROJECTS
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="truncate font-semibold text-white">Dwight&apos;s Assistant</span>
+                <span className="rounded-md bg-crimson/20 px-1.5 py-0.5 font-mono text-[9px] tracking-[0.15em] text-crimson">AI</span>
               </div>
+              <div className="truncate text-xs text-mute">Ask about Dwight · or email Dwight directly</div>
             </div>
-            <button type="button" onClick={() => setOpen(false)} aria-label="Close message box"
-              className="relative rounded-full p-1.5 text-white/90 transition hover:bg-black/20 hover:text-white">
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close chat"
+              className="rounded-full border border-white/10 p-2 text-white/80 transition hover:border-white/30 hover:text-white">
               <X className="h-4 w-4" />
             </button>
           </div>
 
-          <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
-            <div className="flex items-end gap-2">
-              <span className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-white/10"><img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" /></span>
-              <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-sm leading-relaxed text-white/90">
-                Hi! Thanks for stopping by. Tell me about your project, internship or idea and I&apos;ll get back to you by email.
-              </div>
-            </div>
-
-            {draft ? (
-              <div className="anim-rise space-y-3">
-                <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-crimson px-4 py-3 text-sm leading-relaxed text-white">
-                  {form.msg}
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm leading-relaxed text-white/90">
-                  <div className="flex items-center gap-2.5 font-semibold text-white">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#22c55e]/15 text-[#4ade80]"><Check className="h-3.5 w-3.5" /></span>
-                    Your message is ready to send
-                  </div>
-                  <p className="mt-2 text-mute">If your email app opened, just press send there. Use Gmail or Outlook in the browser? Open it there instead:</p>
-                  <div className="mt-3 grid grid-cols-2 gap-2">
-                    {webmail.map(([name, url]) => (
-                      <a key={name} href={url} target="_blank" rel="noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-black/30 px-3 py-2.5 font-mono text-[11px] tracking-[0.1em] text-white transition hover:border-crimson hover:bg-crimson">
-                        <Mail className="h-3.5 w-3.5" /> {name.toUpperCase()} <ArrowUpRight className="h-3 w-3" />
-                      </a>
-                    ))}
-                  </div>
-                  <button type="button" onClick={copyDraft}
-                    className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/10 px-3 py-2 font-mono text-[11px] tracking-[0.1em] text-mute transition hover:border-white/30 hover:text-white">
-                    {copied ? <Check className="h-3.5 w-3.5 text-[#4ade80]" /> : <Copy className="h-3.5 w-3.5" />} {copied ? 'COPIED — PASTE IT ANYWHERE' : 'COPY MESSAGE'}
-                  </button>
-                  <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-mute">Or email me directly: <CopyCode code={PROFILE.email} /></div>
-                </div>
-                <button type="button" onClick={() => setDraft(null)} className="font-mono text-[10px] tracking-[0.15em] text-mute hover:text-white">← EDIT MESSAGE</button>
-              </div>
-            ) : (
-              <form onSubmit={send} className="space-y-3" noValidate>
-                <div>
-                  <div className="mb-2 font-mono text-[10px] tracking-[0.2em] text-mute/70">WHAT&apos;S IT ABOUT?</div>
-                  <div className="flex flex-wrap gap-1.5">
-                    {CHAT_TOPICS.map((t) => (
-                      <button key={t} type="button" onClick={() => setTopic(t)} aria-pressed={topic === t}
-                        className={`rounded-full border px-3 py-1.5 text-xs transition ${topic === t ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute hover:border-white/30 hover:text-white'}`}>
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <input id="chat-name" aria-label="Your name" placeholder="Your name" value={form.name} onChange={set('name')} className={field} />
-                  <input id="chat-email" type="email" aria-label="Your email" placeholder="Your email" value={form.email} onChange={set('email')} className={field} />
-                </div>
-                <textarea id="chat-msg" aria-label="Message" rows={4} placeholder="Hi Dwight, I'd like to talk about…" value={form.msg} onChange={set('msg')} className={`${field} resize-none`} />
-                {error && <p role="alert" className="text-xs text-crimson">{error}</p>}
-                <button type="submit"
-                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-crimson px-4 py-3 font-mono text-[12px] tracking-[0.15em] text-white transition hover:bg-white hover:text-black">
-                  SEND VIA EMAIL <Send className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </button>
-                <p className="text-center text-[11px] text-mute/70">Opens your email app with this message ready to send.</p>
-              </form>
-            )}
+          <div role="tablist" aria-label="Chat mode" className="mx-4 mt-3 grid grid-cols-2 gap-1 rounded-xl border border-white/10 bg-black/40 p-1 font-mono text-[10px] tracking-[0.15em]">
+            {[['ai', 'ASK AI', Sparkles], ['email', 'EMAIL DWIGHT', Mail]].map(([key, label, Icon]) => (
+              <button key={key} type="button" role="tab" aria-selected={tab === key} onClick={() => setTab(key)}
+                className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 transition ${tab === key ? 'bg-crimson text-white' : 'text-mute hover:text-white'}`}>
+                <Icon className="h-3.5 w-3.5" /> {label}
+              </button>
+            ))}
           </div>
 
-          <div className="flex items-center justify-around border-t border-white/10 px-4 py-3 font-mono text-[10px] tracking-[0.15em]">
-            <a href={`mailto:${PROFILE.email}`} className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Mail className="h-3.5 w-3.5" /> EMAIL</a>
-            <a href={`tel:${PROFILE.phone.replace(/\s/g, '')}`} className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Phone className="h-3.5 w-3.5" /> CALL</a>
-            <a href={PROFILE.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Github className="h-3.5 w-3.5" /> GITHUB</a>
-          </div>
+          <div className={tab === 'ai' ? 'flex min-h-0 flex-1 flex-col' : 'hidden'}><AiTab onEmail={() => setTab('email')} /></div>
+          <div className={tab === 'email' ? 'flex min-h-0 flex-1 flex-col' : 'hidden'}><EmailTab /></div>
         </div>
       )}
 
       {!open && teaser && (
-        <div className="anim-pop relative max-w-[260px] rounded-2xl rounded-br-md border border-white/10 bg-[#0e0f11]/95 p-4 pr-8 text-sm text-white/90 shadow-2xl backdrop-blur">
+        <div className="anim-pop relative max-w-[270px] rounded-2xl rounded-br-md border border-white/10 bg-[#0e0f11] p-4 pr-8 text-sm text-white/90 shadow-2xl">
           <button type="button" onClick={hideTeaser} aria-label="Dismiss" className="absolute right-2 top-2 rounded-full p-1 text-mute hover:text-white"><X className="h-3.5 w-3.5" /></button>
-          <div className="font-semibold text-white">Hi there!</div>
-          <p className="mt-1 leading-snug">Have a project or an internship in mind? Send me a message.</p>
-          <button type="button" onClick={() => setOpen(true)} className="mt-2 font-mono text-[10px] tracking-[0.15em] text-crimson hover:text-white">MESSAGE ME →</button>
+          <div className="flex items-center gap-2 font-semibold text-white"><Sparkles className="h-4 w-4 text-crimson" /> Hi there!</div>
+          <p className="mt-1 leading-snug">I&apos;m Dwight&apos;s AI assistant. Ask me about skills, projects or availability.</p>
+          <button type="button" onClick={() => setOpen(true)} className="mt-2 font-mono text-[10px] tracking-[0.15em] text-crimson hover:text-white">ASK NOW →</button>
         </div>
       )}
 
-      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close message box' : 'Message me'}
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close chat' : 'Chat with Dwight’s Assistant'}
         className="group relative flex h-14 items-center gap-2 rounded-full bg-crimson pl-1.5 pr-5 text-white shadow-[0_14px_40px_-8px_rgba(220,38,38,0.8)] transition hover:scale-105 hover:bg-[#ef4444] motion-reduce:transform-none">
-        <span className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-white/80 bg-black/30">
-          <img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" />
-        </span>
-        <span className="font-mono text-[11px] tracking-[0.15em]">{open ? 'CLOSE' : 'MESSAGE ME'}</span>
+        <Avatar size="h-11 w-11" className="border-2 border-white/80" />
+        <span className="font-mono text-[11px] tracking-[0.15em]">{open ? 'CLOSE' : 'ASK ME ANYTHING'}</span>
         {!open && <MessageCircle className="h-4 w-4" />}
         {!open && (
           <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5">
