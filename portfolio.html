@@ -552,7 +552,7 @@ function Hero() {
 
 function ProjectCard({ p }) {
   return (
-    <a href={`#${p.slug}`} target="_blank" rel="noopener" aria-label={`Open ${p.title} ${p.sub} details in a new tab`}
+    <a href={`#${p.slug}`} aria-label={`Open ${p.title} ${p.sub} details`}
       className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-crimson/50 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.25),0_24px_70px_-20px_rgba(220,38,38,0.45)] motion-reduce:transform-none ${p.span}`}>
       <div className={`relative overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_120%_at_100%_0%,rgba(220,38,38,0.18),transparent_55%)] ${p.image ? 'h-72 md:h-80' : 'h-56 md:h-64'}`}>
         <div aria-hidden className="absolute inset-0 bg-grid opacity-60" />
