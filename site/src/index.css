@@ -94,3 +94,4 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* section edges */
 @keyframes sweep { from { left: -35%; } to { left: 100%; } }
 .anim-sweep { animation: sweep 5.5s cubic-bezier(.5,0,.5,1) infinite; }
+.anim-scroll, .anim-scroll-rev { will-change: transform; backface-visibility: hidden; }
