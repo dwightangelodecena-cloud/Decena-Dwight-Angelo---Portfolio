@@ -12,6 +12,8 @@ import {
 
 // Transparent-background cutout served from site/public. Set to null for the silhouette.
 const PORTRAIT_SRC = '/portrait.webp';
+// National University seal, background removed, for the education mentions.
+const NU_LOGO = '/nu-logo.webp';
 
 const PROFILE = {
   name: 'Dwight Angelo Decena',
@@ -1942,7 +1944,9 @@ function ProfileCard() {
                   {ABOUT.facts.map(([k, v]) => (
                     <div key={k} className="min-w-0">
                       <dt className="text-[9px] tracking-[0.2em] text-mute/70">{k}</dt>
-                      <dd className="mt-0.5 truncate text-[12px] text-white">{v}</dd>
+                      <dd className="mt-0.5 flex items-center gap-1.5 truncate text-[12px] text-white">
+                        {k === 'SCHOOL' && <img src={NU_LOGO} alt="" className="h-4 w-auto shrink-0" />}{v}
+                      </dd>
                     </div>
                   ))}
                 </dl>
@@ -2176,7 +2180,7 @@ function About() {
 // Only facts from the CV and the site: no invented dates or schools before NU.
 const JOURNEY = [
   {
-    when: 'AUG 2023', big: '2023', tag: 'ENROLLED', icon: GraduationCap,
+    when: 'AUG 2023', big: '2023', tag: 'ENROLLED', icon: GraduationCap, logo: true,
     title: 'Started BS Information Technology', place: 'National University Dasmariñas',
     text: 'Majoring in Mobile and Web Application Development (BSIT-MWA) at NU Dasmariñas, Sampaloc 1, Dasmariñas, Cavite.',
   },
@@ -2242,9 +2246,13 @@ function JourneyItem({ j, i, lit }) {
             <h3 className="mt-2 text-xl font-semibold text-white sm:text-2xl">{j.title}</h3>
             <div className="mt-1 text-sm text-white/70">{j.place}</div>
           </div>
-          <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition duration-500 group-hover:-rotate-6 ${lit ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute'}`}>
-            <Icon className="h-5 w-5" />
-          </span>
+          {j.logo ? (
+            <img src={NU_LOGO} alt="National University" className={`h-14 w-auto shrink-0 drop-shadow-[0_8px_20px_rgba(43,48,140,0.55)] transition duration-500 group-hover:-rotate-6 ${lit ? '' : 'opacity-80'}`} />
+          ) : (
+            <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition duration-500 group-hover:-rotate-6 ${lit ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute'}`}>
+              <Icon className="h-5 w-5" />
+            </span>
+          )}
         </div>
         <p className="mt-4 text-sm leading-relaxed">{j.text}</p>
         {j.chips && (
@@ -2304,7 +2312,9 @@ function Journey() {
           {[['PROGRAM', 'BSIT – MWA'], ['SCHOOL', 'NU Dasmariñas'], ['SINCE', 'Aug 2023'], ['STATUS', '4th year · OJT']].map(([k, v]) => (
             <div key={k} className="min-w-0 bg-obsidian p-4 sm:p-5">
               <div className="font-mono text-[10px] tracking-[0.2em] text-mute/70">{k}</div>
-              <div className="mt-1 truncate text-sm font-medium text-white sm:text-base">{v}</div>
+              <div className="mt-1 flex items-center gap-2 truncate text-sm font-medium text-white sm:text-base">
+                {k === 'SCHOOL' && <img src={NU_LOGO} alt="" className="h-5 w-auto shrink-0" />}{v}
+              </div>
             </div>
           ))}
         </div>
@@ -2339,11 +2349,14 @@ function Info() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
 
           <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-500 hover:border-crimson/40 md:p-8 lg:col-span-7">
-            <span aria-hidden className="absolute -right-4 -top-6 font-display text-[9rem] leading-none text-white/[0.04] transition-colors duration-500 group-hover:text-crimson/10">NU</span>
+            <img src={NU_LOGO} alt="" aria-hidden className="pointer-events-none absolute -right-6 -top-6 h-48 w-auto rotate-12 opacity-[0.07] grayscale transition duration-700 group-hover:rotate-6 group-hover:opacity-[0.14] group-hover:grayscale-0" />
             <div className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-crimson">
               <GraduationCap className="h-4 w-4" /> EDUCATION
             </div>
-            <h3 className="mt-6 text-2xl font-semibold tracking-tight text-white md:text-3xl">National University Dasmariñas</h3>
+            <div className="mt-6 flex items-center gap-4">
+              <img src={NU_LOGO} alt="National University" className="h-16 w-auto shrink-0 drop-shadow-[0_10px_24px_rgba(43,48,140,0.6)] md:h-20" />
+              <h3 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">National University Dasmariñas</h3>
+            </div>
             <p className="mt-2 text-mute">BS in Information Technology — Mobile &amp; Web Applications</p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Pill active>Specialization · Mobile &amp; Web App Development</Pill>
@@ -3178,7 +3191,8 @@ function useScrollReveal(key) {
         }
       });
     };
-    const units = [...document.querySelectorAll('main > section, #contact')];
+    // The hero has its own intro and a heavy portrait, so it is left out.
+    const units = [...document.querySelectorAll('main > section:not(#hero), #contact')];
     if (units.length) units.forEach((u) => walk(u.querySelector(':scope > .mx-auto') || u, 0));
     else document.querySelectorAll('main').forEach((m) => walk(m, 0));
     document.querySelectorAll('main > [data-ribbon]').forEach((el) => add(el, 'ribbon'));
