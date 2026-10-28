@@ -32,6 +32,7 @@ const PROJECTS = [
     live: 'https://bridgesofhope-delta.vercel.app/',
     repo: 'https://github.com/dwightangelodecena-cloud/-BridgesOfHope---Backup',
     span: 'lg:col-span-4', mono: 'BOH',
+    image: '/projects/boh-web.webp', shot: 'web',
   },
   {
     id: '02', kind: 'MOBILE', title: 'Bridges of Hope', sub: 'Mobile App',
@@ -39,6 +40,7 @@ const PROJECTS = [
     stack: ['React Native', 'TypeScript', 'Supabase'],
     repo: 'https://github.com/dwightangelodecena-cloud/-BridgesOfHope---Backup',
     span: 'lg:col-span-2', mono: 'BOH',
+    image: '/projects/boh-mobile.webp', shot: 'phone',
   },
   {
     id: '03', kind: 'MOBILE', title: 'Rhayz Kicks', sub: 'Mobile App',
@@ -379,11 +381,28 @@ function Hero() {
 function ProjectCard({ p }) {
   return (
     <article className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-crimson/50 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.25),0_24px_70px_-20px_rgba(220,38,38,0.45)] motion-reduce:transform-none ${p.span}`}>
-      <div className="relative h-40 overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_120%_at_100%_0%,rgba(220,38,38,0.18),transparent_55%)]">
+      <div className="relative h-56 md:h-64 overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_120%_at_100%_0%,rgba(220,38,38,0.18),transparent_55%)]">
         <div aria-hidden className="absolute inset-0 bg-grid opacity-60" />
-        <span aria-hidden className="absolute -bottom-6 left-4 font-display text-[7.5rem] leading-none text-white/[0.06] transition-colors duration-300 group-hover:text-crimson/25">
-          {p.mono}
-        </span>
+        {!p.image && (
+          <span aria-hidden className="absolute -bottom-6 left-4 font-display text-[7.5rem] leading-none text-white/[0.06] transition-colors duration-300 group-hover:text-crimson/25">
+            {p.mono}
+          </span>
+        )}
+        {p.shot === 'web' && (
+          <div className="absolute inset-x-5 bottom-0 top-14 overflow-hidden rounded-t-xl border border-b-0 border-white/15 bg-black shadow-[0_-10px_50px_-10px_rgba(0,0,0,0.9)] transition-transform duration-500 group-hover:-translate-y-1.5 motion-reduce:transform-none">
+            <div aria-hidden className="flex h-6 items-center gap-1.5 border-b border-white/10 bg-white/[0.04] px-3">
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+              <span className="h-2 w-2 rounded-full bg-white/20" />
+            </div>
+            <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} home page`} loading="lazy"
+              className="h-[calc(100%-1.5rem)] w-full object-cover object-left-top" />
+          </div>
+        )}
+        {p.shot === 'phone' && (
+          <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} home screen`} loading="lazy"
+            className="absolute left-1/2 top-12 w-[52%] max-w-[210px] -translate-x-1/2 rounded-[9%/4.2%] drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:-translate-y-2 motion-reduce:transform-none" />
+        )}
         <div className="absolute left-5 top-5 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em]">
           <span className="text-crimson">{p.id}</span>
           <span className="rounded-full border border-white/15 px-2 py-0.5 text-mute">{p.kind}</span>
