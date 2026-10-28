@@ -3,7 +3,7 @@ import {
   ArrowUpRight, Mail, Phone, MapPin, Copy, Check, GraduationCap,
   BadgeCheck, Smartphone, Globe, Server, Wrench, Layers, PenTool, Terminal,
   Code, Database, Bell, MousePointer2, GitBranch, Rocket, Award, X, ShieldCheck, Maximize2,
-  Sparkles, Users, GitCommitHorizontal, FileText, Download, Briefcase,
+  Sparkles, Users, GitCommitHorizontal, FileText, Download, Briefcase, MessageCircle, Send,
 } from 'lucide-react';
 
 /* Dwight Angelo Decena — Portfolio
@@ -2380,8 +2380,162 @@ export default function Portfolio() {
     wasProject.current = Boolean(project);
   }, [project, route]);
 
-  if (project) return <ProjectPage p={project} />;
-  return <Home />;
+  return (
+    <>
+      {project ? <ProjectPage p={project} /> : <Home />}
+      <ChatWidget />
+    </>
+  );
+}
+
+/* ---------- floating "message me" widget ---------- */
+
+const CHAT_TOPICS = ['Internship / OJT', 'Freelance project', 'Collaboration', 'Just saying hi'];
+
+const store = {
+  get: (k) => { try { return window.localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { window.localStorage.setItem(k, v); } catch { /* storage unavailable */ } },
+};
+
+function ChatWidget() {
+  const [open, setOpen] = useState(false);
+  const [teaser, setTeaser] = useState(false);
+  const [topic, setTopic] = useState(CHAT_TOPICS[0]);
+  const [form, setForm] = useState({ name: '', email: '', msg: '' });
+  const [opened, setOpened] = useState(false);
+  const [error, setError] = useState('');
+  const panelRef = useRef(null);
+
+  // Show the greeting bubble once per visitor, a few seconds after load.
+  useEffect(() => {
+    if (store.get('dad-chat-teased')) return undefined;
+    const t = setTimeout(() => setTeaser(true), 5000);
+    return () => clearTimeout(t);
+  }, []);
+  const hideTeaser = () => { setTeaser(false); store.set('dad-chat-teased', '1'); };
+
+  useEffect(() => {
+    if (!open) return undefined;
+    hideTeaser();
+    panelRef.current?.querySelector('textarea, input')?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
+  const send = (e) => {
+    e.preventDefault();
+    if (!form.msg.trim()) { setError('Write a short message first.'); return; }
+    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) { setError('That email address doesn’t look right.'); return; }
+    setError('');
+    const subject = `[Portfolio] ${topic}${form.name ? ` — ${form.name}` : ''}`;
+    const body = `${form.msg.trim()}\n\n— ${form.name || 'A visitor'}${form.email ? ` (${form.email})` : ''}\nSent from the portfolio message box`;
+    window.location.href = `mailto:${PROFILE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    setOpened(true);
+  };
+  const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
+  const field = 'w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-mute/60 outline-none transition focus:border-crimson focus:ring-2 focus:ring-crimson/25';
+
+  return (
+    <div className="fixed z-[80] flex flex-col items-end gap-3"
+      style={{ right: 'max(16px, calc(env(safe-area-inset-right, 0px) + 16px))', bottom: 'max(16px, calc(env(safe-area-inset-bottom, 0px) + 16px))' }}>
+
+      {open && (
+        <div ref={panelRef} role="dialog" aria-label="Message Dwight"
+          className="anim-pop flex max-h-[min(640px,calc(100vh-7rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#0e0f11] shadow-[0_30px_90px_-20px_rgba(0,0,0,0.9),0_0_0_1px_rgba(220,38,38,0.15)]">
+          <div className="relative flex items-center gap-3 overflow-hidden bg-crimson px-5 py-4">
+            <div aria-hidden className="absolute inset-0 bg-grid opacity-25" />
+            <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white/70 bg-black/30">
+              <img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" />
+            </span>
+            <div className="relative min-w-0 flex-1">
+              <div className="truncate font-semibold text-white">Dwight Angelo Decena</div>
+              <div className="flex items-center gap-1.5 font-mono text-[10px] tracking-[0.12em] text-white/85">
+                <span className="h-1.5 w-1.5 rounded-full bg-white" /> OPEN TO OJT &amp; PROJECTS
+              </div>
+            </div>
+            <button type="button" onClick={() => setOpen(false)} aria-label="Close message box"
+              className="relative rounded-full p-1.5 text-white/90 transition hover:bg-black/20 hover:text-white">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
+            <div className="flex items-end gap-2">
+              <span className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-white/10"><img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" /></span>
+              <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-sm leading-relaxed text-white/90">
+                Hi! Thanks for stopping by. Tell me about your project, internship or idea and I&apos;ll get back to you by email.
+              </div>
+            </div>
+
+            {opened ? (
+              <div className="anim-rise rounded-2xl border border-crimson/40 bg-crimson/10 p-4 text-sm leading-relaxed text-white/90">
+                <div className="flex items-center gap-2 font-semibold text-white"><Mail className="h-4 w-4 text-crimson" /> Your email app should now be open</div>
+                <p className="mt-2">Your message is filled in and addressed to me. Press send there to deliver it. If nothing opened, email me directly:</p>
+                <div className="mt-3"><CopyCode code={PROFILE.email} /></div>
+                <button type="button" onClick={() => setOpened(false)} className="mt-3 font-mono text-[10px] tracking-[0.15em] text-mute hover:text-white">← EDIT MESSAGE</button>
+              </div>
+            ) : (
+              <form onSubmit={send} className="space-y-3" noValidate>
+                <div>
+                  <div className="mb-2 font-mono text-[10px] tracking-[0.2em] text-mute/70">WHAT&apos;S IT ABOUT?</div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {CHAT_TOPICS.map((t) => (
+                      <button key={t} type="button" onClick={() => setTopic(t)} aria-pressed={topic === t}
+                        className={`rounded-full border px-3 py-1.5 text-xs transition ${topic === t ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute hover:border-white/30 hover:text-white'}`}>
+                        {t}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <input id="chat-name" aria-label="Your name" placeholder="Your name" value={form.name} onChange={set('name')} className={field} />
+                  <input id="chat-email" type="email" aria-label="Your email" placeholder="Your email" value={form.email} onChange={set('email')} className={field} />
+                </div>
+                <textarea id="chat-msg" aria-label="Message" rows={4} placeholder="Hi Dwight, I'd like to talk about…" value={form.msg} onChange={set('msg')} className={`${field} resize-none`} />
+                {error && <p role="alert" className="text-xs text-crimson">{error}</p>}
+                <button type="submit"
+                  className="group flex w-full items-center justify-center gap-2 rounded-xl bg-crimson px-4 py-3 font-mono text-[12px] tracking-[0.15em] text-white transition hover:bg-white hover:text-black">
+                  SEND VIA EMAIL <Send className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </button>
+                <p className="text-center text-[11px] text-mute/70">Opens your email app with this message ready to send.</p>
+              </form>
+            )}
+          </div>
+
+          <div className="flex items-center justify-around border-t border-white/10 px-4 py-3 font-mono text-[10px] tracking-[0.15em]">
+            <a href={`mailto:${PROFILE.email}`} className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Mail className="h-3.5 w-3.5" /> EMAIL</a>
+            <a href={`tel:${PROFILE.phone.replace(/\s/g, '')}`} className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Phone className="h-3.5 w-3.5" /> CALL</a>
+            <a href={PROFILE.github} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-mute hover:text-white"><Github className="h-3.5 w-3.5" /> GITHUB</a>
+          </div>
+        </div>
+      )}
+
+      {!open && teaser && (
+        <div className="anim-pop relative max-w-[260px] rounded-2xl rounded-br-md border border-white/10 bg-[#0e0f11]/95 p-4 pr-8 text-sm text-white/90 shadow-2xl backdrop-blur">
+          <button type="button" onClick={hideTeaser} aria-label="Dismiss" className="absolute right-2 top-2 rounded-full p-1 text-mute hover:text-white"><X className="h-3.5 w-3.5" /></button>
+          <div className="font-semibold text-white">Hi there!</div>
+          <p className="mt-1 leading-snug">Have a project or an internship in mind? Send me a message.</p>
+          <button type="button" onClick={() => setOpen(true)} className="mt-2 font-mono text-[10px] tracking-[0.15em] text-crimson hover:text-white">MESSAGE ME →</button>
+        </div>
+      )}
+
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close message box' : 'Message me'}
+        className="group relative flex h-14 items-center gap-2 rounded-full bg-crimson pl-1.5 pr-5 text-white shadow-[0_14px_40px_-8px_rgba(220,38,38,0.8)] transition hover:scale-105 hover:bg-[#ef4444] motion-reduce:transform-none">
+        <span className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-white/80 bg-black/30">
+          <img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" />
+        </span>
+        <span className="font-mono text-[11px] tracking-[0.15em]">{open ? 'CLOSE' : 'MESSAGE ME'}</span>
+        {!open && <MessageCircle className="h-4 w-4" />}
+        {!open && (
+          <span className="absolute -right-0.5 -top-0.5 flex h-3.5 w-3.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-70 motion-reduce:animate-none" />
+            <span className="relative inline-flex h-3.5 w-3.5 rounded-full border-2 border-crimson bg-white" />
+          </span>
+        )}
+      </button>
+    </div>
+  );
 }
 
 function Home() {
