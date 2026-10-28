@@ -103,6 +103,11 @@
   @keyframes sweep { from { left: -35%; } to { left: 100%; } }
   .anim-sweep { animation: sweep 5.5s cubic-bezier(.5,0,.5,1) infinite; }
   .anim-scroll, .anim-scroll-rev { will-change: transform; backface-visibility: hidden; }
+  /* work process */
+  @keyframes cardpop { 0% { opacity: 0; translate: 0 48px; scale: .9; } 60% { opacity: 1; scale: 1.03; } 100% { opacity: 1; translate: 0 0; scale: 1; } }
+  .anim-cardpop { animation: cardpop .8s cubic-bezier(.2,.8,.2,1) backwards; }
+  @keyframes numwipe { from { opacity: 0; clip-path: inset(100% 0 0 0); translate: 0 18px; } to { opacity: 1; clip-path: inset(0 0 0 0); translate: 0 0; } }
+  .anim-numwipe { animation: numwipe .9s cubic-bezier(.16,1,.3,1) backwards; }
   .process-num.is-on { color: #DC2626; -webkit-text-stroke-color: #DC2626; }
 </style>
 <div id="root"><div id="boot">LOADING PORTFOLIO…</div></div>
@@ -1638,16 +1643,93 @@ function Stack() {
   );
 }
 
+function ProcessCard({ s, i, on, done, onPick, stagger }) {
+  const [ref, seen] = useSeen(0.2);
+  const Icon = PROCESS_ICON[i];
+  const base = stagger ? i * 180 : 0;
+  const rise = (ms) => ({ className: seen ? 'anim-rise' : 'opacity-0', style: { animationDelay: `${base + ms}ms` } });
+  return (
+    <li ref={ref} tabIndex={0} onClick={onPick} onFocus={onPick}
+      onPointerEnter={(e) => { if (e.pointerType === 'mouse') onPick(true); }}
+      style={{ animationDelay: `${base}ms` }}
+      className={`group relative flex min-w-0 flex-col rounded-2xl border p-5 transition-[border-color,background-color,box-shadow,transform] duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-crimson sm:p-6 ${seen ? 'anim-cardpop' : 'opacity-0'} ${on ? 'border-crimson/50 bg-white/[0.06] shadow-[0_24px_70px_-30px_rgba(220,38,38,0.7)] xl:-translate-y-1' : 'border-white/10 bg-white/[0.03]'} motion-reduce:transform-none`}>
+      {/* timeline dot for the phone layout */}
+      <span aria-hidden className={`absolute -left-[33px] top-7 flex h-4 w-4 items-center justify-center rounded-full border-2 transition duration-500 md:hidden ${on ? 'scale-125 border-crimson bg-crimson shadow-[0_0_14px_rgba(220,38,38,0.9)]' : done ? 'border-crimson bg-obsidian' : 'border-white/20 bg-obsidian'}`} />
+      <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl">
+        <span className={`absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-crimson to-transparent transition-transform duration-700 ${on ? 'scale-x-100' : 'scale-x-0'}`} />
+      </span>
+      <div className="flex items-start justify-between">
+        <span className={`process-num font-display text-5xl leading-none transition-colors duration-500 sm:text-6xl ${on ? 'is-on' : ''} ${seen ? 'anim-numwipe' : 'opacity-0'}`} style={{ animationDelay: `${base + 200}ms` }}>{s.n}</span>
+        <span className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-500 ${on ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute/60'}`}>
+          <Icon className="h-4 w-4" />
+        </span>
+      </div>
+      <div className="mt-5 font-mono text-[10px] tracking-[0.25em] text-crimson sm:mt-6">{s.phase}</div>
+      <h4 className="mt-1 text-lg font-semibold text-white sm:text-xl">{s.t}</h4>
+      <p className="mt-3 text-sm leading-relaxed">{s.d}</p>
+
+      <ul className="mt-5 space-y-1.5">
+        {s.does.map((d, j) => (
+          <li key={d} className={`flex items-center gap-2 text-sm text-white/90 ${rise(350 + j * 90).className}`} style={rise(350 + j * 90).style}>
+            <Check className={`h-3.5 w-3.5 shrink-0 transition-colors ${on ? 'text-crimson' : 'text-mute/50'}`} /> {d}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-5 flex flex-wrap gap-1.5">
+        {s.tools.map((t, j) => {
+          const logo = TECH_LOGOS[LOGO_FOR[t.toLowerCase()]];
+          return (
+            <span key={t} style={rise(650 + j * 70).style}
+              className={`inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-2.5 py-1 font-mono text-[10px] text-white/80 ${rise(650 + j * 70).className}`}>
+              {logo && <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3 w-3" style={{ fill: logo.hex }}><path d={logo.path} /></svg>}
+              {t}
+            </span>
+          );
+        })}
+      </div>
+
+      <div className="mt-auto pt-5">
+        <div className={`rounded-xl border border-white/10 bg-black/30 p-3.5 ${rise(800).className}`} style={rise(800).style}>
+          <div className="font-mono text-[9px] tracking-[0.2em] text-mute/70">OUTPUT</div>
+          <div className="mt-1 text-sm font-medium text-white">{s.output}</div>
+          <p className="mt-2.5 border-t border-white/10 pt-2.5 text-[12px] leading-relaxed text-mute">
+            <span className="font-mono text-[9px] tracking-[0.2em] text-crimson">IN PRACTICE · </span>{s.example}
+          </p>
+        </div>
+      </div>
+    </li>
+  );
+}
+
 function WorkProcess() {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(-1);
+  const [introDone, setIntroDone] = useState(false);
   const [hovering, setHovering] = useState(false);
-  // Steps light up in turn; hovering a step takes over, and reduced-motion users get no auto-advance.
+  const [ref, seen] = useSeen(0.15);
+  const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  const stagger = typeof window !== 'undefined' && window.matchMedia?.('(min-width: 768px)').matches;
+  const last = PROCESS.length - 1;
+
+  // Once in view: the cards pop up 01 → 04, then the glow travels the line lighting each step.
   useEffect(() => {
-    if (hovering || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    if (!seen) return undefined;
+    if (reduce) { setActive(0); setIntroDone(true); return undefined; }
+    const start = stagger ? 4 * 180 + 450 : 300;
+    const ts = PROCESS.map((_, k) => setTimeout(() => setActive(k), start + k * 600));
+    ts.push(setTimeout(() => setIntroDone(true), start + last * 600 + 1400));
+    return () => ts.forEach(clearTimeout);
+  }, [seen]);
+
+  // After the intro, steps keep lighting up in turn; hovering a step takes over.
+  useEffect(() => {
+    if (!introDone || hovering || reduce) return undefined;
     const t = setInterval(() => setActive((a) => (a + 1) % PROCESS.length), 3500);
     return () => clearInterval(t);
-  }, [hovering]);
-  const pick = (i) => { setActive(i); setHovering(true); };
+  }, [introDone, hovering]);
+
+  const pct = active < 0 ? 0 : (active / last) * 100;
+  const pick = (i) => (mouse) => { setActive(i); setIntroDone(true); if (mouse === true) setHovering(true); };
 
   return (
     <div className="mt-24">
@@ -1656,7 +1738,7 @@ function WorkProcess() {
           <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
             <Terminal className="h-4 w-4 text-crimson" /> WORK PROCESS
           </div>
-          <h3 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-white md:text-4xl [text-wrap:balance]">
+          <h3 className="mt-4 max-w-2xl text-2xl font-semibold tracking-tight text-white sm:text-3xl md:text-4xl [text-wrap:balance]">
             How I take a project from idea to release.
           </h3>
         </div>
@@ -1665,77 +1747,43 @@ function WorkProcess() {
         </p>
       </div>
 
-      <div aria-hidden className="relative mt-10 hidden grid-cols-4 xl:grid">
-        <div className="absolute left-[12.5%] right-[12.5%] top-1/2 h-px -translate-y-1/2 bg-white/10">
-          <div className="h-full origin-left bg-gradient-to-r from-crimson to-crimson/40 transition-transform duration-700 ease-out"
-            style={{ transform: `scaleX(${active / (PROCESS.length - 1)})` }} />
-        </div>
-        {PROCESS.map((s, i) => {
-          const Icon = PROCESS_ICON[i];
-          const on = i === active;
-          const done = i < active;
-          return (
-            <div key={s.n} className="relative flex flex-col items-center gap-2">
-              <span className={`flex h-12 w-12 items-center justify-center rounded-full border transition duration-500 ${on ? 'anim-glow scale-110 border-crimson bg-crimson text-white' : done ? 'border-crimson/70 bg-obsidian text-crimson' : 'border-white/15 bg-obsidian text-mute'}`}>
-                <Icon className="h-5 w-5" />
-              </span>
-              <span className={`absolute top-full mt-2 font-mono text-[10px] tracking-[0.25em] transition-colors ${on ? 'text-crimson' : 'text-mute/50'}`}>{s.phase}</span>
+      <div ref={ref} data-no-reveal>
+        {/* horizontal timeline (desktop) */}
+        <div aria-hidden className="relative mt-10 hidden grid-cols-4 xl:grid">
+          <div className="absolute left-[12.5%] right-[12.5%] top-6 h-px bg-white/10">
+            <div className="relative h-full overflow-hidden bg-gradient-to-r from-crimson to-crimson/60 transition-[width] duration-[600ms] ease-out" style={{ width: `${pct}%` }}>
+              <span className="anim-sweep absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white to-transparent" />
             </div>
-          );
-        })}
-      </div>
-
-      <ol className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:mt-14 xl:grid-cols-4" onMouseLeave={() => setHovering(false)}>
-        {PROCESS.map((s, i) => {
-          const Icon = PROCESS_ICON[i];
-          const on = i === active;
-          return (
-            <li key={s.n} onMouseEnter={() => pick(i)} onFocus={() => pick(i)} tabIndex={0}
-              className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border p-6 transition duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-crimson ${on ? '-translate-y-1 border-crimson/50 bg-white/[0.06] shadow-[0_24px_70px_-30px_rgba(220,38,38,0.7)]' : 'border-white/10 bg-white/[0.03]'} motion-reduce:transform-none`}>
-              <span aria-hidden className={`absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-crimson to-transparent transition-transform duration-700 ${on ? 'scale-x-100' : 'scale-x-0'}`} />
-              <div className="flex items-start justify-between">
-                <span className={`process-num font-display text-6xl leading-none transition-colors duration-500 ${on ? 'is-on' : ''}`}>{s.n}</span>
-                <span className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-500 ${on ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute/60'}`}>
-                  <Icon className="h-4 w-4" />
+            {active >= 0 && (
+              <span className="absolute top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white shadow-[0_0_12px_3px_rgba(220,38,38,0.95),0_0_32px_8px_rgba(220,38,38,0.55)] transition-[left] duration-[600ms] ease-out"
+                style={{ left: `${pct}%` }} />
+            )}
+          </div>
+          {PROCESS.map((s, i) => {
+            const Icon = PROCESS_ICON[i];
+            const on = i === active;
+            const done = i < active;
+            return (
+              <div key={s.n} className={`relative flex flex-col items-center gap-2 ${seen ? 'anim-cardpop' : 'opacity-0'}`} style={{ animationDelay: `${i * 180}ms` }}>
+                <span className={`relative flex h-12 w-12 items-center justify-center rounded-full border transition duration-500 ${on ? 'anim-glow scale-110 border-crimson bg-crimson text-white' : done ? 'border-crimson/70 bg-obsidian text-crimson' : 'border-white/15 bg-obsidian text-mute'}`}>
+                  <Icon className="h-5 w-5" />
                 </span>
+                <span className={`font-mono text-[10px] tracking-[0.25em] transition-colors ${on ? 'text-crimson' : done ? 'text-white/60' : 'text-mute/50'}`}>{s.phase}</span>
               </div>
-              <div className="mt-6 font-mono text-[10px] tracking-[0.25em] text-crimson">{s.phase}</div>
-              <h4 className="mt-1 text-xl font-semibold text-white">{s.t}</h4>
-              <p className="mt-3 text-sm leading-relaxed">{s.d}</p>
+            );
+          })}
+        </div>
 
-              <ul className="mt-5 space-y-1.5">
-                {s.does.map((d) => (
-                  <li key={d} className="flex items-center gap-2 text-sm text-white/90">
-                    <Check className={`h-3.5 w-3.5 shrink-0 transition-colors ${on ? 'text-crimson' : 'text-mute/50'}`} /> {d}
-                  </li>
-                ))}
-              </ul>
-
-              <div className="mt-5 flex flex-wrap gap-1.5">
-                {s.tools.map((t) => {
-                  const logo = TECH_LOGOS[LOGO_FOR[t.toLowerCase()]];
-                  return (
-                    <span key={t} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-2.5 py-1 font-mono text-[10px] text-white/80">
-                      {logo && <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3 w-3" style={{ fill: logo.hex }}><path d={logo.path} /></svg>}
-                      {t}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <div className="mt-auto pt-5">
-                <div className="rounded-xl border border-white/10 bg-black/30 p-3.5">
-                  <div className="font-mono text-[9px] tracking-[0.2em] text-mute/70">OUTPUT</div>
-                  <div className="mt-1 text-sm font-medium text-white">{s.output}</div>
-                  <p className="mt-2.5 border-t border-white/10 pt-2.5 text-[12px] leading-relaxed text-mute">
-                    <span className="font-mono text-[9px] tracking-[0.2em] text-crimson">IN PRACTICE · </span>{s.example}
-                  </p>
-                </div>
-              </div>
-            </li>
-          );
-        })}
-      </ol>
+        <ol className="relative mt-8 grid grid-cols-1 gap-4 pl-9 md:grid-cols-2 md:pl-0 xl:mt-10 xl:grid-cols-4" onPointerLeave={(e) => { if (e.pointerType === 'mouse') setHovering(false); }}>
+          {/* vertical timeline (phones) */}
+          <span aria-hidden className="absolute bottom-6 left-[11px] top-8 w-px bg-white/10 md:hidden">
+            <span className="block w-full origin-top bg-gradient-to-b from-crimson to-crimson/50 shadow-[0_0_10px_rgba(220,38,38,0.8)] transition-[height] duration-[600ms] ease-out" style={{ height: `${pct}%` }} />
+          </span>
+          {PROCESS.map((s, i) => (
+            <ProcessCard key={s.n} s={s} i={i} on={i === active} done={i < active} onPick={pick(i)} stagger={stagger} />
+          ))}
+        </ol>
+      </div>
     </div>
   );
 }
