@@ -297,6 +297,20 @@ const CREDENTIALS = {
   },
 };
 
+// Main-page summary of the per-project contributions (counts from each repo's non-merge commits).
+const CONTRIB_SUMMARY = [
+  { title: 'Bridges of Hope', badge: 'TEAM OF 4', role: 'Full-stack developer and repository owner',
+    share: [64, 216], stats: [['TEAM', '4 developers'], ['ACTIVE', 'Mar – Oct 2026'], ['WEB', '56 commits'], ['MOBILE', '21 commits']],
+    areas: [[GitBranch, 'Project foundation & role-based routing'], [Layers, 'Admin dashboard & analytics'], [Database, 'Patient, admission & discharge management'],
+      [ShieldCheck, 'Auth & security on web and mobile'], [Bell, 'Notifications & branded email'], [Server, 'Supabase migrations & Edge Functions']],
+    links: ['bridges-of-hope-web', 'bridges-of-hope-mobile'] },
+  { title: 'Rhayz Kicks', badge: 'SOLO', role: 'Solo developer — designed and built every layer',
+    share: [12, 12], stats: [['TEAM', 'Solo'], ['ACTIVE', 'Aug – Oct 2026'], ['WEB', 'React + Supabase'], ['MOBILE', 'Flutter + Laravel']],
+    areas: [[Database, 'Supabase schema & storefront'], [Layers, 'Back office, inventory & POS'], [ShieldCheck, 'Checkout, loyalty & vouchers'],
+      [Smartphone, 'Flutter app & Laravel API'], [Bell, 'Delivery tracking on web and mobile'], [PenTool, 'CMS & admin UI redesign']],
+    links: ['rhayz-kicks-web', 'rhayz-kicks-mobile'] },
+];
+
 const MILESTONES = [
   { when: 'SEP 2025', title: 'Certified IT Specialist — Databases', note: 'Certiport · scored 914 / 1000', open: 'cert' },
   { when: 'A.Y. 2025–26 · 3RD TERM', title: 'Dean’s List, Second Honor', note: 'Rank 6 · BSIT – Mobile & Web Applications', open: 'deans' },
@@ -943,6 +957,91 @@ function Capabilities() {
   );
 }
 
+function ContribPanel({ c }) {
+  const [ref, seen] = useSeen(0.25);
+  const pct = Math.round((c.share[0] / c.share[1]) * 100);
+  const team = c.share[1] - c.share[0];
+  return (
+    <article ref={ref} className="group relative flex min-w-0 flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.015] p-6 transition duration-500 hover:border-crimson/40 hover:shadow-[0_30px_90px_-40px_rgba(220,38,38,0.6)] md:p-8">
+      <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-crimson/15 opacity-60 blur-[90px] transition-opacity duration-500 group-hover:opacity-100" />
+      <div className="relative flex items-start justify-between gap-6">
+        <div className="min-w-0">
+          <div className="font-mono text-[10px] tracking-[0.25em] text-crimson">{c.badge}</div>
+          <h4 className="mt-2 text-3xl font-semibold tracking-tight text-white">{c.title}</h4>
+          <p className="mt-1 text-sm">{c.role}</p>
+        </div>
+        <div className="shrink-0 text-right">
+          <div className="font-display text-6xl leading-none text-white tabular-nums">{pct}<span className="text-crimson">%</span></div>
+          <div className="mt-1 font-mono text-[10px] tracking-[0.2em] text-mute/70">OF COMMITS</div>
+        </div>
+      </div>
+
+      <div className="relative mt-6">
+        <div className="flex h-2 overflow-hidden rounded-full bg-white/10">
+          <div className={`h-full origin-left rounded-full bg-gradient-to-r from-crimson to-[#ff6b6b] shadow-[0_0_14px_rgba(220,38,38,0.7)] ${seen ? 'anim-grow' : ''}`} style={{ width: `${pct}%` }} />
+        </div>
+        <div className="mt-2 flex justify-between font-mono text-[10px] tracking-[0.15em] text-mute/70">
+          <span><span className="text-crimson">●</span> ME · {c.share[0]}</span>
+          <span>{team > 0 ? `TEAMMATES · ${team}` : 'ALL COMMITS ARE MINE'}</span>
+        </div>
+      </div>
+
+      <dl className="relative mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 font-mono sm:grid-cols-4">
+        {c.stats.map(([k, v]) => (
+          <div key={k} className="min-w-0 bg-[#0e0f11] p-3">
+            <dt className="text-[9px] tracking-[0.2em] text-mute/70">{k}</dt>
+            <dd className="mt-1 truncate text-[12px] text-white">{v}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <ul className="relative mt-6 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {c.areas.map(([Icon, label], i) => (
+          <li key={label} style={{ animationDelay: `${i * 80}ms` }}
+            className={`flex min-w-0 items-center gap-3 rounded-xl border border-white/10 bg-black/30 p-3 transition duration-300 hover:-translate-x-0.5 hover:border-crimson/50 motion-reduce:transform-none ${seen ? 'anim-rise' : ''}`}>
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-crimson/15 text-crimson"><Icon className="h-4 w-4" /></span>
+            <span className="text-sm text-white/90">{label}</span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="relative mt-auto flex flex-wrap gap-x-6 gap-y-2 pt-6 font-mono text-[11px] tracking-[0.15em]">
+        {c.links.map((slug) => {
+          const p = PROJECTS.find((x) => x.slug === slug);
+          return (
+            <a key={slug} href={`#${slug}`} className="group/l inline-flex items-center gap-1.5 text-white transition-colors hover:text-crimson">
+              {p.sub.toUpperCase()} <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover/l:-translate-y-0.5 group-hover/l:translate-x-0.5" />
+            </a>
+          );
+        })}
+      </div>
+    </article>
+  );
+}
+
+function ContribSummary() {
+  return (
+    <div className="mt-20">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div className="min-w-0">
+          <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
+            <GitCommitHorizontal className="h-4 w-4 text-crimson" /> WHERE I&apos;VE CONTRIBUTED
+          </div>
+          <h3 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-white md:text-4xl [text-wrap:balance]">
+            My part in each system, measured by my commits.
+          </h3>
+        </div>
+        <p className="max-w-md text-sm leading-relaxed">
+          Counted from each repository&apos;s history. Bridges of Hope was built by a team of four; I built Rhayz Kicks on my own.
+        </p>
+      </div>
+      <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
+        {CONTRIB_SUMMARY.map((c) => <ContribPanel key={c.title} c={c} />)}
+      </div>
+    </div>
+  );
+}
+
 function Work() {
   return (
     <section id="work" className="scroll-mt-24 py-24 md:py-32">
@@ -951,6 +1050,7 @@ function Work() {
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-6">
           {PROJECTS.map((p) => <ProjectCard key={p.id} p={p} />)}
         </div>
+        <ContribSummary />
       </div>
     </section>
   );
@@ -1708,9 +1808,21 @@ function ProjectPage({ p }) {
   );
 }
 
+const clearHash = () => window.history.replaceState(null, '', window.location.pathname + window.location.search);
+
 export default function Portfolio() {
-  const [route, setRoute] = useState(() => window.location.hash.slice(1));
+  // Only project pages survive a reload; a leftover section anchor (#work, #contact…) starts back at the introduction.
+  const [route, setRoute] = useState(() => {
+    const h = window.location.hash.slice(1);
+    if (h && !PROJECTS.some((p) => p.slug === h)) {
+      clearHash();
+      return '';
+    }
+    return h;
+  });
+  const wasProject = useRef(false);
   useEffect(() => {
+    if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
     const onHash = () => setRoute(window.location.hash.slice(1));
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
@@ -1719,8 +1831,18 @@ export default function Portfolio() {
 
   useEffect(() => {
     document.title = project ? `${project.title} — ${project.sub} · Dwight Angelo Decena` : 'Dwight Angelo Decena — Portfolio';
-    if (project) window.scrollTo(0, 0);
-    else if (route) document.getElementById(route)?.scrollIntoView();
+    if (project) {
+      window.scrollTo(0, 0);
+    } else if (route) {
+      document.getElementById(route)?.scrollIntoView();
+      clearHash();
+    } else if (wasProject.current) {
+      // Browser Back from a project page lands on the work grid, not the top.
+      document.getElementById('work')?.scrollIntoView();
+    } else {
+      window.scrollTo(0, 0);
+    }
+    wasProject.current = Boolean(project);
   }, [project, route]);
 
   if (project) return <ProjectPage p={project} />;
