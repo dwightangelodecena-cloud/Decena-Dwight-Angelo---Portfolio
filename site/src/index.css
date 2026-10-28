@@ -78,3 +78,15 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @keyframes shimmer { from { background-position: 100% 0; } to { background-position: 0% 0; } }
 .anim-shimmer { animation: shimmer 4.5s ease-in-out infinite; }
 .social:hover, .social:focus-visible { background-color: var(--brand); border-color: var(--brand); box-shadow: 0 18px 44px -16px var(--brand); }
+
+/* backdrop + ribbons */
+.anim-scroll { animation: marquee var(--dur, 80s) linear infinite; }
+.anim-scroll-rev { animation: marquee var(--dur, 80s) linear infinite reverse; }
+.text-outline { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.045); }
+.text-outline-strong { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.35); }
+.text-outline-hero { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.09); }
+.bg-dots { background-image: radial-gradient(rgba(255,255,255,0.07) 1px, transparent 1.2px); background-size: 28px 28px; mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 85%); -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 85%); }
+@keyframes wander { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(90px, -60px); } 66% { transform: translate(-40px, 70px); } }
+.anim-wander { animation: wander 24s ease-in-out infinite; }
+@keyframes scrollcue { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+.anim-scrollcue { animation: scrollcue 1.8s cubic-bezier(.6,0,.4,1) infinite; }
