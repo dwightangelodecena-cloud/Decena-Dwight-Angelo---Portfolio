@@ -2986,9 +2986,52 @@ function ChatWidget() {
   );
 }
 
-// Replays an entrance every time a block scrolls into view: it rises from below when
-// scrolling down and drops in from above when scrolling up. Uses the Web Animations API
-// with the standalone `translate` property, so it never fights a block's own transforms or transitions.
+// Scroll choreography. Each kind of block gets its own entrance the first time it
+// appears (headings wipe up, cards slide in from their side of the grid, media opens
+// like a curtain, figures settle in), then only a short, quiet fade when it comes back
+// into view, following the scroll direction. Uses the Web Animations API with the
+// standalone `translate`/`scale` properties so it never fights a block's own transforms.
+const EASE_OUT = 'cubic-bezier(.16,1,.3,1)';
+
+function revealKind(el) {
+  if (/^H[1-3]$/.test(el.tagName)) return 'title';
+  if (el.tagName === 'P') return 'text';
+  if (el.matches('img, picture, video, figure') || el.querySelector(':scope > img, :scope > div > img')) return 'media';
+  if (el.offsetHeight < 120 && /\d/.test(el.textContent || '') && (el.textContent || '').trim().length < 40) return 'figure';
+  return 'block';
+}
+
+function entrance(el, kind, dir, order, col) {
+  const y = (px) => `0 ${dir * px}px`;
+  const delay = order * 90;
+  switch (kind) {
+    case 'title':
+      return [[
+        { opacity: 0, translate: y(28), clipPath: 'inset(100% 0 0 0)' },
+        { opacity: 1, translate: '0 0', clipPath: 'inset(0% 0 0 0)' },
+      ], { duration: 1100, delay, easing: EASE_OUT }];
+    case 'text':
+      return [[{ opacity: 0, translate: y(18) }, { opacity: 1, translate: '0 0' }], { duration: 900, delay: delay + 120, easing: EASE_OUT }];
+    case 'media':
+      return [[
+        { opacity: 0.2, clipPath: 'inset(12% 12% 12% 12%)', scale: '1.04' },
+        { opacity: 1, clipPath: 'inset(0% 0% 0% 0%)', scale: '1' },
+      ], { duration: 1200, delay, easing: EASE_OUT }];
+    case 'figure':
+      return [[{ opacity: 0, scale: '0.85' }, { opacity: 1, scale: '1' }], { duration: 800, delay, easing: 'cubic-bezier(.34,1.56,.64,1)' }];
+    case 'card': {
+      // Cards travel in from the side of the grid they sit on; centre cards rise.
+      const from = col < 0 ? { opacity: 0, translate: '-36px 0' } : col > 0 ? { opacity: 0, translate: '36px 0' } : { opacity: 0, translate: y(36), scale: '0.97' };
+      const to = { opacity: 1, translate: '0 0', ...(from.scale ? { scale: '1' } : {}) };
+      return [[from, to], { duration: 1000, delay, easing: EASE_OUT }];
+    }
+    case 'ribbon':
+      return [[{ opacity: 0, translate: `${dir * -120}px 0` }, { opacity: 1, translate: '0 0' }], { duration: 1300, easing: EASE_OUT }];
+    default:
+      return [[{ opacity: 0, translate: y(24) }, { opacity: 1, translate: '0 0' }], { duration: 950, delay, easing: EASE_OUT }];
+  }
+}
+
 function useScrollReveal(key) {
   useEffect(() => {
     if (!('IntersectionObserver' in window) || !Element.prototype.animate) return undefined;
@@ -3010,45 +3053,71 @@ function useScrollReveal(key) {
       const cs = getComputedStyle(el);
       return cs.position === 'absolute' || cs.position === 'fixed' || cs.display === 'none' || el.offsetHeight === 0;
     };
-    const items = new Map(); // element -> { i, kind }
+
+    const items = new Map(); // element -> { kind, order, grid }
+    const add = (el, kind, order = 0, grid = null) => items.set(el, { kind: kind || revealKind(el), order, grid });
+    const cardLike = (el) => /\b(rounded-(?:xl|2xl|3xl)|border)\b/.test(typeof el.className === 'string' ? el.className : '');
+    const intro = (el, kids) => el.querySelector(':scope > h2, :scope > h3, :scope > div > h2') && kids.length > 1 && kids.length <= 5;
     const walk = (box, depth) => {
       [...box.children].forEach((el) => {
         if (skip(el)) return;
         const cs = getComputedStyle(el);
-        const many = el.children.length > 1;
-        if ((cs.display === 'grid' || (cs.display === 'flex' && cs.flexWrap === 'wrap')) && many && depth < 4) {
-          [...el.children].forEach((c, i) => { if (!skip(c)) items.set(c, { i, kind: 'card' }); });
+        const kids = [...el.children].filter((c) => !skip(c));
+        const isGrid = (cs.display === 'grid' || (cs.display === 'flex' && cs.flexWrap === 'wrap')) && kids.length > 1;
+        if (isGrid && depth < 4) {
+          kids.forEach((c, i) => {
+            const ck = [...c.children].filter((x) => !skip(x));
+            if (cardLike(c)) add(c, 'card', i, el);
+            else if (intro(c, ck)) ck.forEach((x, j) => add(x, null, j));
+            else if (c.offsetHeight > tall) walk(c, depth + 1);
+            else add(c, null, i);
+          });
         } else if (el.offsetHeight > tall && depth < 4) {
           walk(el, depth + 1);
+        } else if (intro(el, kids)) {
+          kids.forEach((c, i) => add(c, null, i)); // section intro: label, heading, copy in sequence
         } else {
-          items.set(el, { i: 0, kind: /^H[12]$/.test(el.tagName) || el.querySelector(':scope > h2') ? 'title' : 'block' });
+          add(el);
         }
       });
     };
     const units = [...document.querySelectorAll('main > section, #contact')];
     if (units.length) units.forEach((u) => walk(u.querySelector(':scope > .mx-auto') || u, 0));
     else document.querySelectorAll('main').forEach((m) => walk(m, 0));
-    document.querySelectorAll('main > [data-ribbon]').forEach((el) => items.set(el, { i: 0, kind: 'ribbon' }));
+    document.querySelectorAll('main > [data-ribbon]').forEach((el) => add(el, 'ribbon'));
 
-    const play = (el, { i, kind }) => {
-      const d = dir * (kind === 'card' ? 46 : 60);
-      const from = { opacity: 0, translate: `0 ${d}px` };
-      if (kind === 'card') from.scale = '0.96';
-      if (kind === 'title' || (kind === 'block' && el.offsetHeight < 360)) from.filter = 'blur(8px)';
-      if (kind === 'ribbon') { from.translate = `${dir * -80}px 0`; from.scale = '1.04'; }
-      const to = { opacity: 1, translate: '0 0', scale: '1', filter: 'blur(0px)' };
-      Object.keys(to).forEach((k) => { if (!(k in from)) delete to[k]; });
-      el.animate([from, to], { duration: kind === 'ribbon' ? 1100 : 850, delay: (i % 6) * 80, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' });
+    const played = new WeakSet();
+    const visible = new WeakSet();
+    const play = (el) => {
+      const it = items.get(el);
+      if (!played.has(el)) {
+        played.add(el);
+        let order = it.order;
+        let col = 0;
+        if (it.kind === 'card' && it.grid) {
+          // Stagger by on-screen position (row, then column) instead of DOM order.
+          const g = it.grid.getBoundingClientRect();
+          const r = el.getBoundingClientRect();
+          const third = (r.left + r.width / 2 - g.left) / g.width;
+          col = g.width > 700 && r.width < g.width * 0.6 ? (third < 0.34 ? -1 : third > 0.66 ? 1 : 0) : 0;
+          const rowIndex = Math.max(0, Math.round((r.top - g.top) / Math.max(r.height, 1)));
+          order = Math.min(6, Math.round(third * 3) + rowIndex);
+        }
+        const [frames, opts] = entrance(el, it.kind, dir, order, col);
+        el.animate(frames, { ...opts, fill: 'backwards' });
+      } else {
+        // Coming back into view: a brief, quiet settle rather than the full entrance again.
+        el.animate([{ opacity: 0.35, translate: `0 ${dir * 10}px` }, { opacity: 1, translate: '0 0' }], { duration: 480, easing: EASE_OUT });
+      }
     };
 
-    const shown = new WeakSet();
     const io = new IntersectionObserver((entries) => entries.forEach((e) => {
       if (e.isIntersecting) {
-        if (!shown.has(e.target)) { shown.add(e.target); play(e.target, items.get(e.target)); }
+        if (!visible.has(e.target)) { visible.add(e.target); play(e.target); }
       } else {
-        shown.delete(e.target);
+        visible.delete(e.target);
       }
-    }), { rootMargin: '0px 0px -6% 0px' });
+    }), { rootMargin: '0px 0px -8% 0px' });
     items.forEach((_, el) => io.observe(el));
 
     return () => { io.disconnect(); window.removeEventListener('scroll', onScroll); };
