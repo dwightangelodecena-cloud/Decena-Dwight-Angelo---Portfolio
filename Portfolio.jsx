@@ -393,7 +393,8 @@ const NAV = [
   { id: 'work', label: '03-WORK' },
   { id: 'stack', label: '04-STACK' },
   { id: 'about', label: '05-ABOUT' },
-  { id: 'info', label: '06-INFO' },
+  { id: 'journey', label: '06-JOURNEY' },
+  { id: 'info', label: '07-INFO' },
 ];
 
 const go = (id) => (e) => {
@@ -1899,7 +1900,7 @@ function ProfileCard() {
         <div className="transition-transform duration-200 ease-out [transform-style:preserve-3d]" style={{ transform: `rotateX(${t.rx}deg) rotateY(${t.ry}deg)` }}>
           <div className={`relative transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? '[transform:rotateY(180deg)]' : ''}`}>
 
-            <CardFace className="relative [backface-visibility:hidden]">
+            <CardFace className={`relative [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [transition:visibility_0s_linear_350ms] ${flipped ? 'invisible' : 'visible'}`}>
               {glare}
               <div aria-hidden className="absolute left-1/2 top-3 z-20 h-2 w-12 -translate-x-1/2 rounded-full bg-black/80 ring-1 ring-white/20" />
               <div className="shine relative h-80 overflow-hidden bg-[radial-gradient(90%_80%_at_50%_100%,rgba(220,38,38,0.55),transparent_70%)]">
@@ -1949,7 +1950,7 @@ function ProfileCard() {
               </div>
             </CardFace>
 
-            <CardFace className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+            <CardFace className={`absolute inset-0 [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [transform:rotateY(180deg)] [transition:visibility_0s_linear_350ms] ${flipped ? 'visible' : 'invisible'}`}>
               {glare}
               <div className="flex h-full flex-col">
                 <div className="relative overflow-hidden bg-crimson px-6 pb-6 pt-8">
@@ -2170,6 +2171,161 @@ function About() {
   );
 }
 
+/* ---------- academic journey ---------- */
+
+// Only facts from the CV and the site: no invented dates or schools before NU.
+const JOURNEY = [
+  {
+    when: 'AUG 2023', big: '2023', tag: 'ENROLLED', icon: GraduationCap,
+    title: 'Started BS Information Technology', place: 'National University Dasmariñas',
+    text: 'Majoring in Mobile and Web Application Development (BSIT-MWA) at NU Dasmariñas, Sampaloc 1, Dasmariñas, Cavite.',
+  },
+  {
+    when: 'CORE COURSEWORK', big: 'CORE', tag: 'FOUNDATIONS', icon: Layers,
+    title: 'Building the foundations', place: 'Software engineering · databases · mobile & web',
+    text: 'The coursework behind every system on this site.',
+    chips: ['SDLC & Agile/Scrum', 'UML & system design', 'Relational design & 3NF', 'SQL optimization', 'React Native & Flutter', 'REST APIs & Supabase'],
+  },
+  {
+    when: 'SEP 18, 2025', big: '2025', tag: 'CERTIFIED', icon: BadgeCheck,
+    title: 'IT Specialist — Databases', place: 'Certiport · Pearson VUE',
+    text: 'Passed with 914 / 1000. The credential is valid until September 2030.',
+  },
+  {
+    when: 'CAPSTONE', big: 'TEAM', tag: 'TEAM OF 4', icon: Users,
+    title: 'Bridges of Hope', place: 'Capstone project · lead web & backend developer',
+    text: 'A case-management system for an inpatient recovery facility: a web portal for staff, a mobile app for families and a Supabase backend.',
+    link: { href: '#bridges-of-hope-web', label: 'VIEW PROJECT' },
+  },
+  {
+    when: 'A.Y. 2025–26 · 3RD TERM', big: 'DL', tag: 'SECOND HONOR', icon: Award,
+    title: 'Dean’s List', place: 'Rank 6 · BSIT-MWA',
+    text: 'Second Honor for the third term of academic year 2025–2026.',
+  },
+  {
+    when: 'AUG – OCT 2026', big: '2026', tag: 'SOLO BUILD', icon: Rocket,
+    title: 'Rhayz Kicks', place: 'Applying it end to end, alone',
+    text: 'A sneaker store and retail back office: 27-table Supabase schema, React web platform, Flutter app and a Laravel REST API.',
+    link: { href: '#rhayz-kicks-web', label: 'VIEW PROJECT' },
+  },
+  {
+    when: 'NOW', big: 'NOW', tag: '4TH YEAR', icon: Briefcase, live: true,
+    title: 'OJT / internship practicum', place: 'Graduating BSIT student',
+    text: 'Enrolled in the on-the-job training practicum and looking for a paid OJT or internship with a path to full-time work after graduation.',
+  },
+];
+
+function JourneyItem({ j, i, lit }) {
+  const [ref, seen] = useSeen(0.25);
+  const left = i % 2 === 0;
+  const Icon = j.icon;
+  return (
+    <li ref={ref} className="relative grid grid-cols-1 pl-12 md:grid-cols-2 md:gap-x-20 md:pl-0">
+      {/* node on the line */}
+      <span data-node aria-hidden
+        className={`absolute left-[7px] top-7 z-10 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 transition duration-500 md:left-1/2 md:-translate-x-1/2 ${lit ? 'border-crimson bg-crimson shadow-[0_0_0_6px_rgba(220,38,38,0.15),0_0_22px_rgba(220,38,38,0.9)]' : 'border-white/25 bg-obsidian'}`}>
+        {j.live && lit && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-crimson opacity-60 motion-reduce:animate-none" />}
+      </span>
+
+      {/* big label on the opposite side (desktop) */}
+      <div aria-hidden className={`hidden items-start md:flex ${left ? 'md:order-2 md:justify-start' : 'md:order-1 md:justify-end'}`}>
+        <span className={`process-num pt-2 font-display text-7xl leading-none transition-colors duration-500 ${lit ? 'is-on' : ''} ${seen ? 'anim-numwipe' : 'opacity-0'}`} style={{ animationDelay: '150ms' }}>
+          {j.big}
+        </span>
+      </div>
+
+      <article className={`group relative min-w-0 rounded-2xl border bg-white/[0.03] p-5 transition-[border-color,background-color,box-shadow] duration-500 hover:border-crimson/50 hover:bg-white/[0.05] sm:p-6 ${lit ? 'border-white/15' : 'border-white/10'} ${left ? 'md:order-1' : 'md:order-2'} ${seen ? (left ? 'anim-slide-l' : 'anim-slide-r') : 'opacity-0'}`}>
+        <span aria-hidden className={`absolute top-8 hidden h-px w-10 bg-gradient-to-r md:block ${left ? '-right-10 from-white/15 to-crimson/60' : '-left-10 from-crimson/60 to-white/15'}`} />
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="font-mono text-[10px] tracking-[0.22em] text-crimson">{j.when}</div>
+            <h3 className="mt-2 text-xl font-semibold text-white sm:text-2xl">{j.title}</h3>
+            <div className="mt-1 text-sm text-white/70">{j.place}</div>
+          </div>
+          <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border transition duration-500 group-hover:-rotate-6 ${lit ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute'}`}>
+            <Icon className="h-5 w-5" />
+          </span>
+        </div>
+        <p className="mt-4 text-sm leading-relaxed">{j.text}</p>
+        {j.chips && (
+          <div className="mt-4 flex flex-wrap gap-1.5">
+            {j.chips.map((c, k) => (
+              <span key={c} className={`rounded-full border border-white/10 bg-black/30 px-2.5 py-1 font-mono text-[10px] text-white/80 ${seen ? 'anim-rise' : 'opacity-0'}`} style={{ animationDelay: `${350 + k * 70}ms` }}>{c}</span>
+            ))}
+          </div>
+        )}
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <span className="rounded-full border border-white/10 px-2.5 py-1 font-mono text-[9px] tracking-[0.2em] text-mute">{j.tag}</span>
+          {j.link && (
+            <a href={j.link.href} className="group/link inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.2em] text-white transition hover:text-crimson">
+              {j.link.label} <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover/link:rotate-45" />
+            </a>
+          )}
+        </div>
+      </article>
+    </li>
+  );
+}
+
+function Journey() {
+  const listRef = useRef(null);
+  const fillRef = useRef(null);
+  const [reached, setReached] = useState(-1);
+
+  // The line fills as you scroll through the section; each node lights up once the line reaches it.
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const el = listRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const mark = window.innerHeight * 0.62;
+      const p = Math.min(1, Math.max(0, (mark - r.top) / r.height));
+      if (fillRef.current) fillRef.current.style.height = `${p * 100}%`;
+      let n = -1;
+      el.querySelectorAll('[data-node]').forEach((d, i) => { if (d.getBoundingClientRect().top < mark) n = i; });
+      setReached((prev) => (prev === n ? prev : n));
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); };
+  }, []);
+
+  return (
+    <section id="journey" className="relative scroll-mt-24 py-24 md:py-32">
+      <SectionEdge n="06" label="ACADEMIC JOURNEY" />
+      <div className="mx-auto max-w-[1400px] px-gutter">
+        <SectionHead index="06" label="ACADEMIC JOURNEY" ghost="JOURNEY" title="From first-year student to graduating developer." />
+
+        <div className="-mt-4 mb-14 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-4">
+          {[['PROGRAM', 'BSIT – MWA'], ['SCHOOL', 'NU Dasmariñas'], ['SINCE', 'Aug 2023'], ['STATUS', '4th year · OJT']].map(([k, v]) => (
+            <div key={k} className="min-w-0 bg-obsidian p-4 sm:p-5">
+              <div className="font-mono text-[10px] tracking-[0.2em] text-mute/70">{k}</div>
+              <div className="mt-1 truncate text-sm font-medium text-white sm:text-base">{v}</div>
+            </div>
+          ))}
+        </div>
+
+        <ol ref={listRef} data-no-reveal className="relative space-y-8 md:space-y-12">
+          <span aria-hidden className="absolute bottom-0 left-[15px] top-0 w-px bg-white/10 md:left-1/2 md:-translate-x-1/2">
+            <span ref={fillRef} className="absolute inset-x-0 top-0 block bg-gradient-to-b from-crimson/40 via-crimson to-crimson" style={{ height: 0 }}>
+              <span className="absolute -bottom-1.5 left-1/2 h-3 w-3 -translate-x-1/2 rounded-full bg-white shadow-[0_0_12px_3px_rgba(220,38,38,0.95),0_0_30px_8px_rgba(220,38,38,0.5)]" />
+            </span>
+          </span>
+          {JOURNEY.map((j, i) => <JourneyItem key={j.title} j={j} i={i} lit={i <= reached} />)}
+          <li className="relative pl-12 md:pl-0 md:text-center">
+            <span aria-hidden className="absolute left-[9px] top-1 h-3.5 w-3.5 rotate-45 border border-dashed border-crimson/70 md:left-1/2 md:-translate-x-1/2" />
+            <div className="pt-0.5 font-mono text-[10px] tracking-[0.25em] text-mute md:pt-8">UP NEXT — GRADUATION &amp; A PAID OJT / INTERNSHIP</div>
+          </li>
+        </ol>
+      </div>
+    </section>
+  );
+}
+
 function Info() {
   const [open, setOpen] = useState(null);
   const close = React.useCallback(() => setOpen(null), []);
@@ -2177,9 +2333,9 @@ function Info() {
   const deans = CREDENTIALS.deans;
   return (
     <section id="info" className="relative scroll-mt-24 py-24 md:py-32">
-      <SectionEdge n="06" label="INFO &amp; CREDENTIALS" />
+      <SectionEdge n="07" label="INFO &amp; CREDENTIALS" />
       <div className="mx-auto max-w-[1400px] px-gutter">
-        <SectionHead index="06" label="EDUCATION & CREDENTIALS" ghost="INFO" title="Trained in mobile and web application development." />
+        <SectionHead index="07" label="EDUCATION & CREDENTIALS" ghost="INFO" title="Trained in mobile and web application development." />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
 
           <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-500 hover:border-crimson/40 md:p-8 lg:col-span-7">
@@ -2334,12 +2490,12 @@ function Contact() {
   const tile = 'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] text-crimson transition duration-300 group-hover:-rotate-6 group-hover:border-crimson group-hover:bg-crimson group-hover:text-white motion-reduce:transform-none';
   return (
     <footer id="contact" className="relative scroll-mt-24 overflow-hidden pt-24 md:pt-32">
-      <SectionEdge n="07" label="CONTACT" />
+      <SectionEdge n="08" label="CONTACT" />
       <div aria-hidden className="anim-drift pointer-events-none absolute left-1/2 top-0 h-[420px] w-[820px] max-w-full rounded-full bg-crimson/15 blur-[120px]" />
       <div ref={ref} className="relative mx-auto max-w-[1400px] px-gutter">
         <span aria-hidden className={`pointer-events-none absolute right-8 top-6 hidden select-none font-display text-[clamp(6rem,16vw,15rem)] leading-none text-white/[0.04] md:block ${seen ? 'anim-rise' : 'opacity-0'}`} style={{ animationDelay: '300ms' }}>HELLO</span>
         <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-crimson">
-          07 — CONTACT <span className={`h-px w-16 origin-left bg-crimson/60 ${seen ? 'anim-grow' : 'scale-x-0'}`} />
+          08 — CONTACT <span className={`h-px w-16 origin-left bg-crimson/60 ${seen ? 'anim-grow' : 'scale-x-0'}`} />
         </div>
         <h2 className="mt-5 font-display text-[clamp(2.6rem,6.6vw,6.25rem)] leading-[0.9] text-white" aria-label="Let's create something extraordinary">
           {lines.map(([t, accent], i) => (
@@ -3112,6 +3268,7 @@ function Home() {
         <RoleRibbon />
         <Stack />
         <About />
+        <Journey />
         <Info />
         <RoleRibbon />
       </main>
