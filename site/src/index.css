@@ -58,3 +58,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .shine::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.28) 50%, transparent 65%); transform: translateX(-120%); animation: shine 5s ease-in-out infinite; }
 @keyframes shine { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
 @media (prefers-reduced-motion: reduce) { .shine::after { display: none; } }
+
+/* contributions */
+@keyframes grow { from { transform: scaleX(0); } }
+.anim-grow { animation: grow 1.6s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(16px); } }
+.anim-rise { animation: rise .6s cubic-bezier(.2,.8,.2,1) backwards; }

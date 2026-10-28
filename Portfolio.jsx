@@ -3,6 +3,7 @@ import {
   ArrowUpRight, Mail, Phone, MapPin, Copy, Check, GraduationCap,
   BadgeCheck, Smartphone, Globe, Server, Wrench, Layers, PenTool, Terminal,
   Code, Database, Bell, MousePointer2, GitBranch, Rocket, Award, X, ShieldCheck, Maximize2,
+  Sparkles, Users, GitCommitHorizontal,
 } from 'lucide-react';
 
 /* Dwight Angelo Decena — Portfolio
@@ -35,6 +36,21 @@ const PROJECTS = [
     span: 'lg:col-span-4', mono: 'BOH',
     image: '/projects/boh-web.webp', shot: 'web',
     slug: 'bridges-of-hope-web',
+    contrib: {
+      badge: 'TEAM OF 4', role: 'Full-stack developer and repository owner',
+      stats: [['TEAM', '4 developers'], ['MY COMMITS', '64 of 216'], ['ACTIVE', 'Mar – Oct 2026'], ['ON THIS APP', '56 commits']],
+      share: [64, 216],
+      areas: [
+        [GitBranch, 'Project foundation', 'Set up the web/mobile repository structure and role-based routing for admin, nurse, program staff and family accounts.', 'RoleGuard.jsx · App.jsx'],
+        [Layers, 'Admin dashboard & analytics', 'Built the analytics dashboard, then redesigned it with inline admissions and possible-discharge reports and a ward capacity fix.', 'admin-dashboard.jsx · AdminAnalyticsSection.jsx'],
+        [Database, 'Patient & admission management', 'Worked across the patient database, admission and discharge management, appointments, and staff and user management.', 'patient-database.jsx · admission-management.jsx'],
+        [ShieldCheck, 'Auth & security', 'OAuth sign-in, remember-me, password policy, presence tracking, auth email redirects, and an admin idle lock that persists across tabs.', 'login.jsx · auth-callback.jsx'],
+        [Bell, 'Notifications & email', 'Notification categories with staff broadcast and targeted sends, per-user family notifications, branded email templates and SMTP welcome emails.', 'supabase/functions · migrations'],
+        [Sparkles, 'AI features', 'Groq-powered hospital referral scanning and AI patient reports for admins.', 'src/lib'],
+        [Server, 'Supabase backend', 'Wrote migrations and Edge Functions, including signup profile triggers and staff onboarding.', '23 commits to supabase/'],
+        [Rocket, 'Capstone revision & quality', 'Intelligent staff assignment, continuity of care and daily reports, plus lint fixes for the CI build and README, PRD and architecture docs.', 'docs/ · CI'],
+      ],
+    },
     details: {
       tagline: 'Case-management portal for an inpatient recovery facility.',
       overview: 'Bridges of Hope is the staff side of a case-management system built for Kalinga, a private inpatient recovery facility. Admins, nurses and program staff use it to run admissions, follow patients through care and discharge, manage wards and report on progress. It also powers the facility’s public website through a built-in CMS.',
@@ -70,6 +86,19 @@ const PROJECTS = [
     span: 'lg:col-span-2', mono: 'BOH',
     image: '/projects/boh-mobile.webp', shot: 'phone',
     slug: 'bridges-of-hope-mobile',
+    contrib: {
+      badge: 'TEAM OF 4', role: 'Full-stack developer and repository owner',
+      stats: [['TEAM', '4 developers'], ['MY COMMITS', '64 of 216'], ['ACTIVE', 'Mar – Oct 2026'], ['ON THIS APP', '21 commits']],
+      share: [64, 216],
+      areas: [
+        [ShieldCheck, 'Sign-in & onboarding', 'Login, signup, verification, forgot and new password screens, and a fix for signup confirmation emails redirecting to localhost.', 'login.tsx · signup.tsx · verification.tsx'],
+        [Smartphone, 'Family tabs', 'Home, reports, progress, patient details, appointments and the admission form for families.', 'app/tabs/home.tsx · AdmissionForm.tsx'],
+        [GitBranch, 'Web–mobile parity', 'Kept the app in sync with the web portal: family portal, messaging, appointments, avatars, and the facility’s requested revisions.', 'components/family'],
+        [Bell, 'Visits & appointments', 'Visitation sync after Supabase deletes, with hardened crash handling around appointments.', 'visitationAppointmentsMobile.ts'],
+        [Wrench, 'Stability fixes', 'Fixed keyboard flicker, an upload crash, calendar overflow and the admission-appointment flow.', 'app/tabs'],
+        [Layers, 'Discharge visibility', 'Showed temporary discharge notes and reports on resident details, on both web and mobile.', 'patient-details.tsx'],
+      ],
+    },
     details: {
       tagline: 'Family companion app for the Bridges of Hope recovery facility.',
       overview: 'Families of patients use this app to request admission, follow their loved one’s progress and stay in touch with staff. It runs on the same Supabase backend as the web portal, so updates from nurses and program staff reach families through push notifications.',
@@ -103,6 +132,18 @@ const PROJECTS = [
     span: 'lg:col-span-2', mono: 'RK',
     image: '/projects/rk-mobile.webp', shot: 'phone', bezel: true,
     slug: 'rhayz-kicks-mobile',
+    contrib: {
+      badge: 'SOLO', role: 'Solo developer — designed and built every layer',
+      stats: [['TEAM', 'Solo'], ['MY COMMITS', '12 of 12'], ['ACTIVE', 'Aug – Oct 2026'], ['STACK', 'Flutter + Laravel']],
+      share: [12, 12],
+      areas: [
+        [Smartphone, 'Flutter app from scratch', 'Built the customer app alongside the web store and the Supabase schema in the first commit.', 'lib/screens'],
+        [Server, 'Laravel API layer', 'Added a Laravel API for products, then extended it to cart and wishlist and fixed numeric JSON casting.', 'laravel-api/routes/api.php'],
+        [GitBranch, 'Realtime cart & wishlist', 'Cart and wishlist changes sync in real time through Supabase.', 'store_repository.dart'],
+        [Layers, 'Order tracking', 'Delivery-stage tracking for online orders, shared with the web admin.', 'orders screen'],
+        [Sparkles, 'Video ads & storefront', 'Part 1 and Part 2 video ads, multi-category products and product card sizing.', 'video_player'],
+      ],
+    },
     details: {
       tagline: 'Flutter shopping app for a sneaker and apparel store.',
       overview: 'The customer app for Rhayz Kicks. Shoppers browse new drops by category and collection, save items to a wishlist, manage a cart and follow their orders through each delivery stage. Loyalty points and rewards are shared with the web store, where purchases and voucher redemption happen.',
@@ -136,6 +177,19 @@ const PROJECTS = [
     span: 'lg:col-span-4', mono: 'RK',
     image: '/projects/rk-web.webp', shot: 'web', pos: 'object-[50%_55%]',
     slug: 'rhayz-kicks-web',
+    contrib: {
+      badge: 'SOLO', role: 'Solo developer — designed and built every layer',
+      stats: [['TEAM', 'Solo'], ['MY COMMITS', '12 of 12'], ['ACTIVE', 'Aug – Oct 2026'], ['STACK', 'React + Supabase']],
+      share: [12, 12],
+      areas: [
+        [Database, 'Schema & storefront', 'Designed the Supabase schema and built the web storefront from the first commit.', 'supabase/schema.sql'],
+        [Layers, 'Store back office', 'Staff self-service, online orders, inventory, loyalty and point of sale, plus colorway stock controls.', 'src/pages/admin'],
+        [ShieldCheck, 'Checkout & payments', 'Loyalty points and vouchers at checkout, and a refund and cancellation gate before payment.', 'Edge Functions · PayMongo'],
+        [Bell, 'Orders & delivery', 'Manual delivery-stage tracking for online orders on web and mobile.', 'DeliveryStepper'],
+        [PenTool, 'CMS & admin UI', 'CMS-driven promo banner, admin edit-preview sync and a full admin UI redesign.', 'AdminCMS · AdminBanners'],
+        [Users, 'Unified sign-in', 'One sign-in flow for customers, staff and admins, with forgot-password and a Google sign-in guard.', 'AuthPage'],
+      ],
+    },
     details: {
       tagline: 'Sneaker storefront with a full store back office.',
       overview: 'Rhayz Kicks is a shoe shop management system. Customers browse drops, use cart and wishlist drawers, check out online and earn loyalty points. Staff run the store from the same app, with point of sale, inventory, purchase orders, online order delivery and staff hours.',
@@ -613,7 +667,9 @@ function ProjectCard({ p }) {
         )}
       </div>
       <div className="flex flex-1 flex-col p-5 md:p-6">
-        <div className="font-mono text-[10px] tracking-[0.2em] text-mute/70">{p.sub.toUpperCase()}</div>
+        <div className="font-mono text-[10px] tracking-[0.2em] text-mute/70">
+          {p.sub.toUpperCase()}{p.contrib && <span className="text-crimson"> · {p.contrib.badge}</span>}
+        </div>
         <h3 className="mt-1.5 text-xl font-semibold tracking-tight text-white [text-wrap:balance]">{p.title}</h3>
         <p className="mt-2 max-w-[60ch] text-sm leading-relaxed text-mute">{p.desc}</p>
         <div className="mt-5 flex flex-wrap gap-1.5">
@@ -1195,16 +1251,22 @@ function CredentialModal({ item, onClose }) {
   );
 }
 
-function ScoreRing({ score, max }) {
+// True once the element has scrolled into view; used to start one-off animations.
+function useSeen(threshold = 0.3) {
   const ref = useRef(null);
   const [seen, setSeen] = useState(false);
   useEffect(() => {
     const el = ref.current;
     if (!el || !('IntersectionObserver' in window)) return undefined;
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.4 });
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold });
     io.observe(el);
     return () => io.disconnect();
-  }, []);
+  }, [threshold]);
+  return [ref, seen];
+}
+
+function ScoreRing({ score, max }) {
+  const [ref, seen] = useSeen(0.4);
   const r = 52;
   const c = 2 * Math.PI * r;
   return (
@@ -1433,6 +1495,78 @@ function Showcase({ p }) {
   );
 }
 
+function Contributions({ p }) {
+  const c = p.contrib;
+  const [ref, seen] = useSeen(0.15);
+  const pct = Math.round((c.share[0] / c.share[1]) * 100);
+  const n = c.areas.length;
+  const cols = n % 4 === 0 ? 'lg:grid-cols-4' : 'lg:grid-cols-3';
+  const owner = p.repo ? p.repo.split('/')[3] : '';
+  return (
+    <section ref={ref} className="relative mt-12 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.015] p-6 md:p-10">
+      <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full bg-crimson/15 blur-[100px]" />
+      <div className="relative grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-end">
+        <div className="min-w-0 lg:col-span-7">
+          <div className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-crimson">
+            <GitCommitHorizontal className="h-4 w-4" /> WHERE I&apos;VE CONTRIBUTED
+          </div>
+          <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-tight text-white md:text-5xl [text-wrap:balance]">{c.role}</h2>
+        </div>
+        <div className="min-w-0 lg:col-span-5">
+          <div className="flex items-baseline justify-between font-mono">
+            <span className="text-[10px] tracking-[0.2em] text-mute/70">MY SHARE OF COMMITS</span>
+            <span className="text-3xl text-white tabular-nums">{pct}<span className="text-base text-mute">%</span></span>
+          </div>
+          <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className={`h-full origin-left rounded-full bg-gradient-to-r from-crimson to-[#ff6b6b] shadow-[0_0_14px_rgba(220,38,38,0.7)] ${seen ? 'anim-grow' : ''}`} style={{ width: `${pct}%` }} />
+          </div>
+          <div className="mt-2 font-mono text-[10px] tracking-[0.15em] text-mute/70">{c.share[0]} OF {c.share[1]} COMMITS IN THE REPOSITORY</div>
+        </div>
+      </div>
+
+      <dl className="relative mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 font-mono md:grid-cols-4">
+        {c.stats.map(([k, v]) => (
+          <div key={k} className="min-w-0 bg-[#0e0f11] p-4">
+            <dt className="text-[10px] tracking-[0.2em] text-mute/70">{k}</dt>
+            <dd className="mt-1.5 text-sm text-white">{v}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <div className={`relative mt-8 grid grid-cols-1 gap-3 md:grid-cols-2 ${cols}`}>
+        {c.areas.map(([Icon, title, desc, files], i) => (
+          <div key={title} style={{ animationDelay: `${i * 90}ms` }}
+            className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-black/30 p-5 transition duration-300 hover:-translate-y-1 hover:border-crimson/50 hover:shadow-[0_20px_50px_-25px_rgba(220,38,38,0.7)] motion-reduce:transform-none ${seen ? 'anim-rise' : ''} ${n === 5 && i === 0 ? 'lg:col-span-2' : ''}`}>
+            <span aria-hidden className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-gradient-to-r from-crimson to-transparent transition-transform duration-700 group-hover:scale-x-100" />
+            <div className="flex items-center justify-between">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-crimson/15 text-crimson transition-colors group-hover:bg-crimson group-hover:text-white">
+                <Icon className="h-5 w-5" />
+              </span>
+              <span className="font-mono text-[10px] text-mute/50 tabular-nums">{String(i + 1).padStart(2, '0')}</span>
+            </div>
+            <h3 className="mt-4 font-semibold text-white">{title}</h3>
+            <p className="mt-1.5 text-sm leading-relaxed">{desc}</p>
+            <div className="mt-auto pt-4">
+              <span className="inline-flex max-w-full items-center gap-1.5 truncate rounded-md border border-white/10 bg-white/[0.03] px-2 py-1 font-mono text-[10px] text-mute">
+                <Code className="h-3 w-3 shrink-0 text-crimson" /> <span className="truncate">{files}</span>
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {p.repo && (
+        <div className="relative mt-8 flex flex-col gap-2 border-t border-white/10 pt-6 font-mono text-[10px] tracking-[0.15em] text-mute/70 sm:flex-row sm:items-center sm:justify-between">
+          <span>BASED ON THIS REPOSITORY&apos;S COMMIT HISTORY</span>
+          <a href={`${p.repo}/commits?author=${owner}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-white hover:text-crimson">
+            <Github className="h-3.5 w-3.5" /> VIEW MY COMMITS <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
+        </div>
+      )}
+    </section>
+  );
+}
+
 function ProjectPage({ p }) {
   const d = p.details;
   const sibling = PROJECTS.find((x) => x.title === p.title && x.slug !== p.slug);
@@ -1501,6 +1635,8 @@ function ProjectPage({ p }) {
         </dl>
 
         <div className="mt-12"><Showcase p={p} /></div>
+
+        {p.contrib && <Contributions p={p} />}
 
         <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-6">
           <section className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8 lg:col-span-4">
