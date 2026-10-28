@@ -187,7 +187,7 @@ function Portrait() {
   if (PORTRAIT_SRC) {
     return (
       <img src={PORTRAIT_SRC} alt={PROFILE.name}
-        className="relative z-10 w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)] [mask-image:linear-gradient(to_bottom,black_72%,transparent)]" />
+        className="relative z-10 w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)] [mask-image:radial-gradient(ellipse_56%_76%_at_50%_38%,black_62%,transparent_100%)]" />
     );
   }
   return (
@@ -301,7 +301,7 @@ function Hero() {
         </div>
 
         <div className="relative grid grid-cols-1 items-end gap-10 lg:grid-cols-12 lg:gap-6">
-          <div className="order-2 lg:order-1 lg:col-span-4 lg:pb-10">
+          <div className="relative z-20 order-2 lg:order-1 lg:col-span-4 lg:pb-10">
             <div className="font-mono text-[11px] tracking-[0.2em] text-crimson">// HELLO, I'M</div>
             <p className="mt-3 text-4xl md:text-5xl font-semibold leading-[1.02] tracking-tight text-white">
               {PROFILE.first}<br />{PROFILE.last}
@@ -321,15 +321,15 @@ function Hero() {
             </dl>
           </div>
 
-          <div className="order-1 lg:order-2 lg:col-span-4 -mt-[16vw] md:-mt-[14vw] lg:-mt-[10.5rem]">
-            <div className="relative mx-auto w-[min(78vw,400px)]">
+          <div className="order-1 lg:order-2 lg:col-span-4 -mt-[19vw] md:-mt-[17vw] lg:-mt-[14rem]">
+            <div className="relative left-1/2 w-[min(96vw,640px)] -translate-x-1/2">
               <div aria-hidden className="absolute inset-x-[8%] bottom-[10%] top-[18%] rounded-full bg-crimson/30 blur-[70px]" />
               <Portrait />
               <div aria-hidden className="absolute inset-x-0 bottom-0 z-20 h-16 bg-gradient-to-t from-obsidian to-transparent" />
             </div>
           </div>
 
-          <div className="order-3 lg:col-span-4 lg:pb-10">
+          <div className="relative z-20 order-3 lg:col-span-4 lg:pb-10">
             <p className="max-w-[46ch] text-[15px] leading-relaxed text-mute">{PROFILE.bio}</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <a href="#work" onClick={go('work')}
