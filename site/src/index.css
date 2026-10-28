@@ -64,3 +64,5 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .anim-grow { animation: grow 1.6s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(16px); } }
 .anim-rise { animation: rise .6s cubic-bezier(.2,.8,.2,1) backwards; }
+
+.process-num.is-on { color: #DC2626; -webkit-text-stroke-color: #DC2626; }

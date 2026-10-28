@@ -271,10 +271,26 @@ const CAPABILITIES = [
 ];
 
 const PROCESS = [
-  { n: '01', t: 'Map the flow', d: 'Wireframe screens and user journeys in Figma before writing code.' },
-  { n: '02', t: 'Model the data', d: 'Design tables, relations and auth in MySQL or Supabase.' },
-  { n: '03', t: 'Build the interface', d: 'Ship responsive UI in React, React Native or Flutter.' },
-  { n: '04', t: 'Deploy & iterate', d: 'Push to Vercel, version with Git, refine from feedback.' },
+  { n: '01', t: 'Map the flow', phase: 'PLAN',
+    d: 'Every build starts before the code. I break the idea into user roles and journeys, then wireframe each screen in Figma so everyone agrees on the flow before anything is built.',
+    does: ['User roles & journeys', 'Low-fidelity wireframes', 'Clickable prototypes'],
+    tools: ['Figma'], output: 'Approved flows and wireframes',
+    example: 'Bridges of Hope documents its admin, nurse, program-staff and family flows in a PRD and architecture docs.' },
+  { n: '02', t: 'Model the data', phase: 'DESIGN',
+    d: 'Next I design the database: the tables, how they relate, and who is allowed to read or change what. Getting this right early lets the web and mobile apps share one source of truth.',
+    does: ['Relational schema & ERD', 'Versioned migrations', 'Access rules (RLS)'],
+    tools: ['Supabase', 'PostgreSQL', 'MySQL'], output: 'Schema, migrations and policies',
+    example: 'Rhayz Kicks runs on a 27-table schema documented with an ERD; Bridges of Hope has about 66 migrations.' },
+  { n: '03', t: 'Build the interface', phase: 'BUILD',
+    d: 'With the data in place, I build the screens: responsive web apps in React and TypeScript, and cross-platform mobile apps in React Native or Flutter, all connected to the same backend.',
+    does: ['Responsive web UI', 'Cross-platform mobile apps', 'APIs & serverless functions'],
+    tools: ['React', 'TypeScript', 'React Native', 'Flutter', 'Laravel'], output: 'Working web and mobile apps',
+    example: 'Rhayz Kicks pairs a React storefront with a Flutter app and a Laravel API.' },
+  { n: '04', t: 'Deploy & iterate', phase: 'SHIP',
+    d: 'I ship early and keep improving. Web apps go live on Vercel, mobile builds go out through Expo EAS, and every change is versioned in Git so feedback turns into the next release.',
+    does: ['Vercel & EAS builds', 'CI lint & build checks', 'Feedback-driven fixes'],
+    tools: ['Vercel', 'Expo', 'Git/GitHub'], output: 'Live, maintained releases',
+    example: 'Bridges of Hope is live on Vercel, with a CI lint-and-build job I got passing.' },
 ];
 
 // Opened in a dialog from the Info section. Certiport verification: enter the code at verify.certiport.com.
@@ -1212,42 +1228,111 @@ function Stack() {
           </div>
         </div>
 
-        <div className="mt-20 flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
-          <Terminal className="h-4 w-4 text-crimson" /> WORK PROCESS
-        </div>
-        <div aria-hidden className="relative mt-8 hidden grid-cols-4 lg:grid">
-          <div className="absolute left-[12.5%] right-[12.5%] top-1/2 h-px -translate-y-1/2 bg-gradient-to-r from-crimson/70 via-white/15 to-crimson/70">
-            <span className="anim-travel absolute -top-[3px] h-[7px] w-[7px] rounded-full bg-crimson shadow-[0_0_14px_#DC2626]" style={{ animationDuration: '6s' }} />
-          </div>
-          {PROCESS.map((s, i) => {
-            const Icon = PROCESS_ICON[i];
-            return (
-              <div key={s.n} className="relative flex justify-center">
-                <span className="anim-glow flex h-12 w-12 items-center justify-center rounded-full border border-crimson/50 bg-obsidian text-crimson" style={{ animationDelay: `${i * 0.6}s` }}>
-                  <Icon className="h-5 w-5" />
-                </span>
-              </div>
-            );
-          })}
-        </div>
-        <ol className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {PROCESS.map((s, i) => {
-            const Icon = PROCESS_ICON[i];
-            return (
-              <li key={s.n} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-300 hover:-translate-y-1 hover:border-crimson/40 motion-reduce:transform-none">
-                <span aria-hidden className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-gradient-to-r from-crimson to-transparent transition-transform duration-700 group-hover:scale-x-100" />
-                <div className="flex items-start justify-between">
-                  <span className="process-num font-display text-6xl leading-none transition-colors duration-300">{s.n}</span>
-                  <Icon className="h-5 w-5 text-mute/50 transition-colors group-hover:text-crimson lg:hidden" />
-                </div>
-                <h3 className="mt-6 text-lg font-semibold text-white">{s.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-mute">{s.d}</p>
-              </li>
-            );
-          })}
-        </ol>
+        <WorkProcess />
       </div>
     </section>
+  );
+}
+
+function WorkProcess() {
+  const [active, setActive] = useState(0);
+  const [hovering, setHovering] = useState(false);
+  // Steps light up in turn; hovering a step takes over, and reduced-motion users get no auto-advance.
+  useEffect(() => {
+    if (hovering || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const t = setInterval(() => setActive((a) => (a + 1) % PROCESS.length), 3500);
+    return () => clearInterval(t);
+  }, [hovering]);
+  const pick = (i) => { setActive(i); setHovering(true); };
+
+  return (
+    <div className="mt-24">
+      <div className="flex flex-wrap items-end justify-between gap-6">
+        <div className="min-w-0">
+          <div className="flex items-center gap-3 font-mono text-[11px] tracking-[0.2em] text-mute">
+            <Terminal className="h-4 w-4 text-crimson" /> WORK PROCESS
+          </div>
+          <h3 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight text-white md:text-4xl [text-wrap:balance]">
+            How I take a project from idea to release.
+          </h3>
+        </div>
+        <p className="max-w-md text-sm leading-relaxed">
+          The same four steps behind Bridges of Hope and Rhayz Kicks: plan the flow, model the data, build the apps, then ship and keep improving.
+        </p>
+      </div>
+
+      <div aria-hidden className="relative mt-10 hidden grid-cols-4 xl:grid">
+        <div className="absolute left-[12.5%] right-[12.5%] top-1/2 h-px -translate-y-1/2 bg-white/10">
+          <div className="h-full origin-left bg-gradient-to-r from-crimson to-crimson/40 transition-transform duration-700 ease-out"
+            style={{ transform: `scaleX(${active / (PROCESS.length - 1)})` }} />
+        </div>
+        {PROCESS.map((s, i) => {
+          const Icon = PROCESS_ICON[i];
+          const on = i === active;
+          const done = i < active;
+          return (
+            <div key={s.n} className="relative flex flex-col items-center gap-2">
+              <span className={`flex h-12 w-12 items-center justify-center rounded-full border transition duration-500 ${on ? 'anim-glow scale-110 border-crimson bg-crimson text-white' : done ? 'border-crimson/70 bg-obsidian text-crimson' : 'border-white/15 bg-obsidian text-mute'}`}>
+                <Icon className="h-5 w-5" />
+              </span>
+              <span className={`absolute top-full mt-2 font-mono text-[10px] tracking-[0.25em] transition-colors ${on ? 'text-crimson' : 'text-mute/50'}`}>{s.phase}</span>
+            </div>
+          );
+        })}
+      </div>
+
+      <ol className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:mt-14 xl:grid-cols-4" onMouseLeave={() => setHovering(false)}>
+        {PROCESS.map((s, i) => {
+          const Icon = PROCESS_ICON[i];
+          const on = i === active;
+          return (
+            <li key={s.n} onMouseEnter={() => pick(i)} onFocus={() => pick(i)} tabIndex={0}
+              className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border p-6 transition duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-crimson ${on ? '-translate-y-1 border-crimson/50 bg-white/[0.06] shadow-[0_24px_70px_-30px_rgba(220,38,38,0.7)]' : 'border-white/10 bg-white/[0.03]'} motion-reduce:transform-none`}>
+              <span aria-hidden className={`absolute inset-x-0 top-0 h-px origin-left bg-gradient-to-r from-crimson to-transparent transition-transform duration-700 ${on ? 'scale-x-100' : 'scale-x-0'}`} />
+              <div className="flex items-start justify-between">
+                <span className={`process-num font-display text-6xl leading-none transition-colors duration-500 ${on ? 'is-on' : ''}`}>{s.n}</span>
+                <span className={`flex h-9 w-9 items-center justify-center rounded-lg border transition-colors duration-500 ${on ? 'border-crimson bg-crimson text-white' : 'border-white/10 text-mute/60'}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
+              </div>
+              <div className="mt-6 font-mono text-[10px] tracking-[0.25em] text-crimson">{s.phase}</div>
+              <h4 className="mt-1 text-xl font-semibold text-white">{s.t}</h4>
+              <p className="mt-3 text-sm leading-relaxed">{s.d}</p>
+
+              <ul className="mt-5 space-y-1.5">
+                {s.does.map((d) => (
+                  <li key={d} className="flex items-center gap-2 text-sm text-white/90">
+                    <Check className={`h-3.5 w-3.5 shrink-0 transition-colors ${on ? 'text-crimson' : 'text-mute/50'}`} /> {d}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="mt-5 flex flex-wrap gap-1.5">
+                {s.tools.map((t) => {
+                  const logo = TECH_LOGOS[LOGO_FOR[t.toLowerCase()]];
+                  return (
+                    <span key={t} className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/30 px-2.5 py-1 font-mono text-[10px] text-white/80">
+                      {logo && <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3 w-3" style={{ fill: logo.hex }}><path d={logo.path} /></svg>}
+                      {t}
+                    </span>
+                  );
+                })}
+              </div>
+
+              <div className="mt-auto pt-5">
+                <div className="rounded-xl border border-white/10 bg-black/30 p-3.5">
+                  <div className="font-mono text-[9px] tracking-[0.2em] text-mute/70">OUTPUT</div>
+                  <div className="mt-1 text-sm font-medium text-white">{s.output}</div>
+                  <p className="mt-2.5 border-t border-white/10 pt-2.5 text-[12px] leading-relaxed text-mute">
+                    <span className="font-mono text-[9px] tracking-[0.2em] text-crimson">IN PRACTICE · </span>{s.example}
+                  </p>
+                </div>
+              </div>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }
 
