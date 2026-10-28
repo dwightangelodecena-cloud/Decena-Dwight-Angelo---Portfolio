@@ -381,7 +381,7 @@ function Hero() {
 function ProjectCard({ p }) {
   return (
     <article className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-crimson/50 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.25),0_24px_70px_-20px_rgba(220,38,38,0.45)] motion-reduce:transform-none ${p.span}`}>
-      <div className="relative h-56 md:h-64 overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_120%_at_100%_0%,rgba(220,38,38,0.18),transparent_55%)]">
+      <div className={`relative overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_120%_at_100%_0%,rgba(220,38,38,0.18),transparent_55%)] ${p.image ? 'h-72 md:h-80' : 'h-56 md:h-64'}`}>
         <div aria-hidden className="absolute inset-0 bg-grid opacity-60" />
         {!p.image && (
           <span aria-hidden className="absolute -bottom-6 left-4 font-display text-[7.5rem] leading-none text-white/[0.06] transition-colors duration-300 group-hover:text-crimson/25">
@@ -401,7 +401,7 @@ function ProjectCard({ p }) {
         )}
         {p.shot === 'phone' && (
           <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} home screen`} loading="lazy"
-            className="absolute left-1/2 top-12 w-[52%] max-w-[210px] -translate-x-1/2 rounded-[9%/4.2%] drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:-translate-y-2 motion-reduce:transform-none" />
+            className="absolute left-1/2 top-14 w-[72%] max-w-[320px] -translate-x-1/2 rounded-[9%/4.2%] drop-shadow-[0_20px_40px_rgba(0,0,0,0.8)] transition-transform duration-500 group-hover:-translate-y-2 motion-reduce:transform-none" />
         )}
         <div className="absolute left-5 top-5 flex items-center gap-2 font-mono text-[10px] tracking-[0.2em]">
           <span className="text-crimson">{p.id}</span>
