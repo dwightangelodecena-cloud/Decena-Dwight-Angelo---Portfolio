@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   ArrowUpRight, Mail, Phone, MapPin, Copy, Check, GraduationCap,
   BadgeCheck, Smartphone, Globe, Server, Wrench, Layers, PenTool, Terminal,
-  Code, Database, Bell, MousePointer2, GitBranch, Rocket,
+  Code, Database, Bell, MousePointer2, GitBranch, Rocket, Award, X, ShieldCheck, Maximize2,
 } from 'lucide-react';
 
 /* Dwight Angelo Decena — Portfolio
@@ -223,14 +223,30 @@ const PROCESS = [
   { n: '04', t: 'Deploy & iterate', d: 'Push to Vercel, version with Git, refine from feedback.' },
 ];
 
-// Certiport verification: visitors enter the code at verify.certiport.com.
-const CERTS = [
-  {
-    title: 'IT Specialist — Databases', issuer: 'Certiport · Pearson',
-    awarded: 'SEP 18, 2025', expires: 'SEP 2030',
-    code: 'CHrG-Dwzr', score: 914, max: 1000,
-    href: 'https://verify.certiport.com',
+// Opened in a dialog from the Info section. Certiport verification: enter the code at verify.certiport.com.
+const CREDENTIALS = {
+  cert: {
+    kind: 'CERTIFICATION', title: 'IT Specialist — Databases', issuer: 'Certiport · Pearson VUE · CertNexus',
+    image: '/credentials/its-databases.webp',
+    imageAlt: 'Information Technology Specialist certificate in Databases awarded to Dwight Angelo Decena on September 18, 2025',
+    desc: 'The Information Technology Specialist (ITS) certification in Databases validates practical knowledge of relational databases, from designing tables to writing SQL. It is issued by Certiport, a Pearson VUE business, and stays valid for five years.',
+    covers: ['Database design & normalization', 'Creating and altering tables (DDL)', 'Querying data with SQL', 'Inserting, updating and deleting data (DML)', 'Troubleshooting database objects'],
+    facts: [['AWARDED', 'Sep 18, 2025'], ['EXPIRES', 'Sep 18, 2030'], ['EXAM SCORE', '914 / 1000'], ['CREDENTIAL ID', 'CHrG-Dwzr']],
+    score: 914, max: 1000, code: 'CHrG-Dwzr', href: 'https://verify.certiport.com',
   },
+  deans: {
+    kind: 'DEAN’S LIST', title: 'Dean’s List — Second Honor', issuer: 'National University Dasmariñas',
+    image: '/credentials/deans-list.webp',
+    imageAlt: 'Dean’s List second honor card for Dwight Angelo Decena, A.Y. 2025–2026, 3rd term, BSIT-MWA, rank 6',
+    desc: 'Recognized on the Dean’s List with Second Honor for academic performance in the 3rd term of A.Y. 2025–2026, ranking 6th while specializing in Mobile and Web Applications.',
+    facts: [['HONOR', 'Second Honor'], ['RANK', '06'], ['GWA', '3.**'], ['TERM', 'A.Y. 2025–2026 · 3rd'], ['PROGRAM', 'BSIT – MWA']],
+  },
+};
+
+const MILESTONES = [
+  { when: 'SEP 2025', title: 'Certified IT Specialist — Databases', note: 'Certiport · scored 914 / 1000', open: 'cert' },
+  { when: 'A.Y. 2025–26 · 3RD TERM', title: 'Dean’s List, Second Honor', note: 'Rank 6 · BSIT – Mobile & Web Applications', open: 'deans' },
+  { when: 'NOW', title: 'Open to projects & internships', note: 'Mobile and web application development', live: true },
 ];
 
 // Brand marks from Simple Icons (CC0), 24x24 viewBox.
@@ -1079,60 +1095,249 @@ function Stack() {
   );
 }
 
+function CopyCode({ code }) {
+  const [done, setDone] = useState(false);
+  const ref = useRef(null);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setDone(true);
+      setTimeout(() => setDone(false), 1600);
+    } catch {
+      const r = document.createRange();
+      r.selectNodeContents(ref.current);
+      const s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+    }
+  };
+  return (
+    <span className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black/40 py-1 pl-3 pr-1 font-mono text-sm text-white">
+      <span ref={ref} className="select-all">{code}</span>
+      <button type="button" onClick={copy} aria-label="Copy credential ID"
+        className="rounded-md p-1.5 text-mute transition-colors hover:bg-white/10 hover:text-white">
+        {done ? <Check className="h-3.5 w-3.5 text-crimson" /> : <Copy className="h-3.5 w-3.5" />}
+      </button>
+    </span>
+  );
+}
+
+function CredentialModal({ item, onClose }) {
+  const closeRef = useRef(null);
+  useEffect(() => {
+    if (!item) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeRef.current?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [item, onClose]);
+  if (!item) return null;
+  const tall = item === CREDENTIALS.deans;
+  return (
+    <div role="dialog" aria-modal="true" aria-labelledby="cred-title" onClick={onClose}
+      className="anim-fade fixed inset-0 z-[90] flex justify-center overflow-y-auto bg-black/80 p-4 backdrop-blur-md md:p-8"
+      style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 1rem)', paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 1rem)' }}>
+      <div onClick={(e) => e.stopPropagation()}
+        className="anim-pop relative my-auto grid w-full max-w-5xl grid-cols-1 overflow-hidden rounded-3xl border border-white/10 bg-[#0d0e10] shadow-[0_40px_120px_-30px_rgba(220,38,38,0.55)] lg:grid-cols-5">
+        <button ref={closeRef} type="button" onClick={onClose} aria-label="Close"
+          className="absolute right-4 top-4 z-10 rounded-full border border-white/15 bg-black/60 p-2 text-white backdrop-blur transition hover:border-crimson hover:bg-crimson">
+          <X className="h-4 w-4" />
+        </button>
+        <div className="relative flex items-center justify-center overflow-hidden bg-[radial-gradient(70%_70%_at_50%_50%,rgba(220,38,38,0.22),transparent_75%)] p-6 md:p-10 lg:col-span-3">
+          <div aria-hidden className="absolute inset-0 bg-grid opacity-40" />
+          <img src={item.image} alt={item.imageAlt}
+            className={`relative rounded-xl shadow-[0_30px_80px_rgba(0,0,0,0.7)] ring-1 ring-white/10 ${tall ? 'max-h-[70vh] w-auto' : 'w-full'}`} />
+        </div>
+        <div className="flex min-w-0 flex-col p-6 md:p-8 lg:col-span-2">
+          <div className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-crimson">
+            {tall ? <Award className="h-4 w-4" /> : <BadgeCheck className="h-4 w-4" />} {item.kind}
+          </div>
+          <h3 id="cred-title" className="mt-4 pr-10 text-2xl font-semibold tracking-tight text-white md:text-3xl [text-wrap:balance]">{item.title}</h3>
+          <p className="mt-1 font-mono text-[11px] tracking-wider text-mute">{item.issuer}</p>
+          <p className="mt-5 text-[15px] leading-relaxed">{item.desc}</p>
+          {item.covers && (
+            <>
+              <div className="mt-6 font-mono text-[10px] tracking-[0.2em] text-mute/70">WHAT IT COVERS</div>
+              <ul className="mt-3 space-y-2">
+                {item.covers.map((c) => (
+                  <li key={c} className="flex items-start gap-2 text-sm text-white/90"><Check className="mt-0.5 h-4 w-4 shrink-0 text-crimson" /> {c}</li>
+                ))}
+              </ul>
+            </>
+          )}
+          <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 font-mono">
+            {item.facts.map(([k, v]) => (
+              <div key={k} className="min-w-0 bg-[#0d0e10] p-3">
+                <dt className="text-[9px] tracking-[0.2em] text-mute/70">{k}</dt>
+                <dd className="mt-1 text-[13px] text-white">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          {item.href && (
+            <div className="mt-6 flex flex-col gap-3 border-t border-white/10 pt-6">
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <ShieldCheck className="h-4 w-4 text-crimson" /> Verify with ID <CopyCode code={item.code} />
+              </div>
+              <a href={item.href} target="_blank" rel="noreferrer"
+                className="group inline-flex w-fit items-center gap-2 rounded-full bg-crimson px-5 py-2.5 font-mono text-[12px] tracking-wider text-white transition hover:bg-white hover:text-black">
+                Open verify.certiport.com <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ScoreRing({ score, max }) {
+  const ref = useRef(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || !('IntersectionObserver' in window)) return undefined;
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const r = 52;
+  const c = 2 * Math.PI * r;
+  return (
+    <div ref={ref} className="relative mx-auto h-40 w-40">
+      <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90" aria-hidden>
+        <circle cx="60" cy="60" r={r} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" />
+        <circle cx="60" cy="60" r={r} fill="none" stroke="#DC2626" strokeWidth="8" strokeLinecap="round"
+          className={seen ? 'anim-ring' : ''}
+          style={{ strokeDasharray: c, strokeDashoffset: c * (1 - score / max), '--c': c, filter: 'drop-shadow(0 0 8px rgba(220,38,38,0.6))' }} />
+      </svg>
+      <div className="absolute inset-0 flex flex-col items-center justify-center font-mono">
+        <span className="text-3xl text-white tabular-nums">{score}</span>
+        <span className="text-[10px] tracking-[0.2em] text-mute">/ {max}</span>
+      </div>
+    </div>
+  );
+}
+
 function Info() {
+  const [open, setOpen] = useState(null);
+  const close = React.useCallback(() => setOpen(null), []);
+  const cert = CREDENTIALS.cert;
+  const deans = CREDENTIALS.deans;
   return (
     <section id="info" className="scroll-mt-24 py-24 md:py-32 border-t border-white/10">
       <div className="mx-auto max-w-[1400px] px-gutter">
         <SectionHead index="05" label="EDUCATION & CREDENTIALS" ghost="INFO" title="Trained in mobile and web application development." />
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-6">
-          <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8 lg:col-span-4">
-            <span aria-hidden className="absolute -right-4 -top-6 font-display text-[9rem] leading-none text-white/[0.04]">NU</span>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+
+          <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-500 hover:border-crimson/40 md:p-8 lg:col-span-7">
+            <span aria-hidden className="absolute -right-4 -top-6 font-display text-[9rem] leading-none text-white/[0.04] transition-colors duration-500 group-hover:text-crimson/10">NU</span>
             <div className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-crimson">
               <GraduationCap className="h-4 w-4" /> EDUCATION
             </div>
-            <h3 className="mt-6 text-2xl md:text-3xl font-semibold tracking-tight text-white">National University Dasmariñas</h3>
-            <p className="mt-2 text-mute">BS in Information Technology</p>
-            <div className="mt-6 inline-flex flex-wrap gap-2">
+            <h3 className="mt-6 text-2xl font-semibold tracking-tight text-white md:text-3xl">National University Dasmariñas</h3>
+            <p className="mt-2 text-mute">BS in Information Technology — Mobile &amp; Web Applications</p>
+            <div className="mt-5 flex flex-wrap gap-2">
               <Pill active>Specialization · Mobile &amp; Web App Development</Pill>
+              <Pill>Dean&apos;s Lister</Pill>
               <Pill>Cavite, PH</Pill>
             </div>
+
+            <div className="mt-8 font-mono text-[10px] tracking-[0.2em] text-mute/70">MILESTONES</div>
+            <ol className="relative mt-4 space-y-5 pl-7">
+              <span aria-hidden className="absolute bottom-1 left-[7px] top-1 w-px bg-gradient-to-b from-crimson/70 via-white/15 to-crimson/70">
+                <span className="anim-travel-y absolute -left-[3px] h-[7px] w-[7px] rounded-full bg-crimson shadow-[0_0_12px_#DC2626]" />
+              </span>
+              {MILESTONES.map((m) => (
+                <li key={m.title} className="relative">
+                  <span aria-hidden className={`absolute -left-7 top-1 flex h-[15px] w-[15px] items-center justify-center rounded-full border ${m.live ? 'border-crimson' : 'border-white/30'} bg-obsidian`}>
+                    <span className={`h-[5px] w-[5px] rounded-full ${m.live ? 'animate-ping bg-crimson motion-reduce:animate-none' : 'bg-crimson'}`} />
+                  </span>
+                  <div className="font-mono text-[10px] tracking-[0.2em] text-crimson">{m.when}</div>
+                  {m.open ? (
+                    <button type="button" onClick={() => setOpen(m.open)} className="group/m mt-1 inline-flex items-center gap-1.5 text-left font-medium text-white hover:text-crimson">
+                      {m.title} <ArrowUpRight className="h-3.5 w-3.5 opacity-50 transition group-hover/m:opacity-100" />
+                    </button>
+                  ) : (
+                    <div className="mt-1 font-medium text-white">{m.title}</div>
+                  )}
+                  <div className="text-sm text-mute">{m.note}</div>
+                </li>
+              ))}
+            </ol>
           </div>
 
-          <div className="flex flex-col gap-4 lg:col-span-2">
-            {CERTS.map((c) => (
-              <div key={c.title} className="flex flex-1 flex-col rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition hover:border-crimson/40">
-                <div className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-crimson">
-                  <BadgeCheck className="h-4 w-4" /> CERTIFICATION
-                </div>
-                <h3 className="mt-5 text-lg font-semibold text-white">{c.title}</h3>
-                <p className="mt-1 font-mono text-[11px] tracking-wider text-mute">{c.issuer}</p>
-                <div className="mt-5">
-                  <div className="flex items-baseline justify-between font-mono">
-                    <span className="text-[10px] tracking-[0.2em] text-mute/70">EXAM SCORE</span>
-                    <span className="text-white tabular-nums"><span className="text-2xl">{c.score}</span><span className="text-mute">/{c.max}</span></span>
-                  </div>
-                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full rounded-full bg-crimson" style={{ width: `${(c.score / c.max) * 100}%` }} />
-                  </div>
-                </div>
-                <dl className="mt-5 grid grid-cols-3 gap-3 font-mono text-[10px] tracking-[0.15em]">
-                  {[['AWARDED', c.awarded], ['EXPIRES', c.expires], ['CODE', c.code]].map(([k, v]) => (
-                    <div key={k} className="min-w-0">
-                      <dt className="text-mute/60">{k}</dt>
-                      <dd className="mt-1 break-words text-white select-all">{v}</dd>
+          <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#1d2550]/40 via-white/[0.04] to-white/[0.02] p-6 transition duration-500 hover:border-crimson/40 md:p-8 lg:col-span-5">
+            <div aria-hidden className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-[#2d4bd8]/25 blur-[80px]" />
+            <div className="relative flex items-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-crimson">
+              <Award className="h-4 w-4" /> DEAN&apos;S LIST
+            </div>
+            <div className="relative mt-6 flex flex-col gap-6 sm:flex-row sm:items-center">
+              <button type="button" onClick={() => setOpen('deans')} aria-label="View Dean’s List recognition"
+                className="shine relative w-36 shrink-0 self-center overflow-hidden rounded-xl ring-1 ring-white/15 shadow-[0_24px_60px_-20px_rgba(45,75,216,0.7)] transition duration-500 [transform:perspective(900px)_rotateY(12deg)_rotate(-3deg)] hover:[transform:perspective(900px)_rotateY(0deg)_rotate(0deg)_scale(1.04)] motion-reduce:transform-none sm:w-40 sm:self-auto">
+                <img src={deans.image} alt={deans.imageAlt} loading="lazy" className="block w-full" />
+              </button>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-2xl font-semibold tracking-tight text-white">Second Honor</h3>
+                <p className="mt-1 text-sm text-mute">A.Y. 2025–2026 · 3rd Term · BSIT – MWA</p>
+                <dl className="mt-5 grid grid-cols-2 gap-3 font-mono">
+                  {[['RANK', '06'], ['GWA', '3.**']].map(([k, v]) => (
+                    <div key={k} className="rounded-xl border border-white/10 bg-black/30 p-3">
+                      <dt className="text-[10px] tracking-[0.2em] text-mute/70">{k}</dt>
+                      <dd className="mt-1 text-2xl text-white tabular-nums">{v}</dd>
                     </div>
                   ))}
                 </dl>
-                <a href={c.href} target="_blank" rel="noreferrer"
-                  className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-crimson/60 px-4 py-2 font-mono text-[11px] tracking-[0.15em] text-white transition hover:bg-crimson">
-                  [ ❰ Verify Certificate ❱ ]
-                </a>
-                <p className="mt-2 font-mono text-[10px] tracking-wider text-mute/60">Enter code {c.code} at verify.certiport.com</p>
+                <button type="button" onClick={() => setOpen('deans')}
+                  className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 font-mono text-[11px] tracking-[0.15em] text-white transition hover:border-crimson hover:bg-crimson">
+                  [ View Recognition <Maximize2 className="h-3.5 w-3.5" /> ]
+                </button>
               </div>
-            ))}
+            </div>
+          </div>
+
+          <div className="group relative min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition duration-500 hover:border-crimson/40 md:p-8 lg:col-span-12">
+            <div aria-hidden className="pointer-events-none absolute -left-24 -bottom-24 h-72 w-72 rounded-full bg-crimson/15 blur-[90px]" />
+            <div className="relative grid grid-cols-1 items-center gap-8 md:grid-cols-12">
+              <button type="button" onClick={() => setOpen('cert')} aria-label="View certificate"
+                className="shine group/c relative overflow-hidden rounded-xl ring-1 ring-white/15 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.9)] transition duration-500 [transform:perspective(1000px)_rotateY(-8deg)_rotate(1.5deg)] hover:[transform:perspective(1000px)_rotateY(0deg)_rotate(0deg)_scale(1.03)] motion-reduce:transform-none md:col-span-4">
+                <img src={cert.image} alt={cert.imageAlt} loading="lazy" className="block w-full" />
+                <span className="absolute inset-0 flex items-center justify-center bg-black/55 opacity-0 transition-opacity duration-300 group-hover/c:opacity-100">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-crimson px-4 py-2 font-mono text-[11px] tracking-[0.15em] text-white"><Maximize2 className="h-3.5 w-3.5" /> VIEW</span>
+                </span>
+              </button>
+              <div className="min-w-0 md:col-span-5">
+                <div className="flex items-center gap-2.5 font-mono text-[11px] tracking-[0.2em] text-crimson">
+                  <BadgeCheck className="h-4 w-4" /> CERTIFICATION
+                </div>
+                <h3 className="mt-4 text-2xl font-semibold tracking-tight text-white md:text-3xl">{cert.title}</h3>
+                <p className="mt-1 font-mono text-[11px] tracking-wider text-mute">{cert.issuer}</p>
+                <dl className="mt-5 grid grid-cols-3 gap-3 font-mono text-[10px] tracking-[0.15em]">
+                  {[['AWARDED', 'SEP 18, 2025'], ['EXPIRES', 'SEP 2030'], ['CODE', cert.code]].map(([k, v]) => (
+                    <div key={k} className="min-w-0">
+                      <dt className="text-mute/60">{k}</dt>
+                      <dd className="mt-1 break-words text-white">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <button type="button" onClick={() => setOpen('cert')}
+                  className="mt-6 inline-flex items-center gap-2 rounded-full border border-crimson/60 px-4 py-2 font-mono text-[11px] tracking-[0.15em] text-white transition hover:bg-crimson">
+                  [ ❰ Verify Certificate ❱ ]
+                </button>
+              </div>
+              <div className="md:col-span-3">
+                <ScoreRing score={cert.score} max={cert.max} />
+                <div className="mt-3 text-center font-mono text-[10px] tracking-[0.2em] text-mute/70">EXAM SCORE</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <CredentialModal item={open ? CREDENTIALS[open] : null} onClose={close} />
     </section>
   );
 }

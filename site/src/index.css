@@ -45,3 +45,16 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .anim-orbit { animation: orbit 30s linear infinite; }
 @keyframes glow { 0%, 100% { box-shadow: 0 0 34px -12px rgba(220,38,38,0.55); } 50% { box-shadow: 0 0 60px -6px rgba(220,38,38,0.95); } }
 .anim-glow { animation: glow 3.2s ease-in-out infinite; }
+
+/* credentials */
+@keyframes fadein { from { opacity: 0; } }
+.anim-fade { animation: fadein .25s ease-out; }
+@keyframes pop { from { opacity: 0; transform: translateY(18px) scale(.97); } }
+.anim-pop { animation: pop .4s cubic-bezier(.2,.8,.2,1); }
+@keyframes ring { from { stroke-dashoffset: var(--c); } }
+.anim-ring { animation: ring 1.8s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes travely { 0% { top: 0; opacity: 0; } 15%, 85% { opacity: 1; } 100% { top: calc(100% - 7px); opacity: 0; } }
+.anim-travel-y { animation: travely 4s linear infinite; }
+.shine::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(110deg, transparent 35%, rgba(255,255,255,0.28) 50%, transparent 65%); transform: translateX(-120%); animation: shine 5s ease-in-out infinite; }
+@keyframes shine { 0%, 55% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+@media (prefers-reduced-motion: reduce) { .shine::after { display: none; } }
