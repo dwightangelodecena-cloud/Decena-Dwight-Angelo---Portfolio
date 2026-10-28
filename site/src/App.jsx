@@ -33,6 +33,33 @@ const PROJECTS = [
     repo: 'https://github.com/dwightangelodecena-cloud/-BridgesOfHope---Backup',
     span: 'lg:col-span-4', mono: 'BOH',
     image: '/projects/boh-web.webp', shot: 'web',
+    slug: 'bridges-of-hope-web',
+    details: {
+      tagline: 'Case-management portal for an inpatient recovery facility.',
+      overview: 'Bridges of Hope is the staff side of a case-management system built for Kalinga, a private inpatient recovery facility. Admins, nurses and program staff use it to run admissions, follow patients through care and discharge, manage wards and report on progress. It also powers the facility’s public website through a built-in CMS.',
+      facts: [['TYPE', 'Web portal'], ['ROLES', 'Admin · Nurse · Program staff'], ['BACKEND', 'Supabase (PostgreSQL)'], ['DEPLOYED', 'Vercel']],
+      features: [
+        ['Admissions workflow', 'Admission requests from families move through a nurse review queue to admin approval.'],
+        ['Discharge management', 'Program staff file discharge requests that admins review and complete.'],
+        ['Ward & room management', 'Assign patients to rooms across the facility’s wards.'],
+        ['Patient records', 'A central patient database with care notes and daily reports.'],
+        ['Analytics & reports', 'Recharts dashboards, plus PDF exports generated with jsPDF.'],
+        ['Nurse & program tools', 'Calendars, medical reports, recovery ladders and weekly progress reports.'],
+        ['Staff & user management', 'Staff accounts created through Edge Functions, with welcome emails.'],
+        ['Messaging & notifications', 'Messages, announcements and push notifications to the family app.'],
+        ['AI-assisted drafting', 'Groq-powered drafts for notifications and weekly report digests, plus hospital referral scanning.'],
+        ['Website CMS', 'Edit the public site’s pages and settings without touching code.'],
+      ],
+      languages: ['JavaScript', 'SQL', 'CSS', 'HTML'],
+      roles: [['Admin', 'admissions, wards, staff, analytics and CMS'], ['Nurse', 'pending admissions, calendar and medical reports'], ['Program staff', 'weekly reports and discharge requests']],
+      tools: [
+        ['Frontend', ['React', 'Vite', 'Tailwind CSS', 'React Router', 'Framer Motion']],
+        ['Backend & data', ['Supabase', 'PostgreSQL', 'Supabase Edge Functions', 'Row Level Security']],
+        ['Libraries', ['Recharts', 'jsPDF', 'PDF.js', 'dnd kit', 'Swiper', 'Lucide']],
+        ['AI & deployment', ['Groq API', 'Vercel', 'Git/GitHub']],
+      ],
+      data: 'Shares one Supabase project with the mobile app. About 66 SQL migrations define 20+ tables (patients, admission requests, discharge requests, weekly and daily reports, rooms, visitation requests, notifications and more), along with Row Level Security policies, realtime updates and storage buckets. Four Edge Functions handle staff account creation and deletion, push notifications and welcome emails.',
+    },
   },
   {
     id: '02', kind: 'MOBILE', title: 'Bridges of Hope', sub: 'Mobile App',
@@ -41,6 +68,31 @@ const PROJECTS = [
     repo: 'https://github.com/dwightangelodecena-cloud/-BridgesOfHope---Backup',
     span: 'lg:col-span-2', mono: 'BOH',
     image: '/projects/boh-mobile.webp', shot: 'phone',
+    slug: 'bridges-of-hope-mobile',
+    details: {
+      tagline: 'Family companion app for the Bridges of Hope recovery facility.',
+      overview: 'Families of patients use this app to request admission, follow their loved one’s progress and stay in touch with staff. It runs on the same Supabase backend as the web portal, so updates from nurses and program staff reach families through push notifications.',
+      facts: [['TYPE', 'Mobile app'], ['PLATFORM', 'Android · iOS (Expo)'], ['USERS', 'Patients’ families'], ['BUILDS', 'EAS (APK preview)']],
+      features: [
+        ['Admission requests', 'Submit an admission form and request an admission meeting.'],
+        ['Patient progress', 'Follow progress, patient details and archived records.'],
+        ['Reports', 'Read the reports the care team shares.'],
+        ['Visits & appointments', 'Request and manage visitation schedules.'],
+        ['Messages', 'Chat directly with facility staff.'],
+        ['Push notifications', 'Expo notifications for updates from the care team.'],
+        ['Discharge requests', 'Start a discharge request from the app.'],
+        ['Secure onboarding', 'Sign-up with verification, informed consent and password recovery.'],
+      ],
+      languages: ['TypeScript'],
+      roles: [['Family member', 'admissions, progress, visits, messages and reports']],
+      tools: [
+        ['Mobile', ['React Native', 'Expo', 'Expo Router', 'React Navigation', 'Reanimated']],
+        ['Device features', ['Expo Notifications', 'Image Picker', 'Document Picker', 'Expo Audio', 'AsyncStorage']],
+        ['Backend & data', ['Supabase', 'PostgreSQL']],
+        ['Build', ['EAS Build', 'Git/GitHub']],
+      ],
+      data: 'Connects directly to the Supabase project it shares with the web portal. Each device’s push token is stored in a device_push_tokens table, so the portal’s Edge Function can notify the right families.',
+    },
   },
   {
     id: '03', kind: 'MOBILE', title: 'Rhayz Kicks', sub: 'Mobile App',
@@ -49,6 +101,30 @@ const PROJECTS = [
     repo: 'https://github.com/dwightangelodecena-cloud/RhayzKicks',
     span: 'lg:col-span-2', mono: 'RK',
     image: '/projects/rk-mobile.webp', shot: 'phone', bezel: true,
+    slug: 'rhayz-kicks-mobile',
+    details: {
+      tagline: 'Flutter shopping app for a sneaker and apparel store.',
+      overview: 'The customer app for Rhayz Kicks. Shoppers browse new drops by category and collection, save items to a wishlist, manage a cart and follow their orders through each delivery stage. Loyalty points and rewards are shared with the web store, where purchases and voucher redemption happen.',
+      facts: [['TYPE', 'Mobile app'], ['PLATFORM', 'Flutter (Android · iOS)'], ['USERS', 'Customers'], ['BACKEND', 'Supabase + Laravel API']],
+      features: [
+        ['Storefront', 'Home screen with a hero carousel, promo banners and video ads.'],
+        ['Categories & collections', 'Browse drops by category or curated collection.'],
+        ['Product detail', 'Variants, colorways and image galleries for every item.'],
+        ['Cart & wishlist', 'Kept in sync through the Laravel REST API.'],
+        ['Order tracking', 'Order history with a step-by-step delivery tracker.'],
+        ['Loyalty rewards', 'Points pop-up and a rewards panel.'],
+        ['Account & help', 'Sign-in, profile and a help/FAQ screen.'],
+      ],
+      languages: ['Dart', 'PHP', 'SQL'],
+      roles: [['Customer', 'browse, wishlist, cart, orders and rewards']],
+      tools: [
+        ['Mobile', ['Flutter', 'Provider', 'Google Fonts', 'video_player', 'shared_preferences']],
+        ['API', ['Laravel', 'Laravel Sanctum', 'REST API', 'http']],
+        ['Backend & data', ['Supabase', 'PostgreSQL']],
+        ['Version control', ['Git/GitHub']],
+      ],
+      data: 'A store repository layer combines two sources: Supabase for items, variants, inventory, images and colorways, and a Laravel 13 REST API (PHP 8.3) for products, cart and wishlist. The API’s Eloquent models map onto the same tables the web store uses.',
+    },
   },
   {
     id: '04', kind: 'WEB', title: 'Rhayz Kicks', sub: 'Web Platform',
@@ -58,6 +134,33 @@ const PROJECTS = [
     repo: 'https://github.com/dwightangelodecena-cloud/RhayzKicks',
     span: 'lg:col-span-4', mono: 'RK',
     image: '/projects/rk-web.webp', shot: 'web', pos: 'object-[50%_55%]',
+    slug: 'rhayz-kicks-web',
+    details: {
+      tagline: 'Sneaker storefront with a full store back office.',
+      overview: 'Rhayz Kicks is a shoe shop management system. Customers browse drops, use cart and wishlist drawers, check out online and earn loyalty points. Staff run the store from the same app, with point of sale, inventory, purchase orders, online order delivery and staff hours.',
+      facts: [['TYPE', 'Web platform'], ['ROLES', 'Customer · Staff · Admin'], ['BACKEND', 'Supabase (PostgreSQL)'], ['DEPLOYED', 'Vercel']],
+      features: [
+        ['Storefront', 'Home, category, collection and product pages.'],
+        ['Cart & wishlist drawers', 'Slide-out drawers that keep shoppers on the page.'],
+        ['Online checkout', 'PayMongo checkout and payment webhooks through Supabase Edge Functions.'],
+        ['Loyalty & vouchers', 'Customers earn points and redeem rewards from their account.'],
+        ['Point of sale', 'In-store sales recorded through a create_sale() database function.'],
+        ['Inventory & products', 'Products, variants, categories, collections and stock movements.'],
+        ['Order fulfilment', 'Online orders tracked through each delivery stage.'],
+        ['Vendors & purchase orders', 'Manage suppliers and restock orders.'],
+        ['Staff & hours', 'Team management, shifts and time tracking.'],
+        ['CMS & KPIs', 'Hero slides, banners, announcements and a KPI dashboard.'],
+      ],
+      languages: ['TypeScript', 'SQL', 'CSS'],
+      roles: [['Customer', 'shop, checkout and rewards'], ['Staff', 'point of sale, orders and hours'], ['Admin', 'inventory, vendors, loyalty, CMS and team']],
+      tools: [
+        ['Frontend', ['React', 'TypeScript', 'Vite', 'React Router']],
+        ['Backend & data', ['Supabase', 'PostgreSQL', 'Edge Functions', 'Row Level Security']],
+        ['Payments', ['PayMongo']],
+        ['Deployment', ['Vercel', 'Git/GitHub']],
+      ],
+      data: 'A 27-table Supabase PostgreSQL schema covers the catalogue (items, variants, colorways, images), stock (inventory, stock movements), in-store and online sales, vendors and purchase orders, staff shifts, loyalty vouchers and site content. SQL functions such as create_sale() and redeem_points() keep transactions consistent, and three Edge Functions handle PayMongo checkout, its webhook and staff account creation. The schema is documented with an ERD.',
+    },
   },
 ];
 
@@ -101,6 +204,29 @@ const TECH_LOGOS = {
   tailwind: { hex: '#06B6D4', path: 'M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C16.337,6.182,14.976,4.8,12.001,4.8z M6.001,12c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624 c1.177,1.194,2.538,2.576,5.512,2.576c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624 C10.337,13.382,8.976,12,6.001,12z' },
   figma: { hex: '#F24E1E', path: 'M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.014-4.49-4.49S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.02 3.019 3.02h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51a3.023 3.023 0 0 0-3.019 3.019c0 1.665 1.365 3.019 3.044 3.019 1.705 0 3.093-1.376 3.093-3.068v-2.97H8.148zm7.704 0h-.098c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h.098c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.49-4.49 4.49zm-.097-7.509c-1.665 0-3.019 1.355-3.019 3.019s1.355 3.019 3.019 3.019h.098c1.665 0 3.019-1.355 3.019-3.019s-1.355-3.019-3.019-3.019h-.098z' },
   mysql: { hex: '#4479A1', path: 'M16.405 5.501c-.115 0-.193.014-.274.033v.013h.014c.054.104.146.18.214.273.054.107.1.214.154.32l.014-.015c.094-.066.14-.172.14-.333-.04-.047-.046-.094-.08-.14-.04-.067-.126-.1-.18-.153zM5.77 18.695h-.927a50.854 50.854 0 00-.27-4.41h-.008l-1.41 4.41H2.45l-1.4-4.41h-.01a72.892 72.892 0 00-.195 4.41H0c.055-1.966.192-3.81.41-5.53h1.15l1.335 4.064h.008l1.347-4.064h1.095c.242 2.015.384 3.86.428 5.53zm4.017-4.08c-.378 2.045-.876 3.533-1.492 4.46-.482.716-1.01 1.073-1.583 1.073-.153 0-.34-.046-.566-.138v-.494c.11.017.24.026.386.026.268 0 .483-.075.647-.222.197-.18.295-.382.295-.605 0-.155-.077-.47-.23-.944L6.23 14.615h.91l.727 2.36c.164.536.233.91.205 1.123.4-1.064.678-2.227.835-3.483zm12.325 4.08h-2.63v-5.53h.885v4.85h1.745zm-3.32.135l-1.016-.5c.09-.076.177-.158.255-.25.433-.506.648-1.258.648-2.253 0-1.83-.718-2.746-2.155-2.746-.704 0-1.254.232-1.65.697-.43.508-.646 1.256-.646 2.245 0 .972.19 1.686.574 2.14.35.41.877.615 1.583.615.264 0 .506-.033.725-.098l1.325.772.36-.622zM15.5 17.588c-.225-.36-.337-.94-.337-1.736 0-1.393.424-2.09 1.27-2.09.443 0 .77.167.977.5.224.362.336.936.336 1.723 0 1.404-.424 2.108-1.27 2.108-.445 0-.77-.167-.978-.5zm-1.658-.425c0 .47-.172.856-.516 1.156-.344.3-.803.45-1.384.45-.543 0-1.064-.172-1.573-.515l.237-.476c.438.22.833.328 1.19.328.332 0 .593-.073.783-.22a.754.754 0 00.3-.615c0-.33-.23-.61-.648-.845-.388-.213-1.163-.657-1.163-.657-.422-.307-.632-.636-.632-1.177 0-.45.157-.81.47-1.085.315-.278.72-.415 1.22-.415.512 0 .98.136 1.4.41l-.213.476a2.726 2.726 0 00-1.064-.23c-.283 0-.502.068-.654.206a.685.685 0 00-.248.524c0 .328.234.61.666.85.393.215 1.187.67 1.187.67.433.305.648.63.648 1.168zm9.382-5.852c-.535-.014-.95.04-1.297.188-.1.04-.26.04-.274.167.055.053.063.14.11.214.08.134.218.313.346.407.14.11.28.216.427.31.26.16.555.255.81.416.145.094.293.213.44.313.073.05.12.14.214.172v-.02c-.046-.06-.06-.147-.105-.214-.067-.067-.134-.127-.2-.193a3.223 3.223 0 00-.695-.675c-.214-.146-.682-.35-.77-.595l-.013-.014c.146-.013.32-.066.46-.106.227-.06.435-.047.67-.106.106-.027.213-.06.32-.094v-.06c-.12-.12-.21-.283-.334-.395a8.867 8.867 0 00-1.104-.823c-.21-.134-.476-.22-.697-.334-.08-.04-.214-.06-.26-.127-.12-.146-.19-.34-.275-.514a17.69 17.69 0 01-.547-1.163c-.12-.262-.193-.523-.34-.763-.69-1.137-1.437-1.826-2.586-2.5-.247-.14-.543-.2-.856-.274-.167-.008-.334-.02-.5-.027-.11-.047-.216-.174-.31-.235-.38-.24-1.364-.76-1.644-.072-.18.434.267.862.422 1.082.115.153.26.328.34.5.047.116.06.235.107.356.106.294.207.622.347.897.073.14.153.287.247.413.054.073.146.107.167.227-.094.136-.1.334-.154.5-.24.757-.146 1.693.194 2.25.107.166.362.534.703.393.3-.12.234-.5.32-.835.02-.08.007-.133.048-.187v.015c.094.188.188.367.274.555.206.328.566.668.867.895.16.12.287.328.487.402v-.02h-.015c-.043-.058-.1-.086-.154-.133a3.445 3.445 0 01-.35-.4 8.76 8.76 0 01-.747-1.218c-.11-.21-.202-.436-.29-.643-.04-.08-.04-.2-.107-.24-.1.146-.247.273-.32.453-.127.288-.14.642-.188 1.01-.027.007-.014 0-.027.014-.214-.052-.287-.274-.367-.46-.2-.475-.233-1.238-.06-1.785.047-.14.247-.582.167-.716-.042-.127-.174-.2-.247-.303a2.478 2.478 0 01-.24-.427c-.16-.374-.24-.788-.414-1.162-.08-.173-.22-.354-.334-.513-.127-.18-.267-.307-.368-.52-.033-.073-.08-.194-.027-.274.014-.054.042-.075.094-.09.088-.072.335.022.422.062.247.1.455.194.662.334.094.066.195.193.315.226h.14c.214.047.455.014.655.073.355.114.675.28.962.46a5.953 5.953 0 012.085 2.286c.08.154.115.295.188.455.14.33.313.663.455.982.14.315.275.636.476.897.1.14.502.213.682.286.133.06.34.115.46.188.23.14.454.3.67.454.11.076.443.243.463.378z' },
+  javascript: { hex: '#F7DF1E', path: 'M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.404-.601-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z' },
+  dart: { hex: '#0175C2', path: 'M4.105 4.105S9.158 1.58 11.684.316a3.079 3.079 0 0 1 1.481-.315c.766.047 1.677.788 1.677.788L24 9.948v9.789h-4.263V24H9.789l-9-9C.303 14.5 0 13.795 0 13.105c0-.319.18-.818.316-1.105l3.789-7.895zm.679.679v11.787c.002.543.021 1.024.498 1.508L10.204 23h8.533v-4.263L4.784 4.784zm12.055-.678c-.899-.896-1.809-1.78-2.74-2.643-.302-.267-.567-.468-1.07-.462-.37.014-.87.195-.87.195L6.341 4.105l10.498.001z' },
+  php: { hex: '#777BB4', path: 'M7.01 10.207h-.944l-.515 2.648h.838c.556 0 .97-.105 1.242-.314.272-.21.455-.559.55-1.049.092-.47.05-.802-.124-.995-.175-.193-.523-.29-1.047-.29zM12 5.688C5.373 5.688 0 8.514 0 12s5.373 6.313 12 6.313S24 15.486 24 12c0-3.486-5.373-6.312-12-6.312zm-3.26 7.451c-.261.25-.575.438-.917.551-.336.108-.765.164-1.285.164H5.357l-.327 1.681H3.652l1.23-6.326h2.65c.797 0 1.378.209 1.744.628.366.418.476 1.002.33 1.752a2.836 2.836 0 0 1-.305.847c-.143.255-.33.49-.561.703zm4.024.715l.543-2.799c.063-.318.039-.536-.068-.651-.107-.116-.336-.174-.687-.174H11.46l-.704 3.625H9.388l1.23-6.327h1.367l-.327 1.682h1.218c.767 0 1.295.134 1.586.401s.378.7.263 1.299l-.572 2.944h-1.389zm7.597-2.265a2.782 2.782 0 0 1-.305.847c-.143.255-.33.49-.561.703a2.44 2.44 0 0 1-.917.551c-.336.108-.765.164-1.286.164h-1.18l-.327 1.682h-1.378l1.23-6.326h2.649c.797 0 1.378.209 1.744.628.366.417.477 1.001.331 1.751zM17.766 10.207h-.943l-.516 2.648h.838c.557 0 .971-.105 1.242-.314.272-.21.455-.559.551-1.049.092-.47.049-.802-.125-.995s-.524-.29-1.047-.29z' },
+  postgresql: { hex: '#4169E1', path: 'M23.5594 14.7228a.5269.5269 0 0 0-.0563-.1191c-.139-.2632-.4768-.3418-1.0074-.2321-1.6533.3411-2.2935.1312-2.5256-.0191 1.342-2.0482 2.445-4.522 3.0411-6.8297.2714-1.0507.7982-3.5237.1222-4.7316a1.5641 1.5641 0 0 0-.1509-.235C21.6931.9086 19.8007.0248 17.5099.0005c-1.4947-.0158-2.7705.3461-3.1161.4794a9.449 9.449 0 0 0-.5159-.0816 8.044 8.044 0 0 0-1.3114-.1278c-1.1822-.0184-2.2038.2642-3.0498.8406-.8573-.3211-4.7888-1.645-7.2219.0788C.9359 2.1526.3086 3.8733.4302 6.3043c.0409.818.5069 3.334 1.2423 5.7436.4598 1.5065.9387 2.7019 1.4334 3.582.553.9942 1.1259 1.5933 1.7143 1.7895.4474.1491 1.1327.1441 1.8581-.7279.8012-.9635 1.5903-1.8258 1.9446-2.2069.4351.2355.9064.3625 1.39.3772a.0569.0569 0 0 0 .0004.0041 11.0312 11.0312 0 0 0-.2472.3054c-.3389.4302-.4094.5197-1.5002.7443-.3102.064-1.1344.2339-1.1464.8115-.0025.1224.0329.2309.0919.3268.2269.4231.9216.6097 1.015.6331 1.3345.3335 2.5044.092 3.3714-.6787-.017 2.231.0775 4.4174.3454 5.0874.2212.5529.7618 1.9045 2.4692 1.9043.2505 0 .5263-.0291.8296-.0941 1.7819-.3821 2.5557-1.1696 2.855-2.9059.1503-.8707.4016-2.8753.5388-4.1012.0169-.0703.0357-.1207.057-.1362.0007-.0005.0697-.0471.4272.0307a.3673.3673 0 0 0 .0443.0068l.2539.0223.0149.001c.8468.0384 1.9114-.1426 2.5312-.4308.6438-.2988 1.8057-1.0323 1.5951-1.6698zM2.371 11.8765c-.7435-2.4358-1.1779-4.8851-1.2123-5.5719-.1086-2.1714.4171-3.6829 1.5623-4.4927 1.8367-1.2986 4.8398-.5408 6.108-.13-.0032.0032-.0066.0061-.0098.0094-2.0238 2.044-1.9758 5.536-1.9708 5.7495-.0002.0823.0066.1989.0162.3593.0348.5873.0996 1.6804-.0735 2.9184-.1609 1.1504.1937 2.2764.9728 3.0892.0806.0841.1648.1631.2518.2374-.3468.3714-1.1004 1.1926-1.9025 2.1576-.5677.6825-.9597.5517-1.0886.5087-.3919-.1307-.813-.5871-1.2381-1.3223-.4796-.839-.9635-2.0317-1.4155-3.5126zm6.0072 5.0871c-.1711-.0428-.3271-.1132-.4322-.1772.0889-.0394.2374-.0902.4833-.1409 1.2833-.2641 1.4815-.4506 1.9143-1.0002.0992-.126.2116-.2687.3673-.4426a.3549.3549 0 0 0 .0737-.1298c.1708-.1513.2724-.1099.4369-.0417.156.0646.3078.26.3695.4752.0291.1016.0619.2945-.0452.4444-.9043 1.2658-2.2216 1.2494-3.1676 1.0128zm2.094-3.988-.0525.141c-.133.3566-.2567.6881-.3334 1.003-.6674-.0021-1.3168-.2872-1.8105-.8024-.6279-.6551-.9131-1.5664-.7825-2.5004.1828-1.3079.1153-2.4468.079-3.0586-.005-.0857-.0095-.1607-.0122-.2199.2957-.2621 1.6659-.9962 2.6429-.7724.4459.1022.7176.4057.8305.928.5846 2.7038.0774 3.8307-.3302 4.7363-.084.1866-.1633.3629-.2311.5454zm7.3637 4.5725c-.0169.1768-.0358.376-.0618.5959l-.146.4383a.3547.3547 0 0 0-.0182.1077c-.0059.4747-.054.6489-.115.8693-.0634.2292-.1353.4891-.1794 1.0575-.11 1.4143-.8782 2.2267-2.4172 2.5565-1.5155.3251-1.7843-.4968-2.0212-1.2217a6.5824 6.5824 0 0 0-.0769-.2266c-.2154-.5858-.1911-1.4119-.1574-2.5551.0165-.5612-.0249-1.9013-.3302-2.6462.0044-.2932.0106-.5909.019-.8918a.3529.3529 0 0 0-.0153-.1126 1.4927 1.4927 0 0 0-.0439-.208c-.1226-.4283-.4213-.7866-.7797-.9351-.1424-.059-.4038-.1672-.7178-.0869.067-.276.1831-.5875.309-.9249l.0529-.142c.0595-.16.134-.3257.213-.5012.4265-.9476 1.0106-2.2453.3766-5.1772-.2374-1.0981-1.0304-1.6343-2.2324-1.5098-.7207.0746-1.3799.3654-1.7088.5321a5.6716 5.6716 0 0 0-.1958.1041c.0918-1.1064.4386-3.1741 1.7357-4.4823a4.0306 4.0306 0 0 1 .3033-.276.3532.3532 0 0 0 .1447-.0644c.7524-.5706 1.6945-.8506 2.802-.8325.4091.0067.8017.0339 1.1742.081 1.939.3544 3.2439 1.4468 4.0359 2.3827.8143.9623 1.2552 1.9315 1.4312 2.4543-1.3232-.1346-2.2234.1268-2.6797.779-.9926 1.4189.543 4.1729 1.2811 5.4964.1353.2426.2522.4522.2889.5413.2403.5825.5515.9713.7787 1.2552.0696.087.1372.1714.1885.245-.4008.1155-1.1208.3825-1.0552 1.717-.0123.1563-.0423.4469-.0834.8148-.0461.2077-.0702.4603-.0994.7662zm.8905-1.6211c-.0405-.8316.2691-.9185.5967-1.0105a2.8566 2.8566 0 0 0 .135-.0406 1.202 1.202 0 0 0 .1342.103c.5703.3765 1.5823.4213 3.0068.1344-.2016.1769-.5189.3994-.9533.6011-.4098.1903-1.0957.333-1.7473.3636-.7197.0336-1.0859-.0807-1.1721-.151zm.5695-9.2712c-.0059.3508-.0542.6692-.1054 1.0017-.055.3576-.112.7274-.1264 1.1762-.0142.4368.0404.8909.0932 1.3301.1066.887.216 1.8003-.2075 2.7014a3.5272 3.5272 0 0 1-.1876-.3856c-.0527-.1276-.1669-.3326-.3251-.6162-.6156-1.1041-2.0574-3.6896-1.3193-4.7446.3795-.5427 1.3408-.5661 2.1781-.463zm.2284 7.0137a12.3762 12.3762 0 0 0-.0853-.1074l-.0355-.0444c.7262-1.1995.5842-2.3862.4578-3.4385-.0519-.4318-.1009-.8396-.0885-1.2226.0129-.4061.0666-.7543.1185-1.0911.0639-.415.1288-.8443.1109-1.3505.0134-.0531.0188-.1158.0118-.1902-.0457-.4855-.5999-1.938-1.7294-3.253-.6076-.7073-1.4896-1.4972-2.6889-2.0395.5251-.1066 1.2328-.2035 2.0244-.1859 2.0515.0456 3.6746.8135 4.8242 2.2824a.908.908 0 0 1 .0667.1002c.7231 1.3556-.2762 6.2751-2.9867 10.5405zm-8.8166-6.1162c-.025.1794-.3089.4225-.6211.4225a.5821.5821 0 0 1-.0809-.0056c-.1873-.026-.3765-.144-.5059-.3156-.0458-.0605-.1203-.178-.1055-.2844.0055-.0401.0261-.0985.0925-.1488.1182-.0894.3518-.1226.6096-.0867.3163.0441.6426.1938.6113.4186zm7.9305-.4114c.0111.0792-.049.201-.1531.3102-.0683.0717-.212.1961-.4079.2232a.5456.5456 0 0 1-.075.0052c-.2935 0-.5414-.2344-.5607-.3717-.024-.1765.2641-.3106.5611-.352.297-.0414.6111.0088.6356.1851z' },
+  css: { hex: '#1572B6', path: 'M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.288l5.373-1.53L18.59 4.414z' },
+  html: { hex: '#E34F26', path: 'M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157H8.531z' },
+  expo: { hex: '#F5F5F5', path: 'M0 20.084c.043.53.23 1.063.718 1.778.58.849 1.576 1.315 2.303.567.49-.505 5.794-9.776 8.35-13.29a.761.761 0 011.248 0c2.556 3.514 7.86 12.785 8.35 13.29.727.748 1.723.282 2.303-.567.57-.835.728-1.42.728-2.046 0-.426-8.26-15.798-9.092-17.078-.8-1.23-1.044-1.498-2.397-1.542h-1.032c-1.353.044-1.597.311-2.398 1.542C8.267 3.991.33 18.758 0 19.77Z' },
+  vite: { hex: '#646CFF', path: 'm8.286 10.578.512-8.657a.306.306 0 0 1 .247-.282L17.377.006a.306.306 0 0 1 .353.385l-1.558 5.403a.306.306 0 0 0 .352.385l2.388-.46a.306.306 0 0 1 .332.438l-6.79 13.55-.123.19a.294.294 0 0 1-.252.14c-.177 0-.35-.152-.305-.369l1.095-5.301a.306.306 0 0 0-.388-.355l-1.433.435a.306.306 0 0 1-.389-.354l.69-3.375a.306.306 0 0 0-.37-.36l-2.32.536a.306.306 0 0 1-.374-.316zm14.976-7.926L17.284 3.74l-.544 1.887 2.077-.4a.8.8 0 0 1 .84.369.8.8 0 0 1 .034.783L12.9 19.93l-.013.025-.015.023-.122.19a.801.801 0 0 1-.672.37.826.826 0 0 1-.634-.302.8.8 0 0 1-.16-.67l1.029-4.981-1.12.34a.81.81 0 0 1-.86-.262.802.802 0 0 1-.165-.67l.63-3.08-2.027.468a.808.808 0 0 1-.768-.233.81.81 0 0 1-.217-.6l.389-6.57-7.44-1.33a.612.612 0 0 0-.64.906L11.58 23.691a.612.612 0 0 0 1.066-.004l11.26-20.135a.612.612 0 0 0-.644-.9z' },
+  vercel: { hex: '#F5F5F5', path: 'M24 22.525H0l12-21.05 12 21.05z' },
+  reactrouter: { hex: '#CA4245', path: 'M12.118 5.466a2.306 2.306 0 00-.623.08c-.278.067-.702.332-.953.583-.41.423-.49.609-.662 1.469-.08.423.41 1.43.847 1.734.45.317 1.085.502 2.065.608 1.429.16 1.84.636 1.84 2.197 0 1.377-.385 1.747-1.96 1.906-1.707.172-2.58.834-2.765 2.117-.106.781.41 1.76 1.125 2.091 1.627.768 3.15-.198 3.467-2.196.211-1.284.622-1.642 1.998-1.747 1.588-.133 2.409-.675 2.713-1.787.278-1.02-.304-2.157-1.297-2.554-.264-.106-.873-.238-1.35-.291-1.495-.16-1.879-.424-2.038-1.39-.225-1.337-.317-1.562-.794-2.09a2.174 2.174 0 00-1.613-.73zm-4.785 4.36a2.145 2.145 0 00-.497.048c-1.469.318-2.17 2.051-1.35 3.295 1.178 1.774 3.944.953 3.97-1.177.012-1.193-.98-2.143-2.123-2.166zM2.089 14.19a2.22 2.22 0 00-.427.052c-2.158.476-2.237 3.626-.106 4.182.53.145.582.145 1.111.013 1.191-.318 1.866-1.456 1.549-2.607-.278-1.02-1.144-1.664-2.127-1.64zm19.824.008c-.233.002-.477.058-.784.162-1.39.477-1.866 2.092-.98 3.336.557.794 1.96 1.058 2.82.516 1.416-.874 1.363-3.057-.093-3.746-.38-.186-.663-.271-.963-.268z' },
+  framer: { hex: '#0055FF', path: 'M4 0h16v8h-8zM4 8h8l8 8H4zM4 16h8v8z' },
+  git: { hex: '#F05032', path: 'M23.546 10.93L13.067.452c-.604-.603-1.582-.603-2.188 0L8.708 2.627l2.76 2.76c.645-.215 1.379-.07 1.889.441.516.515.658 1.258.438 1.9l2.658 2.66c.645-.223 1.387-.078 1.9.435.721.72.721 1.884 0 2.604-.719.719-1.881.719-2.6 0-.539-.541-.674-1.337-.404-1.996L12.86 8.955v6.525c.176.086.342.203.488.348.713.721.713 1.883 0 2.6-.719.721-1.889.721-2.609 0-.719-.719-.719-1.879 0-2.598.182-.18.387-.316.605-.406V8.835c-.217-.091-.424-.222-.6-.401-.545-.545-.676-1.342-.396-2.009L7.636 3.7.45 10.881c-.6.605-.6 1.584 0 2.189l10.48 10.477c.604.604 1.582.604 2.186 0l10.43-10.43c.605-.603.605-1.582 0-2.187' },
+};
+
+// Display name (lowercased) -> TECH_LOGOS key, for tech chips on project pages.
+const LOGO_FOR = {
+  react: 'react', 'react native': 'react', typescript: 'typescript', javascript: 'javascript',
+  flutter: 'flutter', dart: 'dart', php: 'php', laravel: 'laravel', 'laravel sanctum': 'laravel',
+  supabase: 'supabase', 'supabase edge functions': 'supabase', 'edge functions': 'supabase',
+  postgresql: 'postgresql', sql: 'postgresql', 'row level security': 'postgresql',
+  'tailwind css': 'tailwind', css: 'css', html: 'html', vite: 'vite', vercel: 'vercel',
+  expo: 'expo', 'expo router': 'expo', 'expo notifications': 'expo', 'eas build': 'expo',
+  'react router': 'reactrouter', 'framer motion': 'framer', 'git/github': 'git', figma: 'figma', mysql: 'mysql',
 };
 
 const MARQUEE = [
@@ -382,7 +508,8 @@ function Hero() {
 
 function ProjectCard({ p }) {
   return (
-    <article className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-crimson/50 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.25),0_24px_70px_-20px_rgba(220,38,38,0.45)] motion-reduce:transform-none ${p.span}`}>
+    <a href={`#${p.slug}`} target="_blank" rel="noopener" aria-label={`Open ${p.title} ${p.sub} details in a new tab`}
+      className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-crimson/50 hover:shadow-[0_0_0_1px_rgba(220,38,38,0.25),0_24px_70px_-20px_rgba(220,38,38,0.45)] motion-reduce:transform-none ${p.span}`}>
       <div className={`relative overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_120%_at_100%_0%,rgba(220,38,38,0.18),transparent_55%)] ${p.image ? 'h-72 md:h-80' : 'h-56 md:h-64'}`}>
         <div aria-hidden className="absolute inset-0 bg-grid opacity-60" />
         {!p.image && (
@@ -415,14 +542,11 @@ function ProjectCard({ p }) {
           <span className="text-crimson">{p.id}</span>
           <span className="rounded-full border border-white/15 px-2 py-0.5 text-mute">{p.kind}</span>
         </div>
-        {p.live && (
-          <a href={p.live} target="_blank" rel="noreferrer"
-            className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100 focus-visible:opacity-100">
-            <span className="inline-flex items-center gap-2 rounded-full bg-crimson px-5 py-2.5 font-mono text-[12px] tracking-[0.15em] text-white">
-              VIEW LIVE <ArrowUpRight className="h-4 w-4" />
-            </span>
-          </a>
-        )}
+        <span className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 opacity-0 backdrop-blur-[2px] transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span className="inline-flex items-center gap-2 rounded-full bg-crimson px-5 py-2.5 font-mono text-[12px] tracking-[0.15em] text-white">
+            VIEW PROJECT <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </span>
         {p.live && (
           <span className="absolute right-5 top-5 inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.2em] text-white/80">
             <span className="h-1.5 w-1.5 rounded-full bg-crimson" /> LIVE
@@ -436,22 +560,14 @@ function ProjectCard({ p }) {
         <div className="mt-5 flex flex-wrap gap-1.5">
           {p.stack.map((s) => <Pill key={s}>{s}</Pill>)}
         </div>
-        <div className="mt-auto flex flex-wrap gap-4 pt-6 font-mono text-[11px] tracking-[0.15em]">
-          {p.live && (
-            <a href={p.live} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-white hover:text-crimson">
-              LIVE <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
-          )}
-          {p.repo ? (
-            <a href={p.repo} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-mute hover:text-white">
-              <Github className="h-3.5 w-3.5" /> SOURCE
-            </a>
-          ) : (
-            <span className="text-mute/50">PRIVATE · ACADEMIC</span>
-          )}
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-4 pt-6 font-mono text-[11px] tracking-[0.15em]">
+          <span className="inline-flex items-center gap-1.5 text-white transition-colors group-hover:text-crimson">
+            DETAILS &amp; TECH <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </span>
+          <span className="text-mute/60">{p.live ? 'LIVE DEMO · SOURCE' : 'SOURCE'}</span>
         </div>
       </div>
-    </article>
+    </a>
   );
 }
 
@@ -633,7 +749,209 @@ function Contact() {
   );
 }
 
+/* ---------- project detail page (opened via #slug) ---------- */
+
+function TechChip({ name }) {
+  const logo = TECH_LOGOS[LOGO_FOR[name.toLowerCase()]];
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[13px] text-white/90 transition duration-200 hover:-translate-y-0.5 hover:border-crimson hover:bg-crimson/15">
+      {logo ? (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className="h-3.5 w-3.5" style={{ fill: logo.hex }}><path d={logo.path} /></svg>
+      ) : (
+        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-crimson" />
+      )}
+      {name}
+    </span>
+  );
+}
+
+function Showcase({ p }) {
+  if (p.shot === 'web') {
+    const host = p.live ? p.live.replace(/^https?:\/\//, '').replace(/\/$/, '') : `${p.slug}.local`;
+    return (
+      <div className="overflow-hidden rounded-2xl border border-white/15 bg-black shadow-[0_40px_120px_-30px_rgba(220,38,38,0.35)]">
+        <div className="flex h-9 items-center gap-3 border-b border-white/10 bg-white/[0.04] px-4">
+          <span className="flex gap-1.5" aria-hidden>
+            <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
+            <span className="h-2.5 w-2.5 rounded-full bg-white/20" />
+          </span>
+          <span className="min-w-0 flex-1 truncate rounded-md bg-white/[0.05] px-3 py-1 text-center font-mono text-[11px] text-mute">{host}</span>
+        </div>
+        <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} screenshot`} className="block w-full" />
+      </div>
+    );
+  }
+  return (
+    <div className="relative flex justify-center overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(80%_70%_at_50%_100%,rgba(220,38,38,0.28),transparent_70%)] px-6 pt-10 pb-0">
+      <div aria-hidden className="absolute inset-0 bg-grid opacity-50" />
+      <div className={`relative w-[min(78%,340px)] overflow-hidden ${p.bezel ? 'rounded-[2.6rem] border-[9px] border-[#1b1b1d] bg-black ring-1 ring-white/15' : 'rounded-[9%/4.2%]'} shadow-[0_30px_80px_rgba(0,0,0,0.9)]`}>
+        {p.bezel && <span aria-hidden className="absolute left-1/2 top-2.5 z-10 h-5 w-[30%] -translate-x-1/2 rounded-full bg-black" />}
+        <img src={p.image} alt={`${p.title} ${p.sub.toLowerCase()} screen`} className="block w-full" />
+      </div>
+    </div>
+  );
+}
+
+function ProjectPage({ p }) {
+  const d = p.details;
+  const sibling = PROJECTS.find((x) => x.title === p.title && x.slug !== p.slug);
+  return (
+    <div className="relative min-h-screen bg-obsidian font-sans text-mute antialiased selection:bg-crimson selection:text-white">
+      <div aria-hidden className="grain pointer-events-none fixed inset-0 z-[60] opacity-[0.06]" />
+      <header className="fixed inset-x-0 z-50 flex justify-center px-gutter" style={{ top: 'calc(env(safe-area-inset-top, 0px) + 14px)' }}>
+        <nav className="flex w-full max-w-[1400px] items-center justify-between gap-4 rounded-full border border-white/10 bg-black/50 py-2 pl-5 pr-2 backdrop-blur-xl">
+          <a href="#hero" className="font-display text-xl tracking-wide text-white">DAD<span className="text-crimson">.</span></a>
+          <span className="hidden font-mono text-[11px] tracking-[0.15em] text-mute md:block">PROJECT {p.id} / {String(PROJECTS.length).padStart(2, '0')}</span>
+          <a href="#work" className="rounded-full border border-white/15 px-4 py-2 font-mono text-[11px] tracking-[0.15em] text-white transition hover:border-crimson hover:text-crimson">
+            ← ALL WORK
+          </a>
+        </nav>
+      </header>
+
+      <main className="mx-auto max-w-[1400px] px-gutter pt-32 pb-24 md:pt-40">
+        <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] tracking-[0.2em]">
+          <span className="text-crimson">{p.id}</span>
+          <span className="rounded-full border border-white/15 px-2.5 py-0.5 text-mute">{p.kind}</span>
+          <span className="text-mute">{p.sub.toUpperCase()}</span>
+          {p.live && (
+            <span className="inline-flex items-center gap-1.5 text-white">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-crimson opacity-75 motion-reduce:animate-none" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-crimson" />
+              </span>
+              LIVE
+            </span>
+          )}
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
+          <div className="min-w-0 lg:col-span-7">
+            <h1 className="font-display text-[clamp(3.25rem,9vw,8.5rem)] leading-[0.86] text-white [text-wrap:balance]">
+              {p.title.toUpperCase()}
+            </h1>
+            <p className="mt-4 text-xl text-white/80">{d.tagline}</p>
+          </div>
+          <div className="min-w-0 lg:col-span-5">
+            <p className="max-w-[60ch] text-[15px] leading-relaxed">{d.overview}</p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {p.live && (
+                <a href={p.live} target="_blank" rel="noreferrer"
+                  className="group inline-flex items-center gap-2 rounded-full bg-crimson px-5 py-3 font-mono text-[12px] tracking-wider text-white transition hover:bg-white hover:text-black">
+                  [ View Live <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" /> ]
+                </a>
+              )}
+              {p.repo && (
+                <a href={p.repo} target="_blank" rel="noreferrer"
+                  className="group inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-3 font-mono text-[12px] tracking-wider text-white transition hover:border-crimson hover:text-crimson">
+                  <Github className="h-4 w-4" /> [ Source Code ]
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <dl className="mt-12 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 font-mono md:grid-cols-4">
+          {d.facts.map(([k, v]) => (
+            <div key={k} className="min-w-0 bg-obsidian p-5">
+              <dt className="text-[10px] tracking-[0.2em] text-mute/70">{k}</dt>
+              <dd className="mt-2 text-sm text-white">{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="mt-12"><Showcase p={p} /></div>
+
+        <div className="mt-12 grid grid-cols-1 gap-4 lg:grid-cols-6">
+          <section className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8 lg:col-span-4">
+            <h2 className="font-mono text-[11px] tracking-[0.2em] text-crimson">KEY FEATURES</h2>
+            <ul className="mt-6 grid grid-cols-1 gap-x-8 gap-y-4 md:grid-cols-2">
+              {d.features.map(([t, s]) => (
+                <li key={t} className="flex gap-3">
+                  <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-crimson" />
+                  <div className="min-w-0">
+                    <div className="font-medium text-white">{t}</div>
+                    <p className="mt-1 text-sm leading-relaxed">{s}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8 lg:col-span-2">
+            <h2 className="font-mono text-[11px] tracking-[0.2em] text-crimson">PROGRAMMING LANGUAGES</h2>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {d.languages.map((l) => <TechChip key={l} name={l} />)}
+            </div>
+            {d.roles && (
+              <>
+                <h2 className="mt-8 font-mono text-[11px] tracking-[0.2em] text-crimson">USER ROLES</h2>
+                <ul className="mt-4 space-y-2 text-sm">
+                  {d.roles.map(([r, s]) => (
+                    <li key={r}><span className="text-white">{r}</span> — {s}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </section>
+
+          <section className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8 lg:col-span-6">
+            <h2 className="font-mono text-[11px] tracking-[0.2em] text-crimson">TOOLS, FRAMEWORKS &amp; LIBRARIES</h2>
+            <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {d.tools.map(([group, items]) => (
+                <div key={group} className="min-w-0">
+                  <div className="font-mono text-[10px] tracking-[0.2em] text-mute/70">{group.toUpperCase()}</div>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {items.map((t) => <TechChip key={t} name={t} />)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {d.data && (
+            <section className="min-w-0 rounded-2xl border border-white/10 bg-white/[0.04] p-6 md:p-8 lg:col-span-6">
+              <h2 className="font-mono text-[11px] tracking-[0.2em] text-crimson">BACKEND &amp; DATA</h2>
+              <p className="mt-4 max-w-[75ch] text-sm leading-relaxed">{d.data}</p>
+            </section>
+          )}
+        </div>
+
+        <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
+          {sibling ? (
+            <a href={`#${sibling.slug}`} className="group inline-flex items-center gap-3 text-white">
+              <span className="font-mono text-[11px] tracking-[0.2em] text-mute">ALSO BUILT</span>
+              <span className="text-lg font-semibold group-hover:text-crimson">{sibling.title} — {sibling.sub}</span>
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a>
+          ) : <span />}
+          <a href="#contact" className="font-mono text-[11px] tracking-[0.2em] text-mute hover:text-white">LET&apos;S TALK ABOUT THIS PROJECT →</a>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 export default function Portfolio() {
+  const [route, setRoute] = useState(() => window.location.hash.slice(1));
+  useEffect(() => {
+    const onHash = () => setRoute(window.location.hash.slice(1));
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, []);
+  const project = PROJECTS.find((p) => p.slug === route);
+
+  useEffect(() => {
+    document.title = project ? `${project.title} — ${project.sub} · Dwight Angelo Decena` : 'Dwight Angelo Decena — Portfolio';
+    if (project) window.scrollTo(0, 0);
+    else if (route) document.getElementById(route)?.scrollIntoView();
+  }, [project, route]);
+
+  if (project) return <ProjectPage p={project} />;
+  return <Home />;
+}
+
+function Home() {
   const [active, setActive] = useState('hero');
   useEffect(() => {
     const ids = [...NAV.map((n) => n.id), 'contact'];
