@@ -12,6 +12,8 @@ import {
 
 // Transparent-background cutout served from site/public. Set to null for the silhouette.
 const PORTRAIT_SRC = '/portrait.webp';
+// Face-centred 256px crop of the portrait for small round avatars.
+const AVATAR_SRC = '/avatar.webp';
 
 const PROFILE = {
   name: 'Dwight Angelo Decena',
@@ -2402,7 +2404,8 @@ function ChatWidget() {
   const [teaser, setTeaser] = useState(false);
   const [topic, setTopic] = useState(CHAT_TOPICS[0]);
   const [form, setForm] = useState({ name: '', email: '', msg: '' });
-  const [opened, setOpened] = useState(false);
+  const [draft, setDraft] = useState(null);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
   const panelRef = useRef(null);
 
@@ -2430,8 +2433,23 @@ function ChatWidget() {
     setError('');
     const subject = `[Portfolio] ${topic}${form.name ? ` — ${form.name}` : ''}`;
     const body = `${form.msg.trim()}\n\n— ${form.name || 'A visitor'}${form.email ? ` (${form.email})` : ''}\nSent from the portfolio message box`;
+    // Try the visitor's default email app; the confirmation also offers webmail and copy, since many have no mail app set up.
     window.location.href = `mailto:${PROFILE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setOpened(true);
+    setDraft({ subject, body });
+    setCopied(false);
+  };
+  const enc = encodeURIComponent;
+  const webmail = draft && [
+    ['Gmail', `https://mail.google.com/mail/?view=cm&fs=1&to=${PROFILE.email}&su=${enc(draft.subject)}&body=${enc(draft.body)}`],
+    ['Outlook', `https://outlook.live.com/mail/0/deeplink/compose?to=${PROFILE.email}&subject=${enc(draft.subject)}&body=${enc(draft.body)}`],
+  ];
+  const copyDraft = async () => {
+    try {
+      await navigator.clipboard.writeText(`To: ${PROFILE.email}\nSubject: ${draft.subject}\n\n${draft.body}`);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
   };
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const field = 'w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-sm text-white placeholder:text-mute/60 outline-none transition focus:border-crimson focus:ring-2 focus:ring-crimson/25';
@@ -2446,7 +2464,7 @@ function ChatWidget() {
           <div className="relative flex items-center gap-3 overflow-hidden bg-crimson px-5 py-4">
             <div aria-hidden className="absolute inset-0 bg-grid opacity-25" />
             <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white/70 bg-black/30">
-              <img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" />
+              <img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" />
             </span>
             <div className="relative min-w-0 flex-1">
               <div className="truncate font-semibold text-white">Dwight Angelo Decena</div>
@@ -2462,18 +2480,38 @@ function ChatWidget() {
 
           <div className="flex-1 space-y-4 overflow-y-auto px-5 py-5">
             <div className="flex items-end gap-2">
-              <span className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-white/10"><img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" /></span>
+              <span className="h-7 w-7 shrink-0 overflow-hidden rounded-full bg-white/10"><img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" /></span>
               <div className="max-w-[85%] rounded-2xl rounded-bl-md border border-white/10 bg-white/[0.06] px-4 py-3 text-sm leading-relaxed text-white/90">
                 Hi! Thanks for stopping by. Tell me about your project, internship or idea and I&apos;ll get back to you by email.
               </div>
             </div>
 
-            {opened ? (
-              <div className="anim-rise rounded-2xl border border-crimson/40 bg-crimson/10 p-4 text-sm leading-relaxed text-white/90">
-                <div className="flex items-center gap-2 font-semibold text-white"><Mail className="h-4 w-4 text-crimson" /> Your email app should now be open</div>
-                <p className="mt-2">Your message is filled in and addressed to me. Press send there to deliver it. If nothing opened, email me directly:</p>
-                <div className="mt-3"><CopyCode code={PROFILE.email} /></div>
-                <button type="button" onClick={() => setOpened(false)} className="mt-3 font-mono text-[10px] tracking-[0.15em] text-mute hover:text-white">← EDIT MESSAGE</button>
+            {draft ? (
+              <div className="anim-rise space-y-3">
+                <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-md bg-crimson px-4 py-3 text-sm leading-relaxed text-white">
+                  {form.msg}
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm leading-relaxed text-white/90">
+                  <div className="flex items-center gap-2.5 font-semibold text-white">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#22c55e]/15 text-[#4ade80]"><Check className="h-3.5 w-3.5" /></span>
+                    Your message is ready to send
+                  </div>
+                  <p className="mt-2 text-mute">If your email app opened, just press send there. Use Gmail or Outlook in the browser? Open it there instead:</p>
+                  <div className="mt-3 grid grid-cols-2 gap-2">
+                    {webmail.map(([name, url]) => (
+                      <a key={name} href={url} target="_blank" rel="noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/15 bg-black/30 px-3 py-2.5 font-mono text-[11px] tracking-[0.1em] text-white transition hover:border-crimson hover:bg-crimson">
+                        <Mail className="h-3.5 w-3.5" /> {name.toUpperCase()} <ArrowUpRight className="h-3 w-3" />
+                      </a>
+                    ))}
+                  </div>
+                  <button type="button" onClick={copyDraft}
+                    className="mt-2 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-white/10 px-3 py-2 font-mono text-[11px] tracking-[0.1em] text-mute transition hover:border-white/30 hover:text-white">
+                    {copied ? <Check className="h-3.5 w-3.5 text-[#4ade80]" /> : <Copy className="h-3.5 w-3.5" />} {copied ? 'COPIED — PASTE IT ANYWHERE' : 'COPY MESSAGE'}
+                  </button>
+                  <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-mute">Or email me directly: <CopyCode code={PROFILE.email} /></div>
+                </div>
+                <button type="button" onClick={() => setDraft(null)} className="font-mono text-[10px] tracking-[0.15em] text-mute hover:text-white">← EDIT MESSAGE</button>
               </div>
             ) : (
               <form onSubmit={send} className="space-y-3" noValidate>
@@ -2523,7 +2561,7 @@ function ChatWidget() {
       <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-label={open ? 'Close message box' : 'Message me'}
         className="group relative flex h-14 items-center gap-2 rounded-full bg-crimson pl-1.5 pr-5 text-white shadow-[0_14px_40px_-8px_rgba(220,38,38,0.8)] transition hover:scale-105 hover:bg-[#ef4444] motion-reduce:transform-none">
         <span className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-white/80 bg-black/30">
-          <img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" />
+          <img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" />
         </span>
         <span className="font-mono text-[11px] tracking-[0.15em]">{open ? 'CLOSE' : 'MESSAGE ME'}</span>
         {!open && <MessageCircle className="h-4 w-4" />}
