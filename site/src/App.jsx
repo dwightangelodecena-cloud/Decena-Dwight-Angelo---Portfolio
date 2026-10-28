@@ -37,9 +37,9 @@ const PROJECTS = [
     image: '/projects/boh-web.webp', shot: 'web',
     slug: 'bridges-of-hope-web',
     contrib: {
-      badge: 'TEAM OF 4', role: 'Full-stack developer and repository owner',
-      stats: [['TEAM', '4 developers'], ['MY COMMITS', '64 of 216'], ['ACTIVE', 'Mar – Oct 2026'], ['ON THIS APP', '56 commits']],
-      share: [64, 216],
+      badge: 'TEAM OF 4', role: 'Lead web & backend developer, and repository owner',
+      stats: [['WEB PORTAL', '56 of 120 · #1'], ['BACKEND', '23 of 42 · #1'], ['ADMIN PAGES', '41 of 66 · #1'], ['WHOLE REPO', '64 of 216 · 30%']],
+      share: [56, 120], shareLabel: 'MY SHARE OF WEB PORTAL COMMITS', shareNote: '56 OF 120 WEB PORTAL COMMITS · THE MOST ON A TEAM OF 4',
       areas: [
         [GitBranch, 'Project foundation', 'Set up the web/mobile repository structure and role-based routing for admin, nurse, program staff and family accounts.', 'RoleGuard.jsx · App.jsx'],
         [Layers, 'Admin dashboard & analytics', 'Built the analytics dashboard, then redesigned it with inline admissions and possible-discharge reports and a ward capacity fix.', 'admin-dashboard.jsx · AdminAnalyticsSection.jsx'],
@@ -87,7 +87,7 @@ const PROJECTS = [
     image: '/projects/boh-mobile.webp', shot: 'phone',
     slug: 'bridges-of-hope-mobile',
     contrib: {
-      badge: 'TEAM OF 4', role: 'Full-stack developer and repository owner',
+      badge: 'TEAM OF 4', role: 'Mobile contributor — I led the web portal and backend',
       stats: [['TEAM', '4 developers'], ['MY COMMITS', '64 of 216'], ['ACTIVE', 'Mar – Oct 2026'], ['ON THIS APP', '21 commits']],
       share: [64, 216],
       areas: [
@@ -315,8 +315,12 @@ const CREDENTIALS = {
 
 // Main-page summary of the per-project contributions (counts from each repo's non-merge commits).
 const CONTRIB_SUMMARY = [
-  { title: 'Bridges of Hope', badge: 'TEAM OF 4', role: 'Full-stack developer and repository owner',
-    share: [64, 216], stats: [['TEAM', '4 developers'], ['ACTIVE', 'Mar – Oct 2026'], ['WEB', '56 commits'], ['MOBILE', '21 commits']],
+  { title: 'Bridges of Hope', badge: 'TEAM OF 4', role: 'Lead web & backend developer · repository owner',
+    share: [64, 216],
+    // Areas where I made the most commits on the team (non-merge commits touching each path).
+    lead: [['WEB PORTAL', 56, 120], ['BACKEND', 23, 42], ['ADMIN PAGES', 41, 66]],
+    overall: '30% OF ALL 216 COMMITS · 2ND OF 4 OVERALL · MOBILE LED BY A TEAMMATE',
+    stats: [['TEAM', '4 developers'], ['ACTIVE', 'Mar – Oct 2026'], ['WEB PORTAL', '#1 of 4'], ['BACKEND', '#1 of 4']],
     areas: [[GitBranch, 'Project foundation & role-based routing'], [Layers, 'Admin dashboard & analytics'], [Database, 'Patient, admission & discharge management'],
       [ShieldCheck, 'Auth & security on web and mobile'], [Bell, 'Notifications & branded email'], [Server, 'Supabase migrations & Edge Functions']],
     links: ['bridges-of-hope-web', 'bridges-of-hope-mobile'] },
@@ -987,20 +991,53 @@ function ContribPanel({ c }) {
           <p className="mt-1 text-sm">{c.role}</p>
         </div>
         <div className="shrink-0 text-right">
-          <div className="font-display text-6xl leading-none text-white tabular-nums">{pct}<span className="text-crimson">%</span></div>
-          <div className="mt-1 font-mono text-[10px] tracking-[0.2em] text-mute/70">OF COMMITS</div>
+          {c.lead ? (
+            <>
+              <div className="font-display text-6xl leading-none text-white">#1</div>
+              <div className="mt-1 font-mono text-[10px] tracking-[0.2em] text-mute/70">IN WEB &amp; BACKEND</div>
+            </>
+          ) : (
+            <>
+              <div className="font-display text-6xl leading-none text-white tabular-nums">{pct}<span className="text-crimson">%</span></div>
+              <div className="mt-1 font-mono text-[10px] tracking-[0.2em] text-mute/70">OF COMMITS</div>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="relative mt-6">
-        <div className="flex h-2 overflow-hidden rounded-full bg-white/10">
-          <div className={`h-full origin-left rounded-full bg-gradient-to-r from-crimson to-[#ff6b6b] shadow-[0_0_14px_rgba(220,38,38,0.7)] ${seen ? 'anim-grow' : ''}`} style={{ width: `${pct}%` }} />
+      {c.lead ? (
+        <div className="relative mt-6">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            {c.lead.map(([label, mine, total], i) => {
+              const p = Math.round((mine / total) * 100);
+              return (
+                <div key={label} className="min-w-0 rounded-xl border border-white/10 bg-black/30 p-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="truncate font-mono text-[9px] tracking-[0.2em] text-mute/70">{label}</span>
+                    <span className="text-xl font-semibold text-white tabular-nums">{p}<span className="text-sm text-crimson">%</span></span>
+                  </div>
+                  <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <div className={`h-full origin-left rounded-full bg-gradient-to-r from-crimson to-[#ff6b6b] ${seen ? 'anim-grow' : ''}`}
+                      style={{ width: `${p}%`, animationDelay: `${i * 150}ms` }} />
+                  </div>
+                  <div className="mt-1.5 font-mono text-[9px] tracking-[0.15em] text-mute/60">{mine} OF {total} COMMITS</div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-3 font-mono text-[9px] tracking-[0.15em] text-mute/60">{c.overall}</div>
         </div>
-        <div className="mt-2 flex justify-between font-mono text-[10px] tracking-[0.15em] text-mute/70">
-          <span><span className="text-crimson">●</span> ME · {c.share[0]}</span>
-          <span>{team > 0 ? `TEAMMATES · ${team}` : 'ALL COMMITS ARE MINE'}</span>
+      ) : (
+        <div className="relative mt-6">
+          <div className="flex h-2 overflow-hidden rounded-full bg-white/10">
+            <div className={`h-full origin-left rounded-full bg-gradient-to-r from-crimson to-[#ff6b6b] shadow-[0_0_14px_rgba(220,38,38,0.7)] ${seen ? 'anim-grow' : ''}`} style={{ width: `${pct}%` }} />
+          </div>
+          <div className="mt-2 flex justify-between font-mono text-[10px] tracking-[0.15em] text-mute/70">
+            <span><span className="text-crimson">●</span> ME · {c.share[0]}</span>
+            <span>{team > 0 ? `TEAMMATES · ${team}` : 'ALL COMMITS ARE MINE'}</span>
+          </div>
         </div>
-      </div>
+      )}
 
       <dl className="relative mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-white/10 bg-white/10 font-mono sm:grid-cols-4">
         {c.stats.map(([k, v]) => (
@@ -1699,13 +1736,13 @@ function Contributions({ p }) {
         </div>
         <div className="min-w-0 lg:col-span-5">
           <div className="flex items-baseline justify-between font-mono">
-            <span className="text-[10px] tracking-[0.2em] text-mute/70">MY SHARE OF COMMITS</span>
+            <span className="text-[10px] tracking-[0.2em] text-mute/70">{c.shareLabel || 'MY SHARE OF COMMITS'}</span>
             <span className="text-3xl text-white tabular-nums">{pct}<span className="text-base text-mute">%</span></span>
           </div>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
             <div className={`h-full origin-left rounded-full bg-gradient-to-r from-crimson to-[#ff6b6b] shadow-[0_0_14px_rgba(220,38,38,0.7)] ${seen ? 'anim-grow' : ''}`} style={{ width: `${pct}%` }} />
           </div>
-          <div className="mt-2 font-mono text-[10px] tracking-[0.15em] text-mute/70">{c.share[0]} OF {c.share[1]} COMMITS IN THE REPOSITORY</div>
+          <div className="mt-2 font-mono text-[10px] tracking-[0.15em] text-mute/70">{c.shareNote || `${c.share[0]} OF ${c.share[1]} COMMITS IN THE REPOSITORY`}</div>
         </div>
       </div>
 
