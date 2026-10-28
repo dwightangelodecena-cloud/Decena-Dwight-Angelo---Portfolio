@@ -1656,10 +1656,10 @@ const ABOUT = {
   ],
   facts: [['LOCATION', 'General Trias, Cavite'], ['SCHOOL', 'NU Dasmariñas'], ['STUDYING SINCE', 'Aug 2023'], ['STATUS', '4th year · OJT']],
   docs: [
-    { title: 'Resume', pages: 1, file: '/docs/Resume_-_Dwight_Angelo_Decena.pdf',
-      desc: 'A one-page overview for quick reads.', sections: ['Summary', 'Technical skills', 'Featured projects', 'Competencies'] },
-    { title: 'Curriculum Vitae', pages: 2, file: '/docs/Curriculum_Vitae_-_Dwight_Angelo_Decena.pdf',
-      desc: 'The full record, including coursework and references.', sections: ['Academic statement', 'Competency matrix', 'Projects', 'Coursework', 'References'] },
+    { title: 'Resume', short: 'RESUME', pages: 1, file: '/docs/Dwight_Angelo_Decena_-_Resume.pdf',
+      desc: 'A one-page overview for quick reads.', sections: ['Summary', 'Technical competencies', 'Featured projects', 'Education & certification'] },
+    { title: 'Curriculum Vitae', short: 'CV', pages: 2, file: '/docs/Dwight_Angelo_Decena_-_Curriculum_Vitae.pdf',
+      desc: 'The full record, with project detail, coursework and practices.', sections: ['Profile', 'Competency matrix', 'Projects', 'Coursework', 'Practices', 'References'] },
   ],
   how: [
     [Wrench, 'Analytical problem solving', 'I trace bugs to their root cause instead of patching symptoms.', 'Fixed auth email redirects, app crashes and every lint error blocking CI on Bridges of Hope.'],
@@ -1728,10 +1728,10 @@ function ProfileCard() {
         </div>
       </div>
 
-      <div className="anim-float absolute -left-4 top-44 z-40 hidden items-center gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex">
+      <div className={`anim-float absolute -left-4 top-44 z-40 hidden items-center transition-opacity duration-300 ${flipped ? 'pointer-events-none opacity-0' : 'opacity-100'} gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex`}>
         <BadgeCheck className="h-3.5 w-3.5 text-crimson" /> ITS · 914/1000
       </div>
-      <div className="anim-float absolute -right-4 top-[22rem] z-40 hidden items-center gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex" style={{ animationDelay: '1.6s' }}>
+      <div className={`anim-float absolute -right-4 top-[22rem] z-40 hidden items-center transition-opacity duration-300 ${flipped ? 'pointer-events-none opacity-0' : 'opacity-100'} gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex`} style={{ animationDelay: '1.6s' }}>
         <Award className="h-3.5 w-3.5 text-crimson" /> DEAN&apos;S LIST
       </div>
 
@@ -1813,9 +1813,21 @@ function ProfileCard() {
                     {ABOUT.docs.map((d) => (
                       <a key={d.title} href={d.file} target="_blank" rel="noreferrer"
                         className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/20 px-3 py-2 font-mono text-[10px] tracking-[0.12em] text-white transition hover:border-crimson hover:bg-crimson">
-                        <FileText className="h-3.5 w-3.5" /> {d.pages > 1 ? 'CV' : 'RESUME'}
+                        <FileText className="h-3.5 w-3.5" /> {d.short}
                       </a>
                     ))}
+                  </div>
+                  <div className="mt-6 border-t border-white/10 pt-5">
+                    <div className="font-mono text-[9px] tracking-[0.25em] text-mute/70">CREDENTIALS</div>
+                    <ul className="mt-3 space-y-2.5">
+                      {[[BadgeCheck, 'IT Specialist — Databases', '914 / 1000'], [Award, 'Dean’s List', 'Second Honor'], [GraduationCap, 'BSIT · Mobile & Web Apps', 'NU-D']].map(([Icon, k, v]) => (
+                        <li key={k} className="flex items-center gap-3 text-[13px]">
+                          <Icon className="h-4 w-4 shrink-0 text-crimson" />
+                          <span className="min-w-0 flex-1 truncate text-white/90">{k}</span>
+                          <span className="shrink-0 font-mono text-[10px] text-mute">{v}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   <div className="mt-auto pt-6"><Barcode label="IF FOUND, PLEASE HIRE" /></div>
                 </div>
