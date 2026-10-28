@@ -8,8 +8,8 @@ import {
    Fonts: Anton (display), Plus Jakarta Sans (body), JetBrains Mono (data).
    Palette: obsidian #070708, white headings, #9CA3AF body, crimson #DC2626. */
 
-// Drop a transparent-background PNG cutout here to replace the silhouette.
-const PORTRAIT_SRC = null;
+// Transparent-background cutout served from site/public. Set to null for the silhouette.
+const PORTRAIT_SRC = '/portrait.webp';
 
 const PROFILE = {
   name: 'Dwight Angelo Decena',
@@ -185,7 +185,10 @@ function CopyRow({ icon: Icon, label, value, href }) {
 
 function Portrait() {
   if (PORTRAIT_SRC) {
-    return <img src={PORTRAIT_SRC} alt={PROFILE.name} className="relative z-10 w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)]" />;
+    return (
+      <img src={PORTRAIT_SRC} alt={PROFILE.name}
+        className="relative z-10 w-full object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.8)] [mask-image:linear-gradient(to_bottom,black_72%,transparent)]" />
+    );
   }
   return (
     <svg viewBox="0 0 400 500" className="relative z-10 w-full" role="img" aria-label="Portrait placeholder">
@@ -306,7 +309,7 @@ function Hero() {
             <p className="mt-4 text-base text-mute">{PROFILE.title}</p>
             <dl className="mt-8 grid grid-cols-3 gap-4 border-t border-white/10 pt-5 font-mono">
               {[
-                [String(PROJECTS.length).padStart(2, '0'), 'PROJECTS'],
+                ['02', 'PROJECTS'],
                 [String(toolCount), 'TOOLS'],
                 ['BSIT', 'NU-D'],
               ].map(([v, k]) => (
