@@ -1557,6 +1557,14 @@ function ScoreRing({ score, max }) {
 
 const ABOUT = {
   summary: 'I’m a 4th-year BS Information Technology student at National University Dasmariñas, specializing in Mobile and Web Application Development. I build responsive web apps and cross-platform mobile apps with React, TypeScript, React Native and Flutter, backed by Supabase and MySQL. I’m a certified IT Specialist in Databases, and I’m looking for an OJT or internship where I can contribute to production code.',
+  intro2: 'I enjoy turning complex ideas into working, responsive software and seeing it through from the first wireframe to deployment. Both of my main projects are live systems with real user roles, data and workflows: a case-management portal and family app for a recovery facility, and a sneaker store with its own back office.',
+  // Counts: 2 systems, 2 web + 2 mobile apps, 64 + 12 authored commits, ITS exam score.
+  glance: [[2, 'SYSTEMS SHIPPED'], [4, 'WEB & MOBILE APPS'], [76, 'COMMITS AUTHORED'], [914, 'ITS DATABASES SCORE']],
+  now: [
+    [GraduationCap, 'CURRENTLY', '4th-year BSIT student, enrolled in the OJT / internship practicum'],
+    [Layers, 'FOCUS', 'Mobile architecture, full-stack web systems and databases'],
+    [Briefcase, 'LOOKING FOR', 'A paid OJT or internship, with a path to full-time after graduation'],
+  ],
   facts: [['LOCATION', 'General Trias, Cavite'], ['SCHOOL', 'NU Dasmariñas'], ['STUDYING SINCE', 'Aug 2023'], ['STATUS', '4th year · OJT']],
   docs: [
     { title: 'Resume', pages: 1, file: '/docs/Resume_-_Dwight_Angelo_Decena.pdf',
@@ -1579,59 +1587,187 @@ const ABOUT = {
   ],
 };
 
+function CardFace({ children, className = 'relative' }) {
+  // Animated foil border: a slowly rotating conic gradient peeking out behind the card body.
+  return (
+    <div className={`overflow-hidden rounded-[2rem] p-[1.5px] shadow-[0_40px_100px_-30px_rgba(220,38,38,0.6)] ${className}`}>
+      <div aria-hidden className="anim-orbit absolute inset-[-60%] bg-[conic-gradient(from_0deg,transparent_0deg,#DC2626_50deg,#ffb4b4_80deg,transparent_130deg,transparent_200deg,#7f1d1d_260deg,transparent_320deg)]"
+        style={{ animationDuration: '7s' }} />
+      <div className="relative h-full overflow-hidden rounded-[calc(2rem-1.5px)] bg-[#0f1013]">{children}</div>
+    </div>
+  );
+}
+
+function Barcode({ label }) {
+  return (
+    <div aria-hidden className="flex items-end justify-between gap-4 border-t border-dashed border-white/15 pt-3">
+      <div className="flex h-7 items-end gap-[2px]">
+        {Array.from({ length: 34 }, (_, i) => (
+          <span key={i} className="bg-white/35" style={{ width: i % 3 === 0 ? 3 : 1.5, height: `${35 + ((i * 41) % 65)}%` }} />
+        ))}
+      </div>
+      <span className="font-mono text-[8px] tracking-[0.25em] text-mute/60">{label}</span>
+    </div>
+  );
+}
+
 function ProfileCard() {
   const [t, setT] = useState({ rx: 0, ry: 0, gx: 50, gy: 30 });
+  const [flipped, setFlipped] = useState(false);
   const still = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
   const move = (e) => {
     if (still) return;
     const r = e.currentTarget.getBoundingClientRect();
     const px = (e.clientX - r.left) / r.width;
     const py = (e.clientY - r.top) / r.height;
-    setT({ rx: (0.5 - py) * 10, ry: (px - 0.5) * 12, gx: px * 100, gy: py * 100 });
+    setT({ rx: (0.5 - py) * 9, ry: (px - 0.5) * 11, gx: px * 100, gy: py * 100 });
   };
+  const glare = (
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-30 mix-blend-overlay"
+      style={{ background: `radial-gradient(circle at ${t.gx}% ${t.gy}%, rgba(255,255,255,0.4), transparent 45%)` }} />
+  );
+  const logos = ['react', 'typescript', 'flutter', 'supabase', 'laravel'];
+
   return (
-    <div className="relative mx-auto w-full max-w-sm [perspective:1200px]">
-      <div aria-hidden className="mx-auto h-10 w-14 rounded-b-xl bg-gradient-to-b from-crimson/80 to-crimson/30" />
-      <div onMouseMove={move} onMouseLeave={() => setT({ rx: 0, ry: 0, gx: 50, gy: 30 })}
-        className="relative -mt-2 overflow-hidden rounded-[2rem] border border-white/15 bg-[#0f1013] shadow-[0_40px_100px_-30px_rgba(220,38,38,0.55)] transition-transform duration-200 ease-out"
-        style={{ transform: `rotateX(${t.rx}deg) rotateY(${t.ry}deg)` }}>
-        <div aria-hidden className="pointer-events-none absolute inset-0 z-20 mix-blend-overlay"
-          style={{ background: `radial-gradient(circle at ${t.gx}% ${t.gy}%, rgba(255,255,255,0.35), transparent 45%)` }} />
-        <div aria-hidden className="absolute left-1/2 top-3 z-20 h-2 w-12 -translate-x-1/2 rounded-full bg-black/80 ring-1 ring-white/15" />
-
-        <div className="shine relative h-80 overflow-hidden bg-[radial-gradient(90%_80%_at_50%_100%,rgba(220,38,38,0.5),transparent_70%)]">
-          <div aria-hidden className="absolute inset-0 bg-grid opacity-50" />
-          <span aria-hidden className="absolute -left-2 top-6 font-display text-[7rem] leading-none text-white/[0.06]">DAD</span>
-          <div className="absolute left-5 top-6 z-10 font-display text-xl tracking-wide text-white">DAD<span className="text-crimson">.</span></div>
-          <div className="absolute right-5 top-6 z-10 font-mono text-[9px] tracking-[0.2em] text-white/70">ID · BSIT-MWA</div>
-          <img src={PORTRAIT_SRC} alt="" aria-hidden className="absolute bottom-0 left-1/2 w-[92%] -translate-x-1/2 [mask-image:linear-gradient(to_bottom,black_80%,transparent)]" />
-          <span className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/60 px-3 py-1.5 font-mono text-[9px] tracking-[0.2em] text-white backdrop-blur">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-crimson opacity-75 motion-reduce:animate-none" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-crimson" />
-            </span>
-            OPEN TO OJT / INTERNSHIP
-          </span>
+    <div className="relative mx-auto w-full max-w-sm">
+      <div aria-hidden className="relative z-0 flex flex-col items-center">
+        <div className="h-16 w-10 bg-[repeating-linear-gradient(180deg,#b91c1c_0_10px,#DC2626_10px_20px)] shadow-[inset_0_0_8px_rgba(0,0,0,0.5)]">
+          <span className="block pt-2 text-center font-mono text-[7px] font-bold tracking-[0.1em] text-white/80 [writing-mode:vertical-rl]">DAD · DEV</span>
         </div>
+        <div className="-mt-1 h-6 w-10 rounded-md border border-white/40 bg-gradient-to-b from-zinc-200 via-zinc-400 to-zinc-600 shadow-[0_4px_10px_rgba(0,0,0,0.6)]">
+          <div className="mx-auto mt-3 h-1.5 w-5 rounded-full bg-black/60" />
+        </div>
+      </div>
 
-        <div className="relative p-6">
-          <div className="font-mono text-[10px] tracking-[0.25em] text-crimson">MOBILE &amp; WEB DEVELOPER INTERN</div>
-          <h3 className="mt-2 text-2xl font-semibold tracking-tight text-white">{PROFILE.name}</h3>
-          <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 font-mono">
-            {ABOUT.facts.map(([k, v]) => (
-              <div key={k} className="min-w-0">
-                <dt className="text-[9px] tracking-[0.2em] text-mute/70">{k}</dt>
-                <dd className="mt-0.5 truncate text-[12px] text-white">{v}</dd>
+      <div className="anim-float absolute -left-4 top-44 z-40 hidden items-center gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex">
+        <BadgeCheck className="h-3.5 w-3.5 text-crimson" /> ITS · 914/1000
+      </div>
+      <div className="anim-float absolute -right-4 top-[22rem] z-40 hidden items-center gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex" style={{ animationDelay: '1.6s' }}>
+        <Award className="h-3.5 w-3.5 text-crimson" /> DEAN&apos;S LIST
+      </div>
+
+      <div className="-mt-1 [perspective:1400px]" onMouseMove={move} onMouseLeave={() => setT({ rx: 0, ry: 0, gx: 50, gy: 30 })}>
+        <div className="transition-transform duration-200 ease-out [transform-style:preserve-3d]" style={{ transform: `rotateX(${t.rx}deg) rotateY(${t.ry}deg)` }}>
+          <div className={`relative transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? '[transform:rotateY(180deg)]' : ''}`}>
+
+            <CardFace className="relative [backface-visibility:hidden]">
+              {glare}
+              <div aria-hidden className="absolute left-1/2 top-3 z-20 h-2 w-12 -translate-x-1/2 rounded-full bg-black/80 ring-1 ring-white/20" />
+              <div className="shine relative h-72 overflow-hidden bg-[radial-gradient(90%_80%_at_50%_100%,rgba(220,38,38,0.55),transparent_70%)]">
+                <div aria-hidden className="absolute inset-0 bg-grid opacity-50" />
+                <span aria-hidden className="absolute -left-2 top-8 font-display text-[7rem] leading-none text-white/[0.06]">DAD</span>
+                <div className="absolute left-5 top-6 z-10 font-display text-xl tracking-wide text-white">DAD<span className="text-crimson">.</span></div>
+                <div className="absolute right-5 top-6 z-10 text-right font-mono text-[9px] leading-relaxed tracking-[0.2em] text-white/70">DEVELOPER ID<br /><span className="text-white">BSIT-MWA</span></div>
+                <img src={PORTRAIT_SRC} alt="" aria-hidden className="absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 [mask-image:linear-gradient(to_bottom,black_82%,transparent)]" />
+                <span className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/65 px-3 py-1.5 font-mono text-[9px] tracking-[0.2em] text-white backdrop-blur">
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-crimson opacity-75 motion-reduce:animate-none" />
+                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-crimson" />
+                  </span>
+                  OPEN TO OJT / INTERNSHIP
+                </span>
               </div>
-            ))}
-          </dl>
-          <div aria-hidden className="mt-6 flex h-8 items-end gap-[3px] border-t border-dashed border-white/15 pt-3">
-            {Array.from({ length: 38 }, (_, i) => (
-              <span key={i} className="w-[3px] bg-white/30" style={{ height: `${30 + ((i * 37) % 70)}%` }} />
-            ))}
+
+              <div className="relative p-6">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="font-mono text-[9px] tracking-[0.25em] text-crimson">MOBILE &amp; WEB DEVELOPER INTERN</div>
+                    <h3 className="mt-2 font-display text-[2.1rem] uppercase leading-[0.95] tracking-wide text-white">
+                      Dwight Angelo<br /><span className="text-crimson">Decena</span>
+                    </h3>
+                  </div>
+                  <div aria-hidden className="mt-1 grid h-9 w-12 shrink-0 grid-cols-3 gap-px overflow-hidden rounded-md bg-gradient-to-br from-amber-200 via-amber-400 to-amber-600 p-[3px] shadow-inner">
+                    {Array.from({ length: 6 }, (_, i) => <span key={i} className="rounded-[2px] border border-amber-700/40" />)}
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2">
+                  {logos.map((k) => (
+                    <span key={k} className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-black/40">
+                      <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4" style={{ fill: TECH_LOGOS[k].hex }}><path d={TECH_LOGOS[k].path} /></svg>
+                    </span>
+                  ))}
+                  <span className="font-mono text-[9px] tracking-[0.15em] text-mute/70">+12</span>
+                </div>
+                <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-3 font-mono">
+                  {ABOUT.facts.map(([k, v]) => (
+                    <div key={k} className="min-w-0">
+                      <dt className="text-[9px] tracking-[0.2em] text-mute/70">{k}</dt>
+                      <dd className="mt-0.5 truncate text-[12px] text-white">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <div className="mt-5"><Barcode label="DAD · 2023 · BSIT-MWA" /></div>
+              </div>
+            </CardFace>
+
+            <CardFace className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+              {glare}
+              <div className="flex h-full flex-col">
+                <div className="relative overflow-hidden bg-crimson px-6 pb-6 pt-8">
+                  <div aria-hidden className="absolute inset-0 bg-grid opacity-30" />
+                  <div className="relative flex items-center justify-between">
+                    <span className="font-display text-xl tracking-wide text-white">DAD<span className="text-black">.</span></span>
+                    <span className="font-mono text-[9px] tracking-[0.25em] text-white/80">CONTACT CARD</span>
+                  </div>
+                  <p className="relative mt-6 font-display text-4xl uppercase leading-[0.95] text-white">Let&apos;s build<br />something.</p>
+                </div>
+                <div className="flex flex-1 flex-col p-6">
+                  <ul className="space-y-3 text-sm">
+                    {[[Mail, PROFILE.email], [Phone, PROFILE.phone], [Github, `github.com/${PROFILE.githubHandle}`], [MapPin, 'General Trias, Cavite, PH']].map(([Icon, v]) => (
+                      <li key={v} className="flex min-w-0 items-center gap-3">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-crimson/15 text-crimson"><Icon className="h-4 w-4" /></span>
+                        <span className="min-w-0 break-all text-white/90 select-all">{v}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-6 grid grid-cols-2 gap-2">
+                    {ABOUT.docs.map((d) => (
+                      <a key={d.title} href={d.file} target="_blank" rel="noreferrer"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-full border border-white/20 px-3 py-2 font-mono text-[10px] tracking-[0.12em] text-white transition hover:border-crimson hover:bg-crimson">
+                        <FileText className="h-3.5 w-3.5" /> {d.pages > 1 ? 'CV' : 'RESUME'}
+                      </a>
+                    ))}
+                  </div>
+                  <div className="mt-auto pt-6"><Barcode label="IF FOUND, PLEASE HIRE" /></div>
+                </div>
+              </div>
+            </CardFace>
           </div>
         </div>
       </div>
+
+      <button type="button" onClick={() => setFlipped((f) => !f)} aria-pressed={flipped}
+        className="mx-auto mt-5 flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 font-mono text-[10px] tracking-[0.2em] text-white transition hover:border-crimson hover:text-crimson">
+        <span className={`inline-block transition-transform duration-700 ${flipped ? 'rotate-180' : ''}`}>↻</span>
+        {flipped ? 'SHOW FRONT' : 'FLIP FOR CONTACT'}
+      </button>
+    </div>
+  );
+}
+
+function useCountUp(to, run, ms = 1400) {
+  const [v, setV] = useState(to);
+  useEffect(() => {
+    if (!run || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return undefined;
+    let raf;
+    const t0 = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / ms);
+      setV(Math.round(to * (1 - (1 - p) ** 3)));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [to, run, ms]);
+  return v;
+}
+
+function GlanceStat({ n, label, run }) {
+  const v = useCountUp(n, run);
+  return (
+    <div className="min-w-0 bg-obsidian p-4 transition-colors hover:bg-white/[0.04]">
+      <dd className="font-display text-4xl leading-none text-white tabular-nums">{v}</dd>
+      <dt className="mt-2 font-mono text-[9px] tracking-[0.2em] text-mute/70">{label}</dt>
     </div>
   );
 }
@@ -1677,18 +1813,37 @@ function DocCard({ d }) {
 function About() {
   const [ref, seen] = useSeen(0.15);
   return (
-    <section id="about" className="relative scroll-mt-24 overflow-hidden border-t border-white/10 py-24 md:py-32">
+    // overflow-clip (not hidden) so the sticky profile card can follow the scroll.
+    <section id="about" className="relative scroll-mt-24 overflow-clip border-t border-white/10 py-24 md:py-32">
       <div aria-hidden className="pointer-events-none absolute -left-40 top-20 h-[460px] w-[620px] max-w-full rounded-full bg-crimson/10 blur-[140px]" />
       <div className="relative mx-auto max-w-[1400px] px-gutter">
         <SectionHead index="05" label="ABOUT ME" ghost="ABOUT" title="A 4th-year IT student who ships real systems." />
         <div ref={ref} className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-4">
-            <div className="lg:sticky lg:top-28"><ProfileCard /></div>
+            <div className="lg:sticky lg:top-20"><ProfileCard /></div>
           </div>
 
           <div className="min-w-0 space-y-12 lg:col-span-8">
             <div>
-              <p className="max-w-[65ch] text-lg leading-relaxed text-white/85">{ABOUT.summary}</p>
+              <div className="font-mono text-[11px] tracking-[0.2em] text-crimson">// HELLO, I&apos;M DWIGHT</div>
+              <p className="mt-4 max-w-[65ch] text-xl leading-relaxed text-white/90 md:text-2xl md:leading-relaxed">{ABOUT.summary}</p>
+              <p className="mt-4 max-w-[65ch] leading-relaxed">{ABOUT.intro2}</p>
+
+              <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-4">
+                {ABOUT.glance.map(([n, label]) => <GlanceStat key={label} n={n} label={label} run={seen} />)}
+              </dl>
+
+              <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+                {ABOUT.now.map(([Icon, k, v]) => (
+                  <div key={k} className="group flex min-w-0 gap-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-colors hover:border-crimson/50">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-crimson/15 text-crimson transition-colors group-hover:bg-crimson group-hover:text-white"><Icon className="h-4 w-4" /></span>
+                    <div className="min-w-0">
+                      <div className="font-mono text-[9px] tracking-[0.2em] text-crimson">{k}</div>
+                      <p className="mt-1 text-sm leading-snug text-white/85">{v}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
               <div className="mt-6 flex flex-wrap gap-2">
                 {[[GraduationCap, 'BSIT · Mobile & Web Applications'], [BadgeCheck, 'IT Specialist — Databases'], [Award, 'Dean’s List · Second Honor'], [Briefcase, 'Seeking OJT / internship']].map(([Icon, label]) => (
                   <span key={label} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[13px] text-white/85">
