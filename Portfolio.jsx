@@ -12,8 +12,6 @@ import {
 
 // Transparent-background cutout served from site/public. Set to null for the silhouette.
 const PORTRAIT_SRC = '/portrait.webp';
-// Face-centred 256px crop of the portrait for small round avatars.
-const AVATAR_SRC = '/avatar.webp';
 
 const PROFILE = {
   name: 'Dwight Angelo Decena',
@@ -1644,7 +1642,7 @@ function ProfileCard() {
       <div className={`anim-float absolute -left-4 top-44 z-40 hidden items-center transition-opacity duration-300 ${flipped ? 'pointer-events-none opacity-0' : 'opacity-100'} gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex`}>
         <BadgeCheck className="h-3.5 w-3.5 text-crimson" /> ITS · 914/1000
       </div>
-      <div className={`anim-float absolute -right-4 top-[22rem] z-40 hidden items-center transition-opacity duration-300 ${flipped ? 'pointer-events-none opacity-0' : 'opacity-100'} gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex`} style={{ animationDelay: '1.6s' }}>
+      <div className={`anim-float absolute -right-4 top-[24rem] z-40 hidden items-center transition-opacity duration-300 ${flipped ? 'pointer-events-none opacity-0' : 'opacity-100'} gap-2 rounded-full border border-white/15 bg-black/80 px-3 py-1.5 font-mono text-[10px] tracking-[0.15em] text-white shadow-lg backdrop-blur sm:flex`} style={{ animationDelay: '1.6s' }}>
         <Award className="h-3.5 w-3.5 text-crimson" /> DEAN&apos;S LIST
       </div>
 
@@ -1655,12 +1653,12 @@ function ProfileCard() {
             <CardFace className="relative [backface-visibility:hidden]">
               {glare}
               <div aria-hidden className="absolute left-1/2 top-3 z-20 h-2 w-12 -translate-x-1/2 rounded-full bg-black/80 ring-1 ring-white/20" />
-              <div className="shine relative h-72 overflow-hidden bg-[radial-gradient(90%_80%_at_50%_100%,rgba(220,38,38,0.55),transparent_70%)]">
+              <div className="shine relative h-80 overflow-hidden bg-[radial-gradient(90%_80%_at_50%_100%,rgba(220,38,38,0.55),transparent_70%)]">
                 <div aria-hidden className="absolute inset-0 bg-grid opacity-50" />
                 <span aria-hidden className="absolute -left-2 top-8 font-display text-[7rem] leading-none text-white/[0.06]">DAD</span>
                 <div className="absolute left-5 top-6 z-10 font-display text-xl tracking-wide text-white">DAD<span className="text-crimson">.</span></div>
                 <div className="absolute right-5 top-6 z-10 text-right font-mono text-[9px] leading-relaxed tracking-[0.2em] text-white/70">DEVELOPER ID<br /><span className="text-white">BSIT-MWA</span></div>
-                <img src={PORTRAIT_SRC} alt="" aria-hidden className="absolute bottom-0 left-1/2 w-[94%] -translate-x-1/2 [mask-image:linear-gradient(to_bottom,black_82%,transparent)]" />
+                <img src={PORTRAIT_SRC} alt="" aria-hidden className="absolute bottom-0 left-1/2 h-[17rem] w-auto max-w-none -translate-x-1/2" />
                 <span className="absolute bottom-4 left-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/65 px-3 py-1.5 font-mono text-[9px] tracking-[0.2em] text-white backdrop-blur">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-crimson opacity-75 motion-reduce:animate-none" />
@@ -2401,8 +2399,8 @@ const store = {
 
 function Avatar({ size = 'h-7 w-7', className = '' }) {
   return (
-    <span className={`block shrink-0 overflow-hidden rounded-full bg-white/10 ${size} ${className}`}>
-      <img src={AVATAR_SRC} alt="" className="h-full w-full object-cover" />
+    <span className={`block shrink-0 overflow-hidden rounded-full bg-gradient-to-b from-[#2a2b30] to-[#0e0f11] ${size} ${className}`}>
+      <img src={PORTRAIT_SRC} alt="" className="h-full w-full object-cover object-top" />
     </span>
   );
 }
